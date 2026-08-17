@@ -555,14 +555,182 @@
     }
     .glass-value {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.6rem;
+      font-size: 2.4rem;
       font-weight: 800;
       color: var(--secondary);
     }
     .glass-label {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       margin-top: 6px;
+      font-weight: 600;
+    }
+
+    /* Innovation Lifecycle Flow */
+    .lifecycle-container {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed var(--border);
+    }
+    .lifecycle-heading {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #06b6d4;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lifecycle-tags-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .lifecycle-tag-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s var(--ease);
+    }
+    .lifecycle-tag-pill:hover {
+      background: rgba(124, 58, 237, 0.15);
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-2px);
+      color: #38bdf8;
+    }
+    .lifecycle-tag-num {
+      color: #06b6d4;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    /* Philosophy Banner Card: Think. Build. Innovate. Impact. */
+    .philosophy-feature-card {
+      margin-top: 40px;
+      background: linear-gradient(145deg, rgba(19, 11, 44, 0.6) 0%, rgba(8, 3, 24, 0.8) 100%);
+      border: 1.5px solid rgba(124, 58, 237, 0.35);
+      border-radius: var(--r-xl);
+      padding: 32px 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .philosophy-feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4, #34d399);
+    }
+    .philosophy-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .philosophy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      color: #facc15;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 5px 14px;
+      border-radius: 9999px;
+    }
+    .philosophy-mantra {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .philosophy-mantra .word-think { color: #38bdf8; }
+    .philosophy-mantra .word-build { color: #a78bfa; }
+    .philosophy-mantra .word-innovate { color: #f472b6; }
+    .philosophy-mantra .word-impact { color: #34d399; }
+
+    .philosophy-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (max-width: 900px) {
+      .philosophy-pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 520px) {
+      .philosophy-pillars-grid {
+        grid-template-columns: 1fr;
+      }
+      .philosophy-mantra {
+        font-size: 1.3rem;
+      }
+      .philosophy-feature-card {
+        padding: 24px 18px;
+      }
+    }
+    .pillar-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--r-md);
+      padding: 16px 14px;
+      transition: all 0.3s var(--ease);
+      box-sizing: border-box;
+    }
+    .pillar-box:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-3px);
+    }
+    .pillar-icon {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    .pillar-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+    }
+    .pillar-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .philosophy-callout-quote {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid #7c3aed;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: 14px 18px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.55;
+      box-sizing: border-box;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2608,21 +2776,90 @@
   <div class="container">
     <div class="about-layout">
       <div class="about-text reveal">
-        <div class="section-badge">✦ About The Hackathon</div>
-        <h2 class="section-title">Fueling Innovation & Technical Excellence</h2>
-        <p>Synora 2026 brings together the brightest student developers across the nation. Over 7 hours, teams collaborate to transform ideas into tangible software prototypes and hardware models.</p>
-        <p>Interact with industrial pioneers, showcase your prototypes to expert jury panels, and compete for a premium reward structure.</p>
-        <div class="bullet-points">
-          <div class="bullet-item"><span class="bullet-icon">💡</span><span class="bullet-text">One-on-one reviews with expert judges</span></div>
-          <div class="bullet-item"><span class="bullet-icon">💻</span><span class="bullet-text">High-speed workspace internet and power sockets provided at desks</span></div>
-          <div class="bullet-item"><span class="bullet-icon">🏆</span><span class="bullet-text">Direct eligibility for the cash prize pool and winner trophies</span></div>
+        <div class="section-badge">✦ Next-Gen Tech Hackathon</div>
+        <h2 class="section-title">About <span class="grad-text">SYNORA’26</span></h2>
+        <p style="font-size: 1.02rem; color: #f1f5f9; font-weight: 500; line-height: 1.6; margin-bottom: 14px;">
+          SYNORA’26 is a next-generation innovation and technology hackathon designed to bring together ambitious student developers, innovators, designers, and problem solvers to transform ideas into meaningful real-world solutions.
+        </p>
+        <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; font-size: 0.95rem;">
+          The hackathon provides a competitive environment where participants move beyond theoretical knowledge and experience the complete innovation lifecycle — problem discovery, ideation, solution architecture, rapid development, validation, and final demonstration.
+        </p>
+        <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+          At SYNORA’26, participants are challenged to think differently, collaborate effectively, and leverage emerging technologies to solve complex problems across multiple domains.
+        </p>
+
+        <!-- Complete Innovation Lifecycle Flow -->
+        <div class="lifecycle-container">
+          <div class="lifecycle-heading">⚡ The Complete Innovation Lifecycle</div>
+          <div class="lifecycle-tags-grid">
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">01</span> 🔍 Problem Discovery</div>
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">02</span> 💡 Ideation</div>
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">03</span> 📐 Solution Architecture</div>
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">04</span> ⚡ Rapid Development</div>
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">05</span> 🧪 Validation</div>
+            <div class="lifecycle-tag-pill"><span class="lifecycle-tag-num">06</span> 🎯 Final Demonstration</div>
+          </div>
         </div>
       </div>
+      
+      <!-- Key Metric Cards -->
       <div class="about-cards-grid reveal">
-        <div class="glass-card" data-tilt><div class="glass-value counter-node" data-target="7">0</div><div class="glass-label">Sprint Duration (Hrs)</div></div>
-        <div class="glass-card" data-tilt><div class="glass-value">1:1</div><div class="glass-label">Expert Mentorship</div></div>
-        <div class="glass-card" data-tilt><div class="glass-value">₹3.5K</div><div class="glass-label">Prize Rewards</div></div>
-        <div class="glass-card" data-tilt><div class="glass-value counter-node" data-target="5">0</div><div class="glass-label">Technology Domains</div></div>
+        <div class="glass-card" data-tilt>
+          <div class="glass-value counter-node" data-target="7">0</div>
+          <div class="glass-label">Sprint Hours</div>
+        </div>
+        <div class="glass-card" data-tilt>
+          <div class="glass-value">1:1</div>
+          <div class="glass-label">Expert Mentorship</div>
+        </div>
+        <div class="glass-card" data-tilt>
+          <div class="glass-value">₹3,500</div>
+          <div class="glass-label">Cash Prize Pool</div>
+        </div>
+        <div class="glass-card" data-tilt>
+          <div class="glass-value counter-node" data-target="5">0</div>
+          <div class="glass-label">Technology Domains</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⚡ MORE THAN A HACKATHON FEATURE BANNER -->
+    <div class="philosophy-feature-card reveal">
+      <div class="philosophy-header-row">
+        <div class="philosophy-badge">⚡ More Than a Hackathon</div>
+        <div class="philosophy-mantra">
+          <span class="word-think">Think.</span>
+          <span class="word-build">Build.</span>
+          <span class="word-innovate">Innovate.</span>
+          <span class="word-impact">Impact.</span>
+        </div>
+      </div>
+
+      <div class="philosophy-pillars-grid">
+        <div class="pillar-box">
+          <div class="pillar-icon">🧠</div>
+          <div class="pillar-title" style="color:#38bdf8;">1. Think</div>
+          <div class="pillar-desc">Deeply understand problem statements, discover root bottlenecks, and ideate novel solutions.</div>
+        </div>
+        <div class="pillar-box">
+          <div class="pillar-icon">🛠️</div>
+          <div class="pillar-title" style="color:#a78bfa;">2. Build</div>
+          <div class="pillar-desc">Architect scalable software systems and develop high-speed functional prototypes in the sprint.</div>
+        </div>
+        <div class="pillar-box">
+          <div class="pillar-icon">💡</div>
+          <div class="pillar-title" style="color:#f472b6;">3. Innovate</div>
+          <div class="pillar-desc">Leverage cutting-edge AI, biotechnology, cloud, and IoT stacks to build differentiated solutions.</div>
+        </div>
+        <div class="pillar-box">
+          <div class="pillar-icon">🌍</div>
+          <div class="pillar-title" style="color:#34d399;">4. Impact</div>
+          <div class="pillar-desc">Demonstrate real-world application value and defend engineering decisions before evaluators.</div>
+        </div>
+      </div>
+
+      <div class="philosophy-callout-quote">
+        <strong style="color:white;">Core Standard:</strong> Participants don't simply submit code. They are expected to understand the problem, design an effective solution, build a functional prototype, demonstrate its real-world value, and defend their technical decisions before evaluators.
       </div>
     </div>
   </div>
