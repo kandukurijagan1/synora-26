@@ -3616,28 +3616,41 @@
           <h2 class="success-title" style="font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; color: #ffffff; margin-bottom: 8px;">
             Registration Confirmed!
           </h2>
-          <p class="success-description" style="font-size: 1rem; color: #cbd5e1; margin-bottom: 24px;">
+          <p class="success-description" style="font-size: 1rem; color: #cbd5e1; margin-bottom: 20px;">
             Your team <strong id="successConfTeam" style="color: var(--secondary); font-size: 1.1rem;"></strong> has successfully enrolled in Synora 2026.
           </p>
 
-          <!-- CLEAN EMAIL & DOWNLOAD STATUS CARD -->
-          <div style="max-width: 540px; margin: 0 auto 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; text-align: left; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
-            <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;">
-              <div style="font-size: 1.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📄</div>
+          <!-- 📬 IMPORTANT EMAIL & SPAM FOLDER GUIDANCE NOTIFICATION -->
+          <div style="max-width: 540px; margin: 0 auto 18px; background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 18px 20px; text-align: left; box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+              <div style="font-size: 1.6rem; line-height: 1; flex-shrink: 0;">📬</div>
               <div>
-                <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 2px;">PDF Pass Downloaded</div>
-                <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
-                  Your official registration PDF receipt with full team details has been generated and saved to your device.
+                <div style="font-size: 1rem; font-weight: 800; color: #fbbf24; margin-bottom: 6px; letter-spacing: 0.3px;">
+                  Official Email Dispatched — Check Primary & Spam!
+                </div>
+                <div style="font-size: 0.86rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 10px;">
+                  An official confirmation email containing your <strong>Digital Pass, Reporting Instructions, and Check-In QR Code</strong> has been sent to <strong id="successLeaderEmailDisp" style="color: #38bdf8;">your email</strong>.
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 12px 14px; font-size: 0.83rem; color: #cbd5e1; line-height: 1.5; border-left: 3px solid #fbbf24;">
+                  <div style="margin-bottom: 6px;">
+                    📥 <strong>Step 1:</strong> Check your <strong>Primary / Updates Inbox</strong> first.
+                  </div>
+                  <div>
+                    ⚠️ <strong>Step 2:</strong> If you don't find it in your Primary inbox within 2–3 minutes, <strong>please check your Spam / Junk folder</strong> and mark it as <em>"Report Not Spam"</em> so you never miss future hackathon schedules and desk allocation updates!
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div style="display: flex; align-items: flex-start; gap: 14px; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 16px;">
-              <div style="font-size: 1.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📧</div>
+          <!-- PDF PASS DOWNLOAD STATUS CARD -->
+          <div style="max-width: 540px; margin: 0 auto 18px; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 16px 20px; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="font-size: 1.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📄</div>
               <div>
-                <div style="font-weight: 700; color: #38bdf8; font-size: 1rem; margin-bottom: 2px;">Details & QR Pass Sent to Email</div>
-                <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
-                  All registration information, schedule, and your unique check-in QR code have been dispatched to <strong id="successLeaderEmailDisp" style="color: #ffffff;">your email</strong>.
+                <div style="font-weight: 700; color: #34d399; font-size: 0.98rem; margin-bottom: 2px;">PDF Pass Auto-Downloaded</div>
+                <div style="color: var(--text-muted); font-size: 0.83rem; line-height: 1.4;">
+                  Your official registration PDF receipt with full team details has been downloaded to your device.
                 </div>
               </div>
             </div>
@@ -5549,7 +5562,7 @@
         document.getElementById('stepperProgressBar').style.display = 'none';
         document.getElementById('successOverlayBlock').style.display = 'block';
 
-        showToast(`🎟️ Team ${tName} [${assignedTeamId}] Confirmed! Pass sent to ${lEmail}`, 'success');
+        showToast(`🎟️ Team ${tName} [${assignedTeamId}] Confirmed! Check Primary & Spam for official email pass`, 'success');
 
         // Scroll to modules top
         window.scrollTo({ top: document.getElementById('register').offsetTop - 80, behavior: 'smooth' });
