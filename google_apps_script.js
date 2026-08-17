@@ -1462,15 +1462,15 @@ function doPost(e) {
       var m3Mail = (p.member3Mail || '').trim();
       var m3Phone = (p.member3Phone || '').trim();
 
-      // Secure Private File Upload to Organizer Google Drive (NO PUBLIC LINK SHARING)
+      // Secure Private File Upload to Organizer Google Drive
       var fileRecord = "None";
       if (p.fileData && p.fileName) {
         try {
-          var rawB64 = p.fileData;
+          var rawB64 = p.fileData.toString();
           if (rawB64.indexOf(",") !== -1) {
             rawB64 = rawB64.split(",")[1];
           }
-          rawB64 = rawB64.replace(/\s+/g, '');
+          rawB64 = rawB64.replace(/ /g, '+').replace(/[\r\n\t]/g, '');
           
           if (rawB64.length > 0) {
             var decoded = Utilities.base64Decode(rawB64);
@@ -1479,29 +1479,21 @@ function doPost(e) {
             var name = cleanTeam + '_' + (p.fileName || 'proof.jpg');
             var blob = Utilities.newBlob(decoded, mime, name);
             
-            var folder;
+            var folder = null;
             var folders = DriveApp.getFoldersByName("SYNORA_2026_Uploads");
             if (folders.hasNext()) {
               folder = folders.next();
             } else {
               folder = DriveApp.createFolder("SYNORA_2026_Uploads");
             }
-            try {
-              folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-            } catch(fShareErr) {}
             
-            // File is created inside organizer's Drive and shared so anyone with link can view
+            // Create file inside organizer's Drive folder
             var file = folder.createFile(blob);
-            try {
-              file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-            } catch(shareErr) {
-              console.log("File sharing permission note: " + shareErr.toString());
-            }
             fileRecord = "https://drive.google.com/file/d/" + file.getId() + "/view?usp=drivesdk";
           }
         } catch(fileErr) {
-          console.log("Drive upload note: " + fileErr.toString());
-          fileRecord = "Base64 Received";
+          console.log("Drive upload error: " + fileErr.toString());
+          fileRecord = "Upload Error: " + fileErr.toString();
         }
       }
       
