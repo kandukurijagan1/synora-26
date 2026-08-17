@@ -1189,7 +1189,101 @@
       to { opacity: 1; transform: none; }
     }
 
-    /* Success Overlay State *    /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
+       SUCCESS OVERLAY FEEDBACK & CONFETTI
+    ═══════════════════════════════════════════════════════════════ */
+    .success-feedback-container {
+      display: none;
+      text-align: center;
+      padding: 20px 10px;
+      animation: successReveal 0.6s var(--ease) forwards;
+    }
+    @keyframes successReveal {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: none; }
+    }
+    .success-badge-emoji {
+      font-size: 5rem;
+      margin-bottom: 24px;
+      display: inline-block;
+      animation: badgePop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes badgePop {
+      0% { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+      70% { transform: scale(1.1) rotate(10deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .success-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .success-description {
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .success-summary-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 24px 28px;
+      max-width: 480px;
+      margin: 0 auto 36px;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    .success-summary-heading {
+      font-size: 0.8rem;
+      color: var(--c-primary-l);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .success-summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    .success-summary-row:last-child {
+      margin-bottom: 0;
+    }
+    .success-summary-row span.label-name {
+      color: var(--text-muted);
+    }
+    .success-summary-row span.value-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Confetti Particle Pieces */
+    .confetti-particle {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      top: -20px;
+      border-radius: 2px;
+      animation: confettiFallAnimation linear forwards;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    @keyframes confettiFallAnimation {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
        CONTACT SECTION (ORGANIZERS & HELPDESK - MOBILE & LAPTOP OPTIMIZED)
     ═══════════════════════════════════════════════════════════════ */
     .committee-container {
