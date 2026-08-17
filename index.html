@@ -3446,8 +3446,8 @@
 
               <div class="form-field-group span-2" id="fg-externalTxnId" style="margin-bottom: 12px;">
                 <label for="externalTxnId">Transaction ID / UPI Reference Number <span class="req">*</span></label>
-                <input class="form-input-control" type="text" id="externalTxnId" name="externalTxnId" placeholder="e.g. 324108546729" />
-                <span class="field-error-feedback">Please enter a valid alphanumeric transaction ID or reference number (min 6 characters).</span>
+                <input class="form-input-control" type="text" id="externalTxnId" name="externalTxnId" placeholder="Enter Transaction ID or Reference Number" />
+                <span class="field-error-feedback">Please enter your transaction ID or reference number.</span>
               </div>
 
               <div class="form-field-group span-2" id="fg-paymentFile">
@@ -4686,7 +4686,7 @@
           statusOk = false;
         }
 
-        checkControlValue('externalTxnId', val => /^[a-zA-Z0-9]{6,20}$/.test(val));
+        checkControlValue('externalTxnId', val => val.trim().length > 0);
         checkControlValue('paymentFile', val => val.length > 0 || document.getElementById('fileData').value.length > 0);
       }
     }
