@@ -534,6 +534,12 @@ function processPendingRegistrationEmails() {
               'Email  : ' + leaderEmail + '\n' +
               'Time   : ' + formatISTDateTime(new Date())
             );
+          } else {
+            // Update status column to indicate invalid email address / delivery error
+            if (statusCol !== -1) {
+              sheet.getRange(i + 1, statusCol + 1).setValue("Failed (Invalid Email / Domain)");
+            }
+            SpreadsheetApp.flush();
           }
         }
       }
