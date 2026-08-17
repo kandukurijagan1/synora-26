@@ -1238,41 +1238,166 @@
       margin-left: auto;
       margin-right: auto;
     }
-    .success-summary-box {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 24px 28px;
-      max-width: 480px;
-      margin: 0 auto 36px;
+    /* ════ ADVANCED CYBER DIGITAL TICKET PASS ════ */
+    .cyber-ticket-container {
+      max-width: 520px;
+      width: 100%;
+      margin: 24px auto 28px;
+      perspective: 1000px;
+      box-sizing: border-box;
+    }
+    .cyber-ticket-card {
+      background: linear-gradient(160deg, #130a2a 0%, #080318 60%, #03010b 100%);
+      border: 1.5px solid rgba(124, 58, 237, 0.5);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(124, 58, 237, 0.25);
       text-align: left;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      box-sizing: border-box;
     }
-    .success-summary-heading {
-      font-size: 0.8rem;
-      color: var(--c-primary-l);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
+    .cyber-ticket-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4, #34d399);
     }
-    .success-summary-row {
+    .cyber-ticket-header {
+      padding: 18px 22px;
       display: flex;
       justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 0.95rem;
+      align-items: center;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+      box-sizing: border-box;
     }
-    .success-summary-row:last-child {
-      margin-bottom: 0;
+    .ticket-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .success-summary-row span.label-name {
-      color: var(--text-muted);
+    .ticket-brand-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #06b6d4;
     }
-    .success-summary-row span.value-name {
+    .ticket-brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: white;
+    }
+    .ticket-brand-name span {
+      color: #06b6d4;
+    }
+    .ticket-badge-pill {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+    .cyber-ticket-body {
+      padding: 22px;
+      box-sizing: border-box;
+    }
+    .ticket-team-headline {
+      margin-bottom: 18px;
+    }
+    .ticket-team-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       font-weight: 600;
-      color: var(--text);
+    }
+    .ticket-team-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+    .ticket-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-sizing: border-box;
+    }
+    .ticket-meta-item label {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .ticket-meta-item span {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      word-break: break-all;
+    }
+    .ticket-qr-zone {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.12);
+      padding-top: 16px;
+      box-sizing: border-box;
+    }
+    .ticket-qr-frame {
+      background: white;
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+    }
+    .ticket-qr-frame img {
+      width: 90px;
+      height: 90px;
+      display: block;
+    }
+    .ticket-qr-info {
+      flex: 1;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+    .ticket-qr-info strong {
+      color: #f8fafc;
+      display: block;
+      font-size: 0.88rem;
+      margin-bottom: 3px;
+    }
+    .ticket-action-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      box-sizing: border-box;
+    }
+    @media (max-width: 540px) {
+      .ticket-action-row {
+        flex-direction: column;
+      }
+      .ticket-meta-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
     }
 
     /* Confetti Particle Pieces */
@@ -3056,44 +3181,80 @@
             Your team <strong id="successConfTeam" style="color:var(--secondary)"></strong> has successfully enrolled in Synora 2026.
           </p>
 
-          <!-- 1-CLICK IMMEDIATE PDF DOWNLOAD BUTTON -->
-          <div style="margin: 20px 0 16px 0;">
-            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="width: 100%; padding: 14px 20px; font-size: 1.05rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
-              📥 Download Official PDF Ticket Pass
+          <!-- CYBER HOLOGRAPHIC DIGITAL TICKET PASS -->
+          <div class="cyber-ticket-container" id="ticketPassContainer">
+            <div class="cyber-ticket-card" id="digitalTicketCard">
+              <div class="cyber-ticket-header">
+                <div class="ticket-brand-logo">
+                  <img src="./logo.jpg" alt="Synora 2026 Logo" />
+                  <div class="ticket-brand-name">Synora<span>'26</span></div>
+                </div>
+                <div class="ticket-badge-pill">✔ VERIFIED PASS</div>
+              </div>
+              <div class="cyber-ticket-body">
+                <div class="ticket-team-headline">
+                  <div class="ticket-team-label">Registered Team</div>
+                  <div class="ticket-team-val" id="ticketCardTeamName">Cyber Knights</div>
+                  <div style="font-size:0.85rem; color:#06b6d4; font-weight:700; margin-top:2px;" id="ticketCardTeamId">ID: SYN-26-XXXX</div>
+                </div>
+
+                <div class="ticket-meta-grid">
+                  <div class="ticket-meta-item">
+                    <label>Team Leader</label>
+                    <span id="ticketCardLeaderName">Leader Name</span>
+                  </div>
+                  <div class="ticket-meta-item">
+                    <label>Total Members</label>
+                    <span id="ticketCardTeamSize">2 Members</span>
+                  </div>
+                  <div class="ticket-meta-item">
+                    <label>Event Date</label>
+                    <span style="color:#34d399;">Aug 28, 2026 · 08:00 AM</span>
+                  </div>
+                  <div class="ticket-meta-item">
+                    <label>Venue Desk</label>
+                    <span>NEW SCAD, SIMATS</span>
+                  </div>
+                </div>
+
+                <div class="ticket-qr-zone">
+                  <div class="ticket-qr-frame">
+                    <img id="ticketCardQrImg" src="./qr.png" alt="Desk Check-in QR" />
+                  </div>
+                  <div class="ticket-qr-info">
+                    <strong>Contactless Desk Check-In</strong>
+                    Present this pass on your phone upon arrival at the desk for instant badge & Wi-Fi issue.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAST 1-CLICK TICKET ACTION BUTTONS -->
+          <div class="ticket-action-row" style="max-width: 520px; margin: 0 auto 20px;">
+            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 14px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
+              📥 Download PDF Pass
             </button>
-            <div style="font-size: 0.76rem; color: #34d399; margin-top: 6px; font-weight: 600;">
-              ✨ Official Pass generated with desk check-in barcode
+            <button type="button" class="btn btn-outline" onclick="downloadTicketAsPNG()" style="flex: 1; padding: 14px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-color: rgba(6, 182, 212, 0.5); color: #38bdf8;">
+              📱 Save Image to Photos
+            </button>
+          </div>
+
+          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
+          <div class="success-whatsapp-box" style="margin: 18px auto; max-width: 520px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;">
+              <span style="font-size:1.3rem;">💬</span>
+              <span style="font-size: 1rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
             </div>
-          </div>
-
-          <div class="success-summary-box">
-            <div class="success-summary-heading">Enrollment Receipt</div>
-            <div class="success-summary-row"><span class="label-name">Team Name:</span><span class="value-name" id="rec-team"></span></div>
-            <div class="success-summary-row"><span class="label-name">Leader Name:</span><span class="value-name" id="rec-leader"></span></div>
-            <div class="success-summary-row"><span class="label-name">Contact Email:</span><span class="value-name" id="rec-email"></span></div>
-          </div>
-
-
-          
-          <!-- WHATSAPP GROUP INVITE BLOCK -->
-          <div class="success-whatsapp-box" style="margin: 20px 0; padding: 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.03); text-align: center;">
-            <div style="font-size: 1.8rem; margin-bottom: 8px;">💬</div>
-            <h4 style="font-size: 1.15rem; color: #25d366; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Join Synora '26 WhatsApp Group</h4>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px; max-width: 420px; margin-left: auto; margin-right: auto;">
-              It is mandatory for all registered teams to join the official WhatsApp group for live announcements, event guidelines, and queries.
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+              Join to receive live hackathon announcements, problem statements, and desk allocations.
             </p>
-            
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 16px;">
-              <img src="./whatsapp_qr.png" alt="WhatsApp Group QR Code" style="width: 140px; height: 140px; border-radius: 8px; border: 3px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" />
-              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Scan QR or click below to join</div>
-            </div>
-
-            <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
-              Join WhatsApp Group Now →
+            <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 10px 22px; font-size: 0.88rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
+              Join WhatsApp Group →
             </a>
           </div>
 
-          <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.9rem; margin-top:8px;">Register Another Team</button>
+          <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; margin-top:8px; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
         </div>
       </div>
     </div>
@@ -4434,237 +4595,312 @@
     });
   });
 
-  // ─── GENERATE & DOWNLOAD REGISTRATION RECEIPT PDF ─────────────
-  function generateReceiptPDF(assignedTeamId) {
+  // ─── ULTRA-FAST INSTANT PASS GENERATION (VECTOR PDF) ────────────
+  function generateReceiptPDF(assignedId) {
     try {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      const teamName = document.getElementById('teamName').value.trim();
-      const leaderName = document.getElementById('teamLeaderName').value.trim();
-      const leaderMail = document.getElementById('teamLeaderMail').value.trim();
-      const leaderMobile = document.getElementById('teamLeaderMobile').value.trim();
-      
-      const m1Name = document.getElementById('member1Name').value.trim();
-      const m1Mail = document.getElementById('member1Mail').value.trim();
-      const m1Phone = document.getElementById('member1Phone').value.trim();
-      
-      const m2Name = document.getElementById('member2Name').value.trim();
-      const m2Mail = document.getElementById('member2Mail').value.trim();
-      const m2Phone = document.getElementById('member2Phone').value.trim();
-      
-      const m3Name = document.getElementById('member3Name').value.trim();
-      const m3Mail = document.getElementById('member3Mail').value.trim();
-      const m3Phone = document.getElementById('member3Phone').value.trim();
-      
-      const regType = document.getElementById('regType').value;
-      const receiptNo = assignedTeamId || `SYN-26-${Math.floor(100000 + Math.random() * 900000)}`;
-      const currentDate = new Date().toLocaleString();
-
-      // ─── ADVANCED TECH DESIGN BACKGROUND ───
-      // 1. Technical Grid Lines (Blueprint mesh)
-      doc.setDrawColor(242, 240, 248);
-      doc.setLineWidth(0.08);
-      for (let x = 10; x < 200; x += 15) {
-        doc.line(x, 45, x, 282);
+      if (typeof window.jspdf === 'undefined' && typeof jsPDF === 'undefined') {
+        window.print();
+        return;
       }
-      for (let y = 45; y < 282; y += 15) {
-        doc.line(10, y, 200, y);
-      }
+      const { jsPDF } = window.jspdf || window;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-      // 2. Large Faded Logo Watermark in Center
-      if (typeof SHARP_LOGO_BASE64 !== 'undefined') {
-        try {
-          doc.saveGraphicsState();
-          doc.setGState(new doc.GState({ opacity: 0.07 })); 
-          doc.addImage(SHARP_LOGO_BASE64, 'JPEG', 45, 88.5, 120, 120);
-          doc.restoreGraphicsState();
-        } catch(wmErr) {
-          console.error("Watermark render:", wmErr);
-        }
-      }
+      const teamName = (document.getElementById('teamName') ? document.getElementById('teamName').value.trim() : '') || 'Synora Team';
+      const leaderName = (document.getElementById('teamLeaderName') ? document.getElementById('teamLeaderName').value.trim() : '') || 'Team Leader';
+      const leaderMail = (document.getElementById('teamLeaderMail') ? document.getElementById('teamLeaderMail').value.trim() : '') || '';
+      const leaderMobile = (document.getElementById('teamLeaderMobile') ? document.getElementById('teamLeaderMobile').value.trim() : '') || '';
+      const m1Name = (document.getElementById('member1Name') ? document.getElementById('member1Name').value.trim() : '') || 'Member 1';
+      const m2Name = (document.getElementById('member2Name') ? document.getElementById('member2Name').value.trim() : '');
+      const m3Name = (document.getElementById('member3Name') ? document.getElementById('member3Name').value.trim() : '');
+      const regType = (document.getElementById('regType') ? document.getElementById('regType').value : 'internal');
+      const ticketId = assignedId || (document.getElementById('ticketCardTeamId') ? document.getElementById('ticketCardTeamId').textContent.replace('ID: ', '') : 'SYN-26-PASS');
+      const currentDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 
-      // ─── PREMIUM HEADER BLOCK ───
-      // Dark Header Band
-      doc.setFillColor(15, 10, 30);
-      doc.rect(0, 0, 210, 45, 'F');
-      
-      // Cybernetic Accent Line
-      doc.setFillColor(6, 182, 212); // Cyan accent
-      doc.rect(0, 43, 210, 2, 'F');
+      let memberCount = 2;
+      if (m2Name) memberCount++;
+      if (m3Name) memberCount++;
 
-      // Sharp Logo inside Circular Cyber Glow Frame
-      if (typeof SHARP_LOGO_BASE64 !== 'undefined') {
-        doc.setDrawColor(6, 182, 212); // Glowing border
-        doc.setLineWidth(0.6);
-        doc.circle(184.5, 22.5, 13.5);
-        try {
-          doc.addImage(SHARP_LOGO_BASE64, 'JPEG', 171.5, 9.5, 26, 26);
-        } catch(imgErr) {
-          console.error("Logo render failed:", imgErr);
-        }
-      }
+      // ── Background & Outer Border ──
+      doc.setFillColor(11, 7, 26);
+      doc.rect(10, 10, 190, 277, 'F');
+      doc.setDrawColor(124, 58, 237);
+      doc.setLineWidth(0.8);
+      doc.rect(10, 10, 190, 277, 'D');
 
-      // Header Brand text
+      // ── Top Header Banner ──
+      doc.setFillColor(19, 11, 44);
+      doc.rect(10, 10, 190, 42, 'F');
+      doc.setFillColor(6, 182, 212);
+      doc.rect(10, 52, 190, 1.5, 'F');
+
+      // Title & Event Meta
       doc.setTextColor(6, 182, 212);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(26);
-      doc.text("SYNORA '26", 15, 20);
-      
+      doc.setFontSize(24);
+      doc.text("SYNORA '26", 18, 26);
+
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(9.5);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.text("MEDICAL BIOTECHNOLOGY HACKATHON · ENTRY PASS", 15, 28);
-      
-      doc.setTextColor(150, 150, 160);
+      doc.text("NATIONAL COLLEGE LEVEL HACKATHON · OFFICIAL ENTRY PASS", 18, 34);
+
+      doc.setTextColor(148, 163, 184);
       doc.setFontSize(8.5);
-      doc.text(`ID: ${receiptNo}  |  Issued: ${currentDate}`, 15, 36);
-      
-      // ─── TICKET DETAILS BODY ───
-      doc.setTextColor(50, 50, 55);
-      let y = 60;
-      
-      // Section 1: Team & Event Overview
+      doc.text(`PASS ID: ${ticketId}  |  ISSUED: ${currentDate}`, 18, 43);
+
+      // Verified Badge Pill (Top Right)
+      doc.setFillColor(16, 185, 129);
+      doc.roundedRect(148, 20, 44, 8, 3, 3, 'F');
+      doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.text("1. Team Overview", 15, y);
-      y += 8;
-      
+      doc.setFontSize(7.5);
+      doc.text("VERIFIED ENTRY", 154, 25.5);
+
+      // ── Team Information Box ──
+      doc.setFillColor(255, 255, 255, 0.03);
+      doc.setDrawColor(255, 255, 255, 0.1);
+      doc.roundedRect(18, 62, 174, 50, 4, 4, 'FD');
+
+      doc.setTextColor(148, 163, 184);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      doc.text(`Team Name: ${teamName}`, 20, y);
-      y += 6;
-      doc.text(`Registration Type: ${regType === 'internal' ? 'Internal Student (SIMATS)' : 'External College Team'}`, 20, y);
-      y += 6;
-      let teamSize = 2;
-      if (m2Name !== '') teamSize++;
-      if (m3Name !== '') teamSize++;
-      const computedFee = teamSize * 100;
+      doc.setFontSize(8);
+      doc.text("REGISTERED TEAM NAME", 24, 70);
 
-      doc.text(`Registration Fee Status: ${regType === 'internal' ? 'Free (Internal Enrollment)' : 'Paid (INR ' + computedFee + ')'}`, 20, y);
-      y += 12;
-
-      // Section 2: Team Leader
+      doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.text("2. Team Leader Details", 15, y);
-      y += 8;
-      
+      doc.setFontSize(18);
+      doc.text(teamName, 24, 79);
+
+      doc.setTextColor(148, 163, 184);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      doc.text(`Full Name: ${leaderName}`, 20, y);
-      y += 6;
-      doc.text(`Email Address: ${leaderMail}`, 20, y);
-      y += 6;
-      doc.text(`Mobile Number: ${leaderMobile}`, 20, y);
-      y += 12;
-
-      // Section 3: Team Members
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.text("3. Team Members Details", 15, y);
-      y += 8;
-      
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      doc.text(`Member 1: ${m1Name}  |  ${m1Mail}  |  ${m1Phone}`, 20, y);
-      y += 6;
-      
-      if (m2Name) {
-        doc.text(`Member 2: ${m2Name}  |  ${m2Mail}  |  ${m2Phone}`, 20, y);
-        y += 6;
-      }
-      if (m3Name) {
-        doc.text(`Member 3: ${m3Name}  |  ${m3Mail}  |  ${m3Phone}`, 20, y);
-        y += 6;
-      }
-      y += 10;
-
-      // Section 4: Verification & Payment Info
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(13);
-      doc.text("4. Verification Details", 15, y);
-      y += 8;
-      
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      if (regType === 'internal') {
-        const regNo = document.getElementById('internalRegNo').value.trim();
-        doc.text(`College Registration Number: ${regNo}`, 20, y);
-        y += 6;
-        doc.text(`Uploaded ID Card Proof: Yes (Logged in Database)`, 20, y);
-      } else {
-        const txnId = document.getElementById('externalTxnId').value.trim();
-        doc.text(`Transaction / UPI ID Ref: ${txnId}`, 20, y);
-        y += 6;
-        doc.text(`Screenshot Proof: Yes (Logged in Database)`, 20, y);
-      }
-      y += 16;
-
-      // Section 5: Hackathon Timeline Summary & Venue
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(11.5);
-      doc.text("Event Schedule & Venue (August 28, 2026)", 15, y);
-      y += 5.5;
-      doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
-      doc.setTextColor(30, 64, 175);
-      doc.text("Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai", 15, y);
-      y += 5.5;
-      doc.setTextColor(50, 50, 50);
+      doc.text(`Team Leader: ${leaderName} (${leaderMobile || leaderMail})`, 24, 89);
+      doc.text(`Total Members: ${memberCount} Students  |  Category: ${regType === 'internal' ? 'Internal Student (SIMATS)' : 'External College Team'}`, 24, 96);
+      doc.text(`Team Members: 1. ${m1Name}${m2Name ? '  |  2. ' + m2Name : ''}${m3Name ? '  |  3. ' + m3Name : ''}`, 24, 103);
+
+      // ── Event & Venue Logistics ──
+      doc.setFillColor(255, 255, 255, 0.03);
+      doc.roundedRect(18, 120, 174, 38, 4, 4, 'FD');
+
+      doc.setTextColor(6, 182, 212);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text("EVENT SCHEDULE & VENUE DETAILS", 24, 128);
+
+      doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      doc.text("08:00 AM - Check-in & Desk Registration  |  08:45 AM - Inauguration  |  09:00 AM - Problem Statement Release", 15, y);
-      y += 4.5;
-      doc.text("10:30 AM - Round 1 Coding  |  11:00 AM - Mid Sprint Break  |  12:00 PM - Prototype Development", 15, y);
-      y += 4.5;
-      doc.text("01:30 PM - Round 2 & Pitching  |  02:30 PM - Event Concludes", 15, y);
-      y += 10;
+      doc.setFontSize(9);
+      doc.text("Date & Time: Friday, August 28, 2026 · 08:00 AM IST (Desk Check-in)", 24, 136);
+      doc.text("Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai", 24, 143);
+      doc.text("Requirement: Physical College ID Card is mandatory for all team members.", 24, 150);
 
-      // Decorative divider
-      doc.setDrawColor(200, 200, 205);
-      doc.setLineWidth(0.4);
-      doc.line(15, y, 195, y);
-      y += 8;
+      // ── Check-In QR & Barcode Section ──
+      doc.setFillColor(255, 255, 255, 0.02);
+      doc.roundedRect(18, 166, 174, 60, 4, 4, 'FD');
 
-      // ─── TICKETING BARCODE & CHECK-IN SYSTEM ───
-      try {
-        // Draw a simulated 1D barcode using varying width lines for the entry scanner
-        doc.setFillColor(30, 30, 40);
-        let curX = 15;
-        const codeString = receiptNo;
-        for (let i = 0; i < codeString.length; i++) {
-          let charCode = codeString.charCodeAt(i);
-          for (let bit = 0; bit < 6; bit++) {
-            let barWidth = (charCode & (1 << bit)) ? 1.0 : 0.35;
-            let isSpace = (bit % 2 === 0);
-            if (!isSpace) {
-              doc.rect(curX, y, barWidth, 11, 'F');
-            }
-            curX += barWidth + 0.3;
-          }
+      // Draw vector barcode
+      let curX = 24;
+      const barcodeStr = ticketId.replace(/[^A-Z0-9]/g, '');
+      doc.setFillColor(255, 255, 255);
+      for (let i = 0; i < barcodeStr.length; i++) {
+        let code = barcodeStr.charCodeAt(i);
+        for (let b = 0; b < 5; b++) {
+          let w = (code & (1 << b)) ? 1.4 : 0.5;
+          doc.rect(curX, 174, w, 22, 'F');
+          curX += w + 0.8;
         }
-        // Label the barcode
-        doc.setFont("courier", "normal");
-        doc.setFontSize(7.5);
-        doc.setTextColor(110, 110, 120);
-        doc.text(`*${receiptNo}*`, 15, y + 14.5);
-      } catch (barcodeErr) {
-        console.error("Barcode drawing failed:", barcodeErr);
+      }
+      doc.setTextColor(148, 163, 184);
+      doc.setFont("courier", "bold");
+      doc.setFontSize(8.5);
+      doc.text(`* ${ticketId} *`, 24, 202);
+
+      // Instructions next to barcode
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.text("CONTACTLESS DESK CHECK-IN", 100, 178);
+
+      doc.setTextColor(148, 163, 184);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.text("Present this pass on your phone at the entrance.", 100, 185);
+      doc.text("The scanner desk will issue your badge and Wi-Fi token.", 100, 191);
+      doc.text("Helpline: Department of Medical Biotechnology", 100, 197);
+
+      // ── Footer Disclaimer ──
+      doc.setTextColor(100, 116, 139);
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7.5);
+      doc.text("Synora 2026 · SIMATS Engineering · Powered by Dept. of Medical Biotechnology", 18, 240);
+      doc.text("Non-transferable ticket. Valid only for registered participants with verified College ID.", 18, 245);
+
+      doc.save(`Synora26_Pass_${teamName.replace(/[^a-zA-Z0-9]/g, '_')}_${ticketId}.pdf`);
+    } catch(err) {
+      console.error("Fast ticket PDF generation error:", err);
+    }
+  }
+
+  // ─── INSTANT PNG PASS GENERATION (FOR PHOTO GALLERY) ────────────
+  function downloadTicketAsPNG() {
+    try {
+      const card = document.getElementById('digitalTicketCard');
+      if (!card) return;
+
+      const teamName = (document.getElementById('ticketCardTeamName') ? document.getElementById('ticketCardTeamName').textContent : 'Team') || 'Team';
+      const ticketId = (document.getElementById('ticketCardTeamId') ? document.getElementById('ticketCardTeamId').textContent.replace('ID: ', '') : 'PASS');
+      const leaderName = (document.getElementById('ticketCardLeaderName') ? document.getElementById('ticketCardLeaderName').textContent : 'Leader');
+
+      // Create an offscreen canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = 700;
+      canvas.height = 800;
+      const ctx = canvas.getContext('2d');
+
+      // Background Gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, 800);
+      grad.addColorStop(0, '#130a2a');
+      grad.addColorStop(0.6, '#080318');
+      grad.addColorStop(1, '#03010b');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(10, 10, 680, 780, 24);
+      ctx.fill();
+
+      ctx.strokeStyle = '#7c3aed';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(10, 10, 680, 780, 24);
+      ctx.stroke();
+
+      // Top Cyber Accent Line
+      const topGrad = ctx.createLinearGradient(10, 0, 690, 0);
+      topGrad.addColorStop(0, '#7c3aed');
+      topGrad.addColorStop(0.5, '#06b6d4');
+      topGrad.addColorStop(1, '#34d399');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(25, 12, 650, 5);
+
+      // Header Brand
+      ctx.fillStyle = '#06b6d4';
+      ctx.font = 'bold 36px "Space Grotesk", sans-serif';
+      ctx.fillText("SYNORA '26", 40, 75);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 14px sans-serif';
+      ctx.fillText("OFFICIAL HACKATHON ENTRY PASS", 40, 102);
+
+      // Verified Badge Pill
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(470, 50, 180, 40, 20);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 15px sans-serif';
+      ctx.fillText("✔ VERIFIED ENTRY", 495, 76);
+
+      // Divider
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(35, 125);
+      ctx.lineTo(665, 125);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Team Name & ID
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 13px sans-serif';
+      ctx.fillText("REGISTERED TEAM", 40, 165);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 30px "Space Grotesk", sans-serif';
+      ctx.fillText(teamName, 40, 200);
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.font = 'bold 17px monospace';
+      ctx.fillText(`PASS ID: ${ticketId}`, 40, 230);
+
+      // Details Box
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(40, 255, 620, 175, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      // Meta fields inside box
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 13px sans-serif';
+      ctx.fillText("TEAM LEADER", 60, 290);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 17px sans-serif';
+      ctx.fillText(leaderName, 60, 315);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 13px sans-serif';
+      ctx.fillText("EVENT DATE & TIME", 360, 290);
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 17px sans-serif';
+      ctx.fillText("Aug 28, 2026 · 08:00 AM", 360, 315);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 13px sans-serif';
+      ctx.fillText("VENUE DESK", 60, 365);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText("NEW SCAD, SIMATS Engineering", 60, 390);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 13px sans-serif';
+      ctx.fillText("LOCATION", 360, 365);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText("Thandalam, Chennai", 360, 390);
+
+      // QR Code Block
+      const qrImg = document.getElementById('ticketCardQrImg');
+      if (qrImg && qrImg.complete) {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(40, 460, 145, 145, 12);
+        ctx.fill();
+        try {
+          ctx.drawImage(qrImg, 45, 465, 135, 135);
+        } catch(e) {}
       }
 
-      // Disclaimer / Footer (Right Aligned next to Barcode)
-      doc.setFont("helvetica", "italic");
-      doc.setFontSize(7.8);
-      doc.setTextColor(120, 120, 125);
-      doc.text("Present this file on your mobile device at the college desk.", 98, y + 3);
-      doc.text("You will receive workspace details and desk allocations at the registration desk.", 98, y + 7.5);
-      doc.text("Registration is subject to verification. Payments are non-refundable (no repayment).", 98, y + 12);
+      // Check-in Instructions
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px "Space Grotesk", sans-serif';
+      ctx.fillText("FAST CONTACTLESS CHECK-IN", 215, 500);
 
-      // Save PDF
-      doc.save(`Synora_Registration_${teamName.replace(/\s+/g, '_')}.pdf`);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '14px sans-serif';
+      ctx.fillText("Present this digital pass on your phone at entry.", 215, 530);
+      ctx.fillText("Physical College ID is required for verification.", 215, 555);
+      ctx.fillText("Desk staff will scan the QR to issue your badge.", 215, 580);
+
+      // Bottom Barcode / Watermark
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'italic 12px sans-serif';
+      ctx.fillText("Synora 2026 · SIMATS Engineering · Department of Medical Biotechnology", 40, 660);
+      ctx.fillText("Official digital admission voucher. Non-transferable.", 40, 685);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `Synora26_Pass_${teamName.replace(/[^a-zA-Z0-9]/g, '_')}_${ticketId}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast("📱 Pass saved to your photos!", "success");
     } catch(err) {
-      console.error("PDF generation failed:", err);
+      console.error("PNG ticket save error:", err);
     }
   }
 
@@ -4733,11 +4969,25 @@
           localStorage.removeItem('synora26_form_draft');
         } catch(err) {}
 
-        // Update receipts labels
+        // Update Cyber Ticket Pass Card fields
         document.getElementById('successConfTeam').textContent = `${tName} (${assignedTeamId})`;
-        document.getElementById('rec-team').textContent = `${tName} [ID: ${assignedTeamId}]`;
-        document.getElementById('rec-leader').textContent = lName;
-        document.getElementById('rec-email').textContent = lEmail;
+        if (document.getElementById('ticketCardTeamName')) document.getElementById('ticketCardTeamName').textContent = tName;
+        if (document.getElementById('ticketCardTeamId')) document.getElementById('ticketCardTeamId').textContent = `ID: ${assignedTeamId}`;
+        if (document.getElementById('ticketCardLeaderName')) document.getElementById('ticketCardLeaderName').textContent = lName;
+        
+        let mCount = 2;
+        const m2 = document.getElementById('member2Name') ? document.getElementById('member2Name').value.trim() : '';
+        const m3 = document.getElementById('member3Name') ? document.getElementById('member3Name').value.trim() : '';
+        if (m2) mCount++;
+        if (m3) mCount++;
+        if (document.getElementById('ticketCardTeamSize')) document.getElementById('ticketCardTeamSize').textContent = `${mCount} Members · ${college}`;
+        
+        // Generate high-resolution live check-in QR Code for the ticket
+        const ticketQrEl = document.getElementById('ticketCardQrImg');
+        if (ticketQrEl) {
+          const passUrl = `${SCRIPT_URL}?action=pass&id=${encodeURIComponent(assignedTeamId)}`;
+          ticketQrEl.src = `https://quickchart.io/qr?text=${encodeURIComponent(passUrl)}&size=200&dark=000000&ecLevel=H`;
+        }
 
         // Trigger panels display toggles
         document.getElementById('hackForm').style.display = 'none';
