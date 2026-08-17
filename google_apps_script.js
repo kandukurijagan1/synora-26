@@ -1498,11 +1498,18 @@ function doPost(e) {
             var blob = Utilities.newBlob(decoded, mime, name);
             
             var folder = null;
-            var folders = DriveApp.getFoldersByName("SYNORA_2026_Uploads");
-            if (folders.hasNext()) {
-              folder = folders.next();
-            } else {
-              folder = DriveApp.createFolder("SYNORA_2026_Uploads");
+            var folderId = PropertiesService.getScriptProperties().getProperty("SYNORA_UPLOAD_FOLDER_ID");
+            if (folderId) {
+              try { folder = DriveApp.getFolderById(folderId); } catch(fIdErr) {}
+            }
+            if (!folder) {
+              var folders = DriveApp.getFoldersByName("SYNORA_2026_Uploads");
+              if (folders.hasNext()) {
+                folder = folders.next();
+              } else {
+                folder = DriveApp.createFolder("SYNORA_2026_Uploads");
+              }
+              try { PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId()); } catch(pErr) {}
             }
             
             // Create file inside organizer's Drive folder
@@ -1733,21 +1740,6 @@ function doPost(e) {
       
       sheet.appendRow(rowToAppend);
       SpreadsheetApp.flush();
-      
-      // Auto-ensure background 1-minute trigger is active
-      try {
-        var triggers = ScriptApp.getProjectTriggers();
-        var trigFound = false;
-        for (var t = 0; t < triggers.length; t++) {
-          if (triggers[t].getHandlerFunction() === 'processPendingRegistrationEmails') {
-            trigFound = true;
-            break;
-          }
-        }
-        if (!trigFound) {
-          setupAutomatedEmailTrigger();
-        }
-      } catch(trigErr) {}
 
       // Late-Night (10:00 PM - 06:59 AM) & 5-Minute Daytime Delay Detection
       var istHour = parseInt(Utilities.formatDate(now, DEFAULT_TIMEZONE, "HH"), 10);

@@ -5117,7 +5117,7 @@
           let width = img.width;
           let height = img.height;
           
-          const MAX_SIZE = 600; // Ultra-fast lightweight upload (<30KB)
+          const MAX_SIZE = 500; // Ultra-fast lightweight upload (<20KB payload)
           if (width > height) {
             if (width > MAX_SIZE) {
               height *= MAX_SIZE / width;
@@ -5130,12 +5130,12 @@
             }
           }
           
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = Math.round(width);
+          canvas.height = Math.round(height);
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          ctx.drawImage(img, 0, 0, Math.round(width), Math.round(height));
           
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.50); // Ultra-light 0.50 quality for instant transmission
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.45); // Fast ~15KB payload
           const rawBase64 = compressedDataUrl.split(',')[1];
           
           document.getElementById('fileData').value = rawBase64;
