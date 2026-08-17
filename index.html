@@ -249,6 +249,11 @@
       color: var(--text);
       background: rgba(255, 255, 255, 0.04);
     }
+    .nav-links a.active {
+      color: #fff !important;
+      background: rgba(124, 58, 237, 0.18) !important;
+      border: 1px solid rgba(124, 58, 237, 0.35) !important;
+    }
     .nav-cta {
       background: var(--grad-primary) !important;
       color: #fff !important;
@@ -4378,6 +4383,39 @@
   }
   runTimerCountdown();
   setInterval(runTimerCountdown, 1000);
+
+  // ─── DYNAMIC SCROLL SPY & ACTIVE NAV HIGHLIGHT ─────────────────
+  const spySections = document.querySelectorAll('section[id], header[id]');
+  const navAnchorLinks = document.querySelectorAll('.nav-links a:not(.nav-cta)');
+  
+  function updateScrollSpy() {
+    const scrollPos = window.scrollY + 160;
+    let currentSectionId = '';
+    
+    spySections.forEach(sec => {
+      const secTop = sec.offsetTop;
+      const secHeight = sec.offsetHeight;
+      if (scrollPos >= secTop && scrollPos < secTop + secHeight) {
+        currentSectionId = sec.getAttribute('id');
+      }
+    });
+
+    if (currentSectionId) {
+      navAnchorLinks.forEach(link => {
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      // Synchronize URL hash seamlessly without jump if not in ticket pass view
+      if (window.location.hash !== `#${currentSectionId}` && !window.location.hash.includes('pass') && !window.location.hash.includes('ticket') && !window.location.hash.includes('id=')) {
+        history.replaceState(null, null, `#${currentSectionId}`);
+      }
+    }
+  }
+  window.addEventListener('scroll', updateScrollSpy, { passive: true });
+  updateScrollSpy();
 
   // ─── SCROLL INTERSECTION REVEAL ────────────────────────────────
   const revealObserver = new IntersectionObserver((entries) => {
