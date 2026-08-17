@@ -1605,17 +1605,6 @@ function doPost(e) {
         }
       }
 
-      for (var a = 0; a < incomingNames.length; a++) {
-        for (var b = a + 1; b < incomingNames.length; b++) {
-          if (incomingNames[a].val && incomingNames[a].val === incomingNames[b].val) {
-            return ContentService.createTextOutput(JSON.stringify({
-              status: "duplicate",
-              message: "Duplicate participant name detected within your team: '" + incomingNames[a].raw + "' is entered for both " + incomingNames[a].role + " and " + incomingNames[b].role + ". All team members must have distinct names."
-            })).setMimeType(ContentService.MimeType.JSON);
-          }
-        }
-      }
-
       // 3. Database-wide duplicate check (against all previously registered teams)
       if (existingData.length > 1) {
         for (var d = 1; d < existingData.length; d++) {
@@ -1669,13 +1658,13 @@ function doPost(e) {
             }
           }
 
-          // Check College Register Number
+          // Check Team Leader College Register Number
           if (targetRegNoNorm && targetRegNoNorm !== 'none' && targetRegNoNorm !== '') {
             var eRegNo = (headerMap.regNumber !== -1 && rowD[headerMap.regNumber] ? rowD[headerMap.regNumber].toString().toLowerCase().trim() : '');
             if (eRegNo && eRegNo === targetRegNoNorm) {
               return ContentService.createTextOutput(JSON.stringify({
                 status: "duplicate",
-                message: "The College Register Number '" + reg.regNumber + "' is already registered under Team '" + existingTeamName + "' [" + existingTeamId + "].",
+                message: "The Team Leader College Register Number '" + reg.regNumber + "' is already registered under Team '" + existingTeamName + "' [" + existingTeamId + "].",
                 teamId: existingTeamId
               })).setMimeType(ContentService.MimeType.JSON);
             }

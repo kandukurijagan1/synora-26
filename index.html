@@ -3489,9 +3489,9 @@
             <!-- Internal College Verification -->
             <div id="sectionInternalCol" class="form-fields-grid" style="margin-bottom: 24px;">
               <div class="form-field-group span-2" id="fg-internalRegNo">
-                <label for="internalRegNo">College Registration Number <span class="req">*</span></label>
-                <input class="form-input-control" type="text" id="internalRegNo" name="internalRegNo" placeholder="e.g. 2021BCS0123" />
-                <span class="field-error-feedback">Please enter your college registration number.</span>
+                <label for="internalRegNo">Team Leader College Register Number <span class="req">*</span></label>
+                <input class="form-input-control" type="text" id="internalRegNo" name="internalRegNo" placeholder="Enter Team Leader's Register Number (e.g. 2021BCS0123)" />
+                <span class="field-error-feedback">Please enter the team leader's college register number.</span>
               </div>
               <div class="form-field-group span-2" id="fg-collegeIdFile">
                 <label for="collegeIdFile">Upload College ID Card <span class="req">*</span> <span class="opt">(Photo or Screenshot)</span></label>
@@ -4797,12 +4797,6 @@
         checkControlValue('member1Phone', () => false);
         statusOk = false;
       }
-      if (m1N && m1N === lName) {
-        showToast('⚠️ Member 1 name cannot be the same as Team Leader name.', 'error');
-        checkControlValue('member1Name', () => false);
-        statusOk = false;
-      }
-
       if (m2N) {
         if (m2M && (m2M === lMail || m2M === m1M)) {
           showToast('⚠️ Member 2 email must be unique and cannot duplicate existing team emails.', 'error');
@@ -4812,11 +4806,6 @@
         if (m2P && (m2P === lPhone || m2P === m1P)) {
           showToast('⚠️ Member 2 phone number must be unique.', 'error');
           checkControlValue('member2Phone', () => false);
-          statusOk = false;
-        }
-        if (m2N && (m2N === lName || m2N === m1N)) {
-          showToast('⚠️ Member 2 name must be unique.', 'error');
-          checkControlValue('member2Name', () => false);
           statusOk = false;
         }
       }
@@ -4830,11 +4819,6 @@
         if (m3P && (m3P === lPhone || m3P === m1P || m3P === m2P)) {
           showToast('⚠️ Member 3 phone number must be unique.', 'error');
           checkControlValue('member3Phone', () => false);
-          statusOk = false;
-        }
-        if (m3N && (m3N === lName || m3N === m1N || m3N === m2N)) {
-          showToast('⚠️ Member 3 name must be unique.', 'error');
-          checkControlValue('member3Name', () => false);
           statusOk = false;
         }
       }
