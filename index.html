@@ -1083,17 +1083,21 @@
       word-break: break-all;
     }
 
+
     /* Stepper Navigation Buttons */
     .stepper-nav-buttons {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 40px;
-      padding-top: 32px;
+      gap: 14px;
+      margin-top: 36px;
+      padding-top: 28px;
       border-top: 1px solid var(--border);
+      width: 100%;
+      box-sizing: border-box;
     }
     .btn-step-action {
-      padding: 12px 32px;
+      padding: 12px 28px;
       border-radius: 9999px;
       font-size: 0.95rem;
       font-weight: 600;
@@ -1103,7 +1107,10 @@
       transition: all var(--dur) var(--ease);
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-sizing: border-box;
     }
     .btn-step-next {
       background: var(--grad-primary);
@@ -1125,9 +1132,9 @@
     .btn-submit-registration {
       background: var(--grad-primary);
       color: white;
-      padding: 14px 40px;
+      padding: 12px 28px;
       border-radius: 9999px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
@@ -1136,7 +1143,10 @@
       transition: all var(--dur) var(--ease);
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-sizing: border-box;
     }
     .btn-submit-registration:hover:not(:disabled) {
       transform: translateY(-3px);
@@ -1160,11 +1170,16 @@
     .submit-feedback-notification {
       display: none;
       margin-top: 20px;
-      padding: 16px 24px;
+      padding: 16px 20px;
       border-radius: var(--r-md);
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-align: center;
+      font-size: 0.92rem;
+      font-weight: 500;
+      text-align: left;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      word-break: break-word;
+      overflow-wrap: break-word;
       animation: notificationFadeIn 0.4s var(--ease);
     }
     .submit-feedback-notification.success-type {
@@ -1587,12 +1602,30 @@
         margin: 0 auto !important;
       }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 600px) {
       .contacts-layout-grid { grid-template-columns: 1fr; }
       .faculty-mentor-box { flex-direction: column; align-items: flex-start; }
       .faculty-badge-group { width: 100%; flex-direction: column; }
       .faculty-pill { width: 100%; justify-content: center; }
       .main-coordinator-card { flex-direction: column; align-items: flex-start; }
+      .stepper-nav-buttons {
+        gap: 10px;
+      }
+      .btn-step-action, .btn-submit-registration {
+        padding: 12px 16px !important;
+        font-size: 0.88rem !important;
+      }
+      .btn-step-back {
+        flex: 0 0 auto;
+        min-width: 80px;
+      }
+      .btn-step-next, .btn-submit-registration {
+        flex: 1 1 auto;
+      }
+      .submit-feedback-notification {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+      }
     }
     @media (max-width: 480px) {
       .countdown-grid { flex-wrap: wrap; }
@@ -3004,15 +3037,15 @@
           <!-- Stepper Navigation buttons -->
           <div class="stepper-nav-buttons">
             <button type="button" class="btn-step-action btn-step-back" id="navBackBtn" style="visibility: hidden;">← Back</button>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+            <div style="display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end;">
               <button type="button" class="btn-step-action btn-step-next" id="navNextBtn">Next Step →</button>
               <button type="submit" class="btn-submit-registration" id="navSubmitFormBtn" style="display: none;">
                 <span class="btn-spinner-icon" id="spinnerIcon"></span>
                 <span id="submitLabel">🚀 Confirm Submission</span>
               </button>
-              <div class="submit-feedback-notification" id="submitFeedbackNotificationBox"></div>
             </div>
           </div>
+          <div class="submit-feedback-notification" id="submitFeedbackNotificationBox"></div>
         </form>
         
         <!-- SUCCESS STATE CONFIRMATION OVERLAY -->
@@ -4720,12 +4753,12 @@
         submitText.textContent = '🚀 Confirm Submission';
         feedbox.style.display = 'block';
         feedbox.innerHTML = `
-          <div style="background:rgba(239,68,68,0.12); border:1px solid #ef4444; border-radius:10px; padding:16px; margin-top:12px; text-align:left;">
-            <div style="font-weight:700; color:#f87171; margin-bottom:6px; font-size:1rem; display:flex; align-items:center; gap:8px;">
+          <div style="background:rgba(239,68,68,0.12); border:1px solid #ef4444; border-radius:10px; padding:14px 16px; margin-top:12px; text-align:left; width:100%; box-sizing:border-box; word-break:break-word; overflow-wrap:break-word;">
+            <div style="font-weight:700; color:#f87171; margin-bottom:6px; font-size:0.95rem; display:flex; align-items:center; gap:8px;">
               🚫 Duplicate Details Not Allowed
             </div>
-            <div style="color:#fecaca; font-size:0.88rem; line-height:1.5;">${res.message}</div>
-            <div style="color:#fca5a5; font-size:0.8rem; margin-top:8px;">
+            <div style="color:#fecaca; font-size:0.85rem; line-height:1.5; word-break:break-word;">${res.message}</div>
+            <div style="color:#fca5a5; font-size:0.78rem; margin-top:8px; line-height:1.4;">
               Please ensure all team members provide unique names, email addresses, phone numbers, and a unique team name.
             </div>
           </div>
