@@ -3584,27 +3584,17 @@
                   </div>
                 </div>
 
-                <div class="ticket-qr-zone">
-                  <div class="ticket-qr-frame">
-                    <img id="ticketCardQrImg" src="./qr.png" alt="Desk Check-in QR" />
-                  </div>
-                  <div class="ticket-qr-info">
-                    <strong>Contactless Desk Check-In</strong>
-                    Present this pass on your phone upon arrival at the desk for instant badge & Wi-Fi issue.
+                <div class="ticket-email-delivery-zone" style="background: rgba(6, 182, 212, 0.05); border: 1px dashed rgba(6, 182, 212, 0.35); border-radius: 12px; padding: 16px 18px; margin-top: 18px; display: flex; align-items: center; gap: 14px; text-align: left;">
+                  <div style="font-size: 2rem; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.5));">📧</div>
+                  <div>
+                    <div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">Pass Sent to Registered Email</div>
+                    <div style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.45;">
+                      Your official digital pass with your unique QR code is dispatched to <strong id="successLeaderEmailDisp" style="color: #ffffff;">your email</strong>. Please check your inbox and present the email/pass at the reception desk on event day.
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- FAST 1-CLICK TICKET ACTION BUTTONS -->
-          <div class="ticket-action-row" style="max-width: 520px; margin: 0 auto 20px;">
-            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 14px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
-              📥 Download PDF Pass
-            </button>
-            <button type="button" class="btn btn-outline" onclick="downloadTicketAsPNG()" style="flex: 1; padding: 14px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-color: rgba(6, 182, 212, 0.5); color: #38bdf8;">
-              📱 Save Image to Photos
-            </button>
           </div>
 
           <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
@@ -5461,9 +5451,6 @@
 
         const assignedTeamId = res.teamId || `SYN-26-${Math.floor(1000 + Math.random() * 9000)}`;
 
-        // Auto-generate and download the registration receipt PDF
-        generateReceiptPDF(assignedTeamId);
-
         // ── CACHE REGISTERED TICKET IN LOCALSTORAGE ──
         try {
           const myTicket = {
@@ -5484,6 +5471,7 @@
         if (document.getElementById('ticketCardTeamName')) document.getElementById('ticketCardTeamName').textContent = tName;
         if (document.getElementById('ticketCardTeamId')) document.getElementById('ticketCardTeamId').textContent = `ID: ${assignedTeamId}`;
         if (document.getElementById('ticketCardLeaderName')) document.getElementById('ticketCardLeaderName').textContent = lName;
+        if (document.getElementById('successLeaderEmailDisp')) document.getElementById('successLeaderEmailDisp').textContent = lEmail;
         
         let mCount = 2;
         const m2 = document.getElementById('member2Name') ? document.getElementById('member2Name').value.trim() : '';
@@ -5491,20 +5479,13 @@
         if (m2) mCount++;
         if (m3) mCount++;
         if (document.getElementById('ticketCardTeamSize')) document.getElementById('ticketCardTeamSize').textContent = `${mCount} Members · ${college}`;
-        
-        // Generate high-resolution live check-in QR Code for the ticket
-        const ticketQrEl = document.getElementById('ticketCardQrImg');
-        if (ticketQrEl) {
-          const passUrl = `${SCRIPT_URL}?action=pass&id=${encodeURIComponent(assignedTeamId)}`;
-          ticketQrEl.src = `https://quickchart.io/qr?text=${encodeURIComponent(passUrl)}&size=200&dark=000000&ecLevel=H`;
-        }
 
         // Trigger panels display toggles
         document.getElementById('hackForm').style.display = 'none';
         document.getElementById('stepperProgressBar').style.display = 'none';
         document.getElementById('successOverlayBlock').style.display = 'block';
 
-        showToast(`🎟️ Team ${tName} [${assignedTeamId}] Confirmed! Pass downloaded.`, 'success');
+        showToast(`🎟️ Team ${tName} [${assignedTeamId}] Confirmed! Pass sent to ${lEmail}`, 'success');
 
         // Scroll to modules top
         window.scrollTo({ top: document.getElementById('register').offsetTop - 80, behavior: 'smooth' });
