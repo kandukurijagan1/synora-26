@@ -21,7 +21,7 @@ var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwfeoGay8fmRY81iv2gMvo9DV6jY2HvR8jZvwk4AiY5-GRypAe853RQ3j1K1AzXkfdqHQ/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwepMP2uTbHqBXQOylIjn_lUGLa4_YVnZO0tOZAJ9B2F-zsTXlqloYi_zcE76QvwV7qAQ/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
 /**
@@ -375,6 +375,18 @@ function processPendingRegistrationEmails() {
     var nowMs = new Date().getTime();
     var processedCount = 0;
     
+    var quota = 100;
+    try {
+      quota = MailApp.getRemainingDailyQuota();
+    } catch(qErr) {
+      quota = 100;
+    }
+    
+    if (quota <= 0) {
+      console.warn("⚠️ Google Daily Email Quota Exhausted (0 remaining for today). Quota resets automatically in 24 hours. Pending emails remain safely queued and will be dispatched once quota is restored.");
+      return 0;
+    }
+    
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       if (!row || row.length === 0) continue;
@@ -534,6 +546,12 @@ function processPendingRegistrationEmails() {
               'Email  : ' + leaderEmail + '\n' +
               'Time   : ' + formatISTDateTime(new Date())
             );
+          } else {
+            // Update status column to indicate invalid email address / delivery error
+            if (statusCol !== -1) {
+              sheet.getRange(i + 1, statusCol + 1).setValue("Failed (Invalid Email / Domain)");
+            }
+            SpreadsheetApp.flush();
           }
         }
       }
