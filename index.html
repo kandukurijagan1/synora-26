@@ -3620,50 +3620,7 @@
             Your team <strong id="successConfTeam" style="color: var(--secondary); font-size: 1.1rem;"></strong> has successfully enrolled in Synora 2026.
           </p>
 
-          <!-- 📬 IMPORTANT EMAIL & SPAM FOLDER GUIDANCE NOTIFICATION -->
-          <div style="max-width: 540px; margin: 0 auto 18px; background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 18px 20px; text-align: left; box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);">
-            <div style="display: flex; align-items: flex-start; gap: 12px;">
-              <div style="font-size: 1.6rem; line-height: 1; flex-shrink: 0;">📬</div>
-              <div>
-                <div style="font-size: 1rem; font-weight: 800; color: #fbbf24; margin-bottom: 6px; letter-spacing: 0.3px;">
-                  Official Email Dispatched — Check Primary & Spam!
-                </div>
-                <div style="font-size: 0.86rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 10px;">
-                  An official confirmation email containing your <strong>Digital Pass, Reporting Instructions, and Check-In QR Code</strong> has been sent to <strong id="successLeaderEmailDisp" style="color: #38bdf8;">your email</strong>.
-                </div>
-                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 12px 14px; font-size: 0.83rem; color: #cbd5e1; line-height: 1.5; border-left: 3px solid #fbbf24;">
-                  <div style="margin-bottom: 6px;">
-                    📥 <strong>Step 1:</strong> Check your <strong>Primary / Updates Inbox</strong> first.
-                  </div>
-                  <div>
-                    ⚠️ <strong>Step 2:</strong> If you don't find it in your Primary inbox within 2–3 minutes, <strong>please check your Spam / Junk folder</strong> and mark it as <em>"Report Not Spam"</em> so you never miss future hackathon schedules and desk allocation updates!
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PDF PASS DOWNLOAD STATUS CARD -->
-          <div style="max-width: 540px; margin: 0 auto 18px; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 16px 20px; text-align: left;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <div style="font-size: 1.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📄</div>
-              <div>
-                <div style="font-weight: 700; color: #34d399; font-size: 0.98rem; margin-bottom: 2px;">PDF Pass Auto-Downloaded</div>
-                <div style="color: var(--text-muted); font-size: 0.83rem; line-height: 1.4;">
-                  Your official registration PDF receipt with full team details has been downloaded to your device.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 1-CLICK ACTION BUTTONS -->
-          <div class="ticket-action-row" style="max-width: 540px; margin: 0 auto 16px; display: flex; gap: 10px;">
-            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
-              📥 Download PDF Pass Again
-            </button>
-          </div>
-
-          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER WITH QR CODE -->
+          <!-- 1. WHATSAPP BROADCAST GROUP JOIN BANNER WITH QR CODE (ON TOP) -->
           <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.05); text-align: center;">
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px;">
               <span style="font-size:1.3rem;">💬</span>
@@ -3682,6 +3639,48 @@
               <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 11px 26px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(37, 211, 102, 0.35);">
                 Join WhatsApp Group Directly →
               </a>
+            </div>
+          </div>
+
+          <!-- 2. PDF PASS DOWNLOAD STATUS CARD & ACTION BUTTON -->
+          <div style="max-width: 540px; margin: 0 auto 14px; background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 16px 20px; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="font-size: 1.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📄</div>
+              <div>
+                <div style="font-weight: 700; color: #34d399; font-size: 0.98rem; margin-bottom: 2px;">PDF Pass Auto-Downloaded</div>
+                <div style="color: var(--text-muted); font-size: 0.83rem; line-height: 1.4;">
+                  Your official registration PDF receipt with full team details has been downloaded to your device.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ticket-action-row" style="max-width: 540px; margin: 0 auto 18px; display: flex; gap: 10px;">
+            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
+              📥 Download PDF Pass Again
+            </button>
+          </div>
+
+          <!-- 3. 📬 IMPORTANT EMAIL & SPAM FOLDER GUIDANCE NOTIFICATION (BELOW) -->
+          <div style="max-width: 540px; margin: 0 auto 20px; background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 18px 20px; text-align: left; box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+              <div style="font-size: 1.6rem; line-height: 1; flex-shrink: 0;">📬</div>
+              <div>
+                <div style="font-size: 1rem; font-weight: 800; color: #fbbf24; margin-bottom: 6px; letter-spacing: 0.3px;">
+                  Official Email Dispatched — Check Primary & Spam!
+                </div>
+                <div style="font-size: 0.86rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 10px;">
+                  An official confirmation email containing your <strong>Digital Pass, Reporting Instructions, and Check-In QR Code</strong> has been sent to <strong id="successLeaderEmailDisp" style="color: #38bdf8;">your email</strong>.
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 12px 14px; font-size: 0.83rem; color: #cbd5e1; line-height: 1.5; border-left: 3px solid #fbbf24;">
+                  <div style="margin-bottom: 6px;">
+                    📥 <strong>Step 1:</strong> Check your <strong>Primary / Updates Inbox</strong> first.
+                  </div>
+                  <div>
+                    ⚠️ <strong>Step 2:</strong> If you don't find it in your Primary inbox within 2–3 minutes, <strong>please check your Spam / Junk folder</strong> and mark it as <em>"Report Not Spam"</em> so you never miss future hackathon schedules and desk allocation updates!
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
