@@ -375,6 +375,18 @@ function processPendingRegistrationEmails() {
     var nowMs = new Date().getTime();
     var processedCount = 0;
     
+    var quota = 100;
+    try {
+      quota = MailApp.getRemainingDailyQuota();
+    } catch(qErr) {
+      quota = 100;
+    }
+    
+    if (quota <= 0) {
+      console.warn("⚠️ Google Daily Email Quota Exhausted (0 remaining for today). Quota resets automatically in 24 hours. Pending emails remain safely queued and will be dispatched once quota is restored.");
+      return 0;
+    }
+    
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       if (!row || row.length === 0) continue;
