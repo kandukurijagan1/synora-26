@@ -3543,72 +3543,45 @@
         <!-- SUCCESS STATE CONFIRMATION OVERLAY -->
         <div class="success-feedback-container" id="successOverlayBlock">
           <div class="success-badge-emoji">🎉</div>
-          <h3 class="success-title">Registration Confirmed!</h3>
-          <p class="success-description">
-            Your team <strong id="successConfTeam" style="color:var(--secondary)"></strong> has successfully enrolled in Synora 2026.
+          <h2 class="success-title" style="font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; color: #ffffff; margin-bottom: 8px;">
+            Registration Confirmed!
+          </h2>
+          <p class="success-description" style="font-size: 1rem; color: #cbd5e1; margin-bottom: 24px;">
+            Your team <strong id="successConfTeam" style="color: var(--secondary); font-size: 1.1rem;"></strong> has successfully enrolled in Synora 2026.
           </p>
 
-          <!-- CYBER HOLOGRAPHIC DIGITAL TICKET PASS -->
-          <div class="cyber-ticket-container" id="ticketPassContainer">
-            <div class="cyber-ticket-card" id="digitalTicketCard">
-              <div class="cyber-ticket-header">
-                <div class="ticket-brand-logo">
-                  <img src="./logo.jpg" alt="Synora 2026 Logo" />
-                  <div class="ticket-brand-name">Synora<span>'26</span></div>
+          <!-- CLEAN EMAIL & DOWNLOAD STATUS CARD -->
+          <div style="max-width: 540px; margin: 0 auto 20px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 24px; text-align: left; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+            <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;">
+              <div style="font-size: 1.8rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📄</div>
+              <div>
+                <div style="font-weight: 700; color: #34d399; font-size: 1rem; margin-bottom: 2px;">PDF Pass Downloaded</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
+                  Your official registration PDF receipt with full team details has been generated and saved to your device.
                 </div>
-                <div class="ticket-badge-pill">✔ VERIFIED PASS</div>
               </div>
-              <div class="cyber-ticket-body">
-                <div class="ticket-team-headline">
-                  <div class="ticket-team-label">Registered Team</div>
-                  <div class="ticket-team-val" id="ticketCardTeamName">Cyber Knights</div>
-                  <div style="font-size:0.85rem; color:#06b6d4; font-weight:700; margin-top:2px;" id="ticketCardTeamId">ID: SYN-26-XXXX</div>
-                </div>
+            </div>
 
-                <div class="ticket-meta-grid">
-                  <div class="ticket-meta-item">
-                    <div class="meta-label">Team Leader</div>
-                    <span id="ticketCardLeaderName">Leader Name</span>
-                  </div>
-                  <div class="ticket-meta-item">
-                    <div class="meta-label">Total Members</div>
-                    <span id="ticketCardTeamSize">2 Members</span>
-                  </div>
-                  <div class="ticket-meta-item">
-                    <div class="meta-label">Event Date</div>
-                    <span style="color:#34d399;">Aug 28, 2026 · 08:00 AM</span>
-                  </div>
-                  <div class="ticket-meta-item">
-                    <div class="meta-label">Venue Desk</div>
-                    <span>NEW SCAD, SIMATS</span>
-                  </div>
-                </div>
-
-                <div class="ticket-email-delivery-zone" style="background: rgba(6, 182, 212, 0.05); border: 1px dashed rgba(6, 182, 212, 0.35); border-radius: 12px; padding: 16px 18px; margin-top: 18px; display: flex; align-items: center; gap: 14px; text-align: left;">
-                  <div style="font-size: 2rem; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.5));">📧</div>
-                  <div>
-                    <div style="color: #38bdf8; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px;">Pass Sent to Registered Email</div>
-                    <div style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.45;">
-                      Your official digital pass with your unique QR code is dispatched to <strong id="successLeaderEmailDisp" style="color: #ffffff;">your email</strong>. Please check your inbox and present the email/pass at the reception desk on event day.
-                    </div>
-                  </div>
+            <div style="display: flex; align-items: flex-start; gap: 14px; border-top: 1px dashed rgba(255, 255, 255, 0.1); padding-top: 16px;">
+              <div style="font-size: 1.8rem; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📧</div>
+              <div>
+                <div style="font-weight: 700; color: #38bdf8; font-size: 1rem; margin-bottom: 2px;">Details & QR Pass Sent to Email</div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.45;">
+                  All registration information, schedule, and your unique check-in QR code have been dispatched to <strong id="successLeaderEmailDisp" style="color: #ffffff;">your email</strong>.
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- FAST 1-CLICK TICKET ACTION BUTTONS -->
-          <div class="ticket-action-row" style="max-width: 520px; margin: 18px auto 14px; display: flex; gap: 10px;">
+          <!-- 1-CLICK ACTION BUTTONS -->
+          <div class="ticket-action-row" style="max-width: 540px; margin: 0 auto 16px; display: flex; gap: 10px;">
             <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
-              📥 Download PDF Pass
-            </button>
-            <button type="button" class="btn btn-outline" onclick="downloadTicketAsPNG()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-color: rgba(6, 182, 212, 0.5); color: #38bdf8;">
-              📱 Save Pass Image
+              📥 Download PDF Pass Again
             </button>
           </div>
 
           <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
-          <div class="success-whatsapp-box" style="margin: 14px auto; max-width: 520px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
+          <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;">
               <span style="font-size:1.3rem;">💬</span>
               <span style="font-size: 1rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
@@ -3621,7 +3594,7 @@
             </a>
           </div>
 
-          <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; margin-top:8px; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
+          <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
         </div>
       </div>
     </div>
