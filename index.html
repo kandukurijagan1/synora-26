@@ -1514,7 +1514,8 @@
       padding: 12px 14px;
       box-sizing: border-box;
     }
-    .ticket-meta-item label {
+    .ticket-meta-item label,
+    .ticket-meta-item .meta-label {
       font-size: 0.68rem;
       color: #94a3b8;
       text-transform: uppercase;
@@ -3349,7 +3350,7 @@
             
             <div class="form-fields-grid" style="margin-bottom: 12px;">
               <div class="form-field-group span-2">
-                <label>College Group Status <span class="req">*</span></label>
+                <div class="form-label-title" style="font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:8px;">College Group Status <span class="req">*</span></div>
                 <div class="segmented-control" id="collegeStatusToggle" data-active="internal">
                   <div class="segmented-control-slider"></div>
                   <div class="segmented-control-option active" data-value="internal">🏫 Internal Student</div>
@@ -3371,7 +3372,7 @@
                 <span class="field-error-feedback">Please enter your college registration number.</span>
               </div>
               <div class="form-field-group span-2" id="fg-collegeIdFile">
-                <label>Upload College ID Card <span class="req">*</span> <span class="opt">(Photo or Screenshot)</span></label>
+                <label for="collegeIdFile">Upload College ID Card <span class="req">*</span> <span class="opt">(Photo or Screenshot)</span></label>
                 <div class="file-drag-zone" id="zone-collegeIdFile">
                   <div class="file-drag-icon">📁</div>
                   <div class="file-drag-text">Drag & drop your ID card here or <span style="color:var(--secondary); font-weight:700;">browse</span></div>
@@ -3445,7 +3446,7 @@
               </div>
 
               <div class="form-field-group span-2" id="fg-paymentFile">
-                <label>Upload Payment Screenshot <span class="req">*</span></label>
+                <label for="paymentFile">Upload Payment Screenshot <span class="req">*</span></label>
                 <div class="file-drag-zone" id="zone-paymentFile">
                   <div class="file-drag-icon">📁</div>
                   <div class="file-drag-text">Drag & drop your screenshot here or <span style="color:var(--secondary); font-weight:700;">browse</span></div>
@@ -3514,19 +3515,19 @@
 
                 <div class="ticket-meta-grid">
                   <div class="ticket-meta-item">
-                    <label>Team Leader</label>
+                    <div class="meta-label">Team Leader</div>
                     <span id="ticketCardLeaderName">Leader Name</span>
                   </div>
                   <div class="ticket-meta-item">
-                    <label>Total Members</label>
+                    <div class="meta-label">Total Members</div>
                     <span id="ticketCardTeamSize">2 Members</span>
                   </div>
                   <div class="ticket-meta-item">
-                    <label>Event Date</label>
+                    <div class="meta-label">Event Date</div>
                     <span style="color:#34d399;">Aug 28, 2026 · 08:00 AM</span>
                   </div>
                   <div class="ticket-meta-item">
-                    <label>Venue Desk</label>
+                    <div class="meta-label">Venue Desk</div>
                     <span>NEW SCAD, SIMATS</span>
                   </div>
                 </div>
