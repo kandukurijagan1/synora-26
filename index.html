@@ -3837,6 +3837,35 @@
   <div id="mobileStickyCTA-btn">Apply →</div>
 </a>
 
+<!-- ════ MODAL: EMAIL & SPAM FOLDER GUIDANCE POPUP ════ -->
+<div class="syn-modal-backdrop" id="emailGuidanceModal" style="display:none;" onclick="if(event.target===this) closeEmailGuidanceModal()">
+  <div class="syn-modal-box" style="max-width:540px; padding:28px 24px; border:1.5px solid rgba(245, 158, 11, 0.5); box-shadow:0 25px 60px rgba(0,0,0,0.85), 0 0 40px rgba(245, 158, 11, 0.25); text-align:center;">
+    <div style="font-size: 3rem; margin-bottom: 12px; filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5));">📬</div>
+    <h3 style="font-size: 1.35rem; font-weight: 800; color: #fbbf24; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif;">
+      Official Confirmation Email Sent!
+    </h3>
+    <p style="font-size: 0.92rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 16px;">
+      Your team registration is confirmed. We have dispatched your official <strong>Digital Entry Pass & QR Code</strong> to <strong id="modalLeaderEmailDisp" style="color: #38bdf8;">your email</strong>.
+    </p>
+
+    <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(245, 158, 11, 0.3); border-left: 4px solid #fbbf24; border-radius: 10px; padding: 16px; text-align: left; margin-bottom: 20px; font-size: 0.86rem; line-height: 1.55;">
+      <div style="color: #fde68a; font-weight: 700; font-size: 0.92rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        ⚠️ IMPORTANT INSTRUCTIONS FOR ALL STUDENTS:
+      </div>
+      <div style="color: #ffffff; margin-bottom: 8px;">
+        <strong>1. Check Primary Inbox:</strong> Look for an email from <em>"SYNORA '26 Organizing Committee"</em>.
+      </div>
+      <div style="color: #cbd5e1;">
+        <strong>2. Check Spam / Junk Folder:</strong> If it's not in your Primary tab within 2–3 minutes, check your <strong>Spam, Junk, or Updates</strong> folder and click <strong>"Report Not Spam"</strong> to receive all future hackathon alerts!
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="closeEmailGuidanceModal()" style="width: 100%; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4); color: #ffffff;">
+      ✅ Understood, I will check Primary & Spam!
+    </button>
+  </div>
+</div>
+
 <!-- ════ MODAL: TERMS & CONDITIONS ════ -->
 <div class="syn-modal-backdrop" id="termsConditionsModal" onclick="closeModalOnBackdrop(event, 'termsConditionsModal')">
   <div class="syn-modal-box" style="max-width:580px; padding:0; overflow:hidden; border:1px solid rgba(124, 58, 237, 0.4); box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(124, 58, 237, 0.2);">
@@ -4604,6 +4633,25 @@
     if (m) m.classList.remove('active');
   }
 
+  function openEmailGuidanceModal(email) {
+    const m = document.getElementById('emailGuidanceModal');
+    if (m) {
+      if (document.getElementById('modalLeaderEmailDisp') && email) {
+        document.getElementById('modalLeaderEmailDisp').textContent = email;
+      }
+      m.style.display = 'flex';
+      setTimeout(() => m.classList.add('active'), 10);
+    }
+  }
+
+  function closeEmailGuidanceModal() {
+    const m = document.getElementById('emailGuidanceModal');
+    if (m) {
+      m.classList.remove('active');
+      setTimeout(() => { m.style.display = 'none'; }, 250);
+    }
+  }
+
   function openFaqTnc() {
     openTncModal();
   }
@@ -5302,12 +5350,27 @@
       doc.text("The scanner desk will issue your badge and Wi-Fi token.", 100, 191);
       doc.text("Helpline: Department of Medical Biotechnology", 100, 197);
 
+      // ── Email Confirmation Notice in PDF ──
+      doc.setFillColor(255, 255, 255, 0.03);
+      doc.setDrawColor(245, 158, 11, 0.6);
+      doc.roundedRect(18, 230, 174, 18, 3, 3, 'FD');
+      
+      doc.setTextColor(245, 158, 11);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8.5);
+      doc.text("EMAIL CONFIRMATION & QR ENTRY PASS DISPATCHED", 24, 236);
+
+      doc.setTextColor(203, 213, 225);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.text("Check your Primary inbox for official confirmation. If not found in 2-3 mins, check your Spam/Junk folder.", 24, 243);
+
       // ── Footer Disclaimer ──
       doc.setTextColor(100, 116, 139);
       doc.setFont("helvetica", "italic");
       doc.setFontSize(7.5);
-      doc.text("Synora 2026 · SIMATS Engineering · Powered by Dept. of Medical Biotechnology", 18, 240);
-      doc.text("Non-transferable ticket. Valid only for registered participants with verified College ID.", 18, 245);
+      doc.text("Synora 2026 · SIMATS Engineering · Department of Medical Biotechnology", 18, 256);
+      doc.text("Non-transferable pass. Valid only for registered participants with verified physical College ID.", 18, 261);
 
       doc.save(`Synora26_Pass_${teamName.replace(/[^a-zA-Z0-9]/g, '_')}_${ticketId}.pdf`);
     } catch(err) {
@@ -5561,6 +5624,9 @@
         document.getElementById('hackForm').style.display = 'none';
         document.getElementById('stepperProgressBar').style.display = 'none';
         document.getElementById('successOverlayBlock').style.display = 'block';
+
+        // Trigger High-Priority Email & Spam Guidance Modal Popup
+        openEmailGuidanceModal(lEmail);
 
         showToast(`🎟️ Team ${tName} [${assignedTeamId}] Confirmed! Check Primary & Spam for official email pass`, 'success');
 
