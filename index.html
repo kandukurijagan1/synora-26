@@ -3597,8 +3597,18 @@
             </div>
           </div>
 
+          <!-- FAST 1-CLICK TICKET ACTION BUTTONS -->
+          <div class="ticket-action-row" style="max-width: 520px; margin: 18px auto 14px; display: flex; gap: 10px;">
+            <button type="button" class="btn btn-primary" onclick="generateReceiptPDF()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);">
+              📥 Download PDF Pass
+            </button>
+            <button type="button" class="btn btn-outline" onclick="downloadTicketAsPNG()" style="flex: 1; padding: 12px 18px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-color: rgba(6, 182, 212, 0.5); color: #38bdf8;">
+              📱 Save Pass Image
+            </button>
+          </div>
+
           <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
-          <div class="success-whatsapp-box" style="margin: 18px auto; max-width: 520px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
+          <div class="success-whatsapp-box" style="margin: 14px auto; max-width: 520px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;">
               <span style="font-size:1.3rem;">💬</span>
               <span style="font-size: 1rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
@@ -5450,6 +5460,9 @@
         const college = document.getElementById('regType').value === 'internal' ? 'SIMATS Engineering' : 'External College';
 
         const assignedTeamId = res.teamId || `SYN-26-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        // Auto-generate and download the registration receipt PDF
+        generateReceiptPDF(assignedTeamId);
 
         // ── CACHE REGISTERED TICKET IN LOCALSTORAGE ──
         try {
