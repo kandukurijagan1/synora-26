@@ -21,7 +21,7 @@ var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbzf-Lpzyx92bQQgwH-gf9V5LTur-9z5USARCSQrynT_4BdR0hMHLA7aHr8CaYbpp44MVg/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbycz2y-YgaElKeslyq5igP8kYAsra7R2d-vc6Eb9JFKjTT4_6VeHwI4jme5qIJElUrWPw/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
 /**
