@@ -4993,6 +4993,14 @@
 
       const reader = new FileReader();
       reader.onload = function(evt) {
+        const fullDataUrl = evt.target.result || '';
+        const rawBase64Fallback = fullDataUrl.indexOf(',') !== -1 ? fullDataUrl.split(',')[1] : fullDataUrl;
+        
+        // Immediately assign so fileData is ALWAYS populated for submission
+        document.getElementById('fileData').value = rawBase64Fallback;
+        document.getElementById('fileName').value = file.name;
+        document.getElementById('fileMime').value = file.type || 'image/jpeg';
+
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
@@ -5042,11 +5050,6 @@
           }
         };
         img.onerror = function() {
-          const rawBase64 = evt.target.result.split(',')[1];
-          document.getElementById('fileData').value = rawBase64;
-          document.getElementById('fileName').value = file.name;
-          document.getElementById('fileMime').value = file.type;
-          
           const imgEl = preview.querySelector('.file-preview-img');
           if (imgEl) imgEl.src = evt.target.result;
           preview.style.display = 'block';
