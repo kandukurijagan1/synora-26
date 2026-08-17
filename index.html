@@ -1612,8 +1612,8 @@
       padding: 0 12px;
     }
     .faculty-mentor-box {
-      background: rgba(124, 58, 237, 0.06);
-      border: 1px solid rgba(124, 58, 237, 0.25);
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+      border: 1.5px solid rgba(168, 85, 247, 0.35);
       border-radius: var(--r-lg);
       padding: clamp(14px, 3vw, 20px) clamp(16px, 4vw, 24px);
       display: flex;
@@ -1621,11 +1621,23 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 15px rgba(124, 58, 237, 0.08);
       transition: all var(--dur) var(--ease);
     }
+    .faculty-mentor-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #a855f7, #3b82f6);
+    }
     .faculty-mentor-box:hover {
-      border-color: rgba(124, 58, 237, 0.45);
-      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.1);
+      border-color: rgba(168, 85, 247, 0.6);
+      box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
     }
     .faculty-badge-group {
       display: flex;
@@ -1634,32 +1646,52 @@
       align-items: center;
     }
     .faculty-pill {
-      background: rgba(124, 58, 237, 0.15);
-      border: 1px solid rgba(124, 58, 237, 0.35);
-      color: #f8fafc;
-      font-size: clamp(0.82rem, 2vw, 0.9rem);
+      background: rgba(124, 58, 237, 0.16);
+      border: 1.5px solid rgba(168, 85, 247, 0.4);
+      color: #ffffff;
+      font-size: clamp(0.85rem, 2vw, 0.95rem);
       font-weight: 700;
       padding: 8px 18px;
       border-radius: 9999px;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.15);
+      transition: all var(--dur) var(--ease);
+    }
+    .faculty-pill:hover {
+      border-color: rgba(168, 85, 247, 0.8);
+      background: rgba(124, 58, 237, 0.25);
+      transform: translateY(-1px);
     }
     .main-coordinator-card {
-      background: rgba(245, 158, 11, 0.05);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+      border: 1.5px solid rgba(245, 158, 11, 0.4);
       border-radius: var(--r-lg);
-      padding: clamp(14px, 3vw, 18px) clamp(16px, 4vw, 24px);
+      padding: clamp(16px, 3vw, 22px) clamp(18px, 4vw, 28px);
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(245, 158, 11, 0.1);
       transition: all var(--dur) var(--ease);
     }
+    .main-coordinator-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #f59e0b, #38bdf8, #a855f7);
+    }
     .main-coordinator-card:hover {
-      border-color: rgba(245, 158, 11, 0.5);
-      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.7);
+      box-shadow: 0 12px 35px rgba(245, 158, 11, 0.2), 0 0 30px rgba(56, 189, 248, 0.15);
+      transform: translateY(-2px);
     }
     .contacts-layout-grid {
       display: grid;
@@ -3593,13 +3625,16 @@
     <!-- ── 1. FACULTY COORDINATORS & MAIN COORDINATOR ROW ── -->
     <div class="committee-container reveal">
       
-      <!-- Faculty Mentors Box -->
+      <!-- Faculty Mentors Box (Academic Mentorship) -->
       <div class="faculty-mentor-box">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <span style="font-size: 1.6rem; line-height: 1;">🎓</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2)); border: 1.5px solid rgba(168, 85, 247, 0.5); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);">🎓</div>
           <div>
-            <div style="font-size: 0.72rem; font-weight: 800; color: #a78bfa; letter-spacing: 1.5px; text-transform: uppercase;">Faculty Coordinators</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);">Department of Medical Biotechnology, SIMATS</div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-size: 0.78rem; font-weight: 800; color: #c084fc; letter-spacing: 1.5px; text-transform: uppercase;">Faculty Coordinators</div>
+              <span style="background: rgba(168, 85, 247, 0.15); color: #e9d5ff; border: 1px solid rgba(168, 85, 247, 0.35); font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Mentors</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #cbd5e1; margin-top: 2px; font-weight: 500;">Department of Medical Biotechnology, SIMATS Engineering</div>
           </div>
         </div>
         <div class="faculty-badge-group">
@@ -3608,18 +3643,24 @@
         </div>
       </div>
 
-      <!-- Main Coordinator Lead Card -->
+      <!-- Main Tech Lead & Overall Event Head Card -->
       <div class="main-coordinator-card">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">👑</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 50px; height: 50px; min-width: 50px; border-radius: 50%; background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(124, 58, 237, 0.25)); border: 1.5px solid #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);">👑</div>
           <div>
-            <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff;">Kandukuri Jagan</div>
-            <div style="font-size: 0.76rem; color: #fbbf24; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Main Coordinator · Synora '26</div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff; letter-spacing: -0.3px;">Kandukuri Jagan</div>
+              <span style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.8px;">⚡ Main Tech Lead</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #fde68a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px;">Overall Event Head & Lead Architect · Synora '26</div>
+            <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 3px;">Technical Architecture, System Automation & Complete Event Leadership</div>
           </div>
         </div>
-        <span style="background: rgba(245, 158, 11, 0.12); color: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.76rem; font-weight: 700; padding: 6px 16px; border-radius: 999px; text-transform: uppercase; letter-spacing: 1px;">
-          Lead Student Organizer
-        </span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #ffffff; border: 1px solid #f59e0b; font-size: 0.78rem; font-weight: 800; padding: 8px 18px; border-radius: 999px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);">
+            👑 Overall Lead Organizer
+          </span>
+        </div>
       </div>
 
     </div>
@@ -3658,10 +3699,10 @@
         <div class="contact-item-card">
           <div>
             <div class="contact-card-header">
-              <div class="contact-avatar-badge">👨‍💻</div>
+              <div class="contact-avatar-badge">👨‍💼</div>
               <div>
                 <h4>Yugandhar</h4>
-                <div class="contact-role-tag">🌟 Tech Lead & Co-Organizer</div>
+                <div class="contact-role-tag">🌟 Student Coordinator</div>
               </div>
             </div>
             <div class="contact-phone-row">
@@ -3681,7 +3722,7 @@
               <div class="contact-avatar-badge">👩‍💼</div>
               <div>
                 <h4>Tharani</h4>
-                <div class="contact-role-tag">🌟 Logistics & Co-Organizer</div>
+                <div class="contact-role-tag">🌟 Student Coordinator</div>
               </div>
             </div>
             <div class="contact-phone-row">
