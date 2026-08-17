@@ -3580,18 +3580,26 @@
             </button>
           </div>
 
-          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
-          <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;">
+          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER WITH QR CODE -->
+          <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.05); text-align: center;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px;">
               <span style="font-size:1.3rem;">💬</span>
-              <span style="font-size: 1rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
+              <span style="font-size: 1.05rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
             </div>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-              Join to receive live hackathon announcements, problem statements, and desk allocations.
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.45;">
+              Scan the QR code below or tap the button to join the official broadcast group for live announcements and team allocations.
             </p>
-            <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 10px 22px; font-size: 0.88rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
-              Join WhatsApp Group →
-            </a>
+
+            <!-- WHATSAPP QR CODE CONTAINER -->
+            <div style="display: inline-block; background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25); margin-bottom: 14px;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=2&data=https%3A%2F%2Fchat.whatsapp.com%2FESMuU0nwLljLXbWpREEmo2" alt="Synora 2026 WhatsApp Group QR" style="display: block; width: 160px; height: 160px; border-radius: 4px;" loading="lazy" />
+            </div>
+
+            <div>
+              <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 11px 26px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(37, 211, 102, 0.35);">
+                Join WhatsApp Group Directly →
+              </a>
+            </div>
           </div>
 
           <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
