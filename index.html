@@ -2285,39 +2285,86 @@
     .logo-container-wrapper {
       position: relative;
       display: inline-block;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       perspective: 1000px;
     }
     .logo-cyber-ring {
       position: absolute;
-      top: -12px;
-      left: -12px;
-      right: -12px;
-      bottom: -12px;
+      top: -14px;
+      left: -14px;
+      right: -14px;
+      bottom: -14px;
       border-radius: 50%;
-      border: 2px dashed rgba(6, 182, 212, 0.4);
-      animation: rotateRing 18s linear infinite;
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.40);
+      border: 2px dashed rgba(6, 182, 212, 0.45);
+      animation: rotateRing 20s linear infinite;
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.35);
+      pointer-events: none;
+    }
+    .logo-cyber-ring-inner {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      right: -6px;
+      bottom: -6px;
+      border-radius: 50%;
+      border: 1.5px dotted rgba(124, 58, 237, 0.5);
+      animation: rotateRingRev 14s linear infinite;
       pointer-events: none;
     }
     @keyframes rotateRing {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    @keyframes rotateRingRev {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
     .hero-logo-img {
-      width: 155px;
-      height: 155px;
+      width: 145px;
+      height: 145px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3.5px solid var(--secondary);
-      box-shadow: 0 0 50px rgba(6, 182, 212, 0.45), inset 0 0 25px rgba(6, 182, 212, 0.25);
+      border: 3px solid #38bdf8;
+      box-shadow: 0 0 45px rgba(6, 182, 212, 0.5), inset 0 0 25px rgba(6, 182, 212, 0.3);
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
+      display: block;
     }
     .hero-logo-img:hover {
-      transform: scale(1.15) rotate(8deg);
+      transform: scale(1.1) rotate(6deg);
       border-color: #34d399;
-      box-shadow: 0 0 60px rgba(52, 211, 153, 0.65), inset 0 0 30px rgba(52, 211, 153, 0.3);
+      box-shadow: 0 0 65px rgba(52, 211, 153, 0.7), inset 0 0 30px rgba(52, 211, 153, 0.4);
+    }
+    .hero-telemetry-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 auto 32px;
+      max-width: 780px;
+    }
+    .hero-telemetry-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s ease;
+    }
+    .hero-telemetry-chip:hover {
+      background: rgba(6, 182, 212, 0.08);
+      border-color: rgba(6, 182, 212, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+    }
+    .hero-telemetry-chip span.chip-icon {
+      font-size: 1rem;
     }
     .neon-flicker {
       animation: flicker 3s infinite;
@@ -2839,32 +2886,55 @@
   </div>
   <div class="container">
     <div class="hero-inner">
-      <!-- Floating Synora Logo Emblem (Advanced Cybernetic Ring & Hover Glow) -->
+      <!-- Floating Synora Logo Emblem (Advanced Dual Cybernetic Rings & Pulse Glow) -->
       <div class="logo-container-wrapper">
         <div class="logo-cyber-ring"></div>
+        <div class="logo-cyber-ring-inner"></div>
         <img class="hero-logo-img" src="./logo.jpg" alt="Synora Logo" />
       </div>
 
-      <!-- Welcome Slogan Banner -->
-      <div class="hero-slogan-pill" style="margin-bottom: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(56, 189, 248, 0.08); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 9999px; padding: 7px 22px; font-size: clamp(0.78rem, 2.2vw, 0.94rem); font-weight: 700; color: #f8fafc; box-shadow: 0 0 25px rgba(56, 189, 248, 0.18); backdrop-filter: blur(8px);">
-        <span style="font-size: 1.15rem; line-height: 1;">🚀</span>
-        <span><strong style="color: #38bdf8; letter-spacing: 0.3px;">Innovate. Code. Solve. Impact.</strong> Welcome to Synora'26!</span>
+      <!-- Department Institution Badge -->
+      <div class="hero-badge" style="margin-bottom: 14px;">
+        <span></span> Department of Medical Biotechnology · SIMATS Engineering
       </div>
 
-      <div class="hero-badge" style="margin-bottom: 20px;">
-        <span></span> Dept of Medical Biotechnology, SIMATS
+      <!-- Advanced Holographic Slogan Pill -->
+      <div class="hero-slogan-pill" style="margin-bottom: 22px; display: inline-flex; align-items: center; gap: 10px; background: rgba(6, 182, 212, 0.08); border: 1.5px solid rgba(6, 182, 212, 0.4); border-radius: 9999px; padding: 8px 24px; font-size: clamp(0.82rem, 2.2vw, 0.96rem); font-weight: 700; color: #ffffff; box-shadow: 0 0 30px rgba(6, 182, 212, 0.25); backdrop-filter: blur(12px);">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; animation: neonPulse 1.5s infinite alternate;"></span>
+        <span><strong style="color: #38bdf8; letter-spacing: 0.4px;">Innovate. Code. Solve. Impact.</strong> · Welcome to Synora'26 🚀</span>
       </div>
-      <h1 class="hero-title" style="line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 16px; text-transform: uppercase; font-weight: 800;">
+
+      <!-- Main Cinematic Title -->
+      <h1 class="hero-title" style="line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 16px; text-transform: uppercase; font-weight: 900; filter: drop-shadow(0 0 35px rgba(6, 182, 212, 0.35));">
         SYNORA<span class="grad-text neon-flicker">'26</span>
       </h1>
-      <h2 class="hero-subtitle">
+
+      <!-- Dynamic Typewriter Subtitle -->
+      <h2 class="hero-subtitle" style="font-size: clamp(1.25rem, 3.2vw, 1.85rem); margin-bottom: 16px;">
         Build the Future with <span class="grad-text" id="typewriterText">GenAI & Software</span>
       </h2>
-      <p class="hero-sub" style="margin-bottom: 28px;">
-        A national-level innovation battleground at NEW SCAD, SIMATS Engineering for student developers, designers, and biotechnologists.
+
+      <p class="hero-sub" style="margin-bottom: 24px; max-width: 680px;">
+        A premier national-level hackathon uniting student developers, designers, and biotechnologists to solve critical real-world challenges.
       </p>
 
-      <!-- Countdown Timer -->
+      <!-- Key Event Highlights Telemetry Chips -->
+      <div class="hero-telemetry-row">
+        <div class="hero-telemetry-chip">
+          <span class="chip-icon">🏆</span> <span>₹3,500 Cash Prize Pool</span>
+        </div>
+        <div class="hero-telemetry-chip">
+          <span class="chip-icon">⚡</span> <span>7-Hour Hacking Sprint</span>
+        </div>
+        <div class="hero-telemetry-chip">
+          <span class="chip-icon">📍</span> <span>NEW SCAD, SIMATS</span>
+        </div>
+        <div class="hero-telemetry-chip">
+          <span class="chip-icon">📅</span> <span>August 28, 2026 · 08:00 AM</span>
+        </div>
+      </div>
+
+      <!-- Countdown HUD Module -->
       <div class="countdown-grid" id="countdownTimer">
         <div class="countdown-box"><div class="countdown-value" id="val-d">00</div><div class="countdown-label">Days</div></div>
         <div class="countdown-box"><div class="countdown-value" id="val-h">00</div><div class="countdown-label">Hours</div></div>
@@ -2872,9 +2942,9 @@
         <div class="countdown-box"><div class="countdown-value" id="val-s">00</div><div class="countdown-label">Secs</div></div>
       </div>
 
-      <div class="hero-cta-btns" style="margin-top:24px;">
-        <a href="#register" class="btn btn-primary">Register Team <span>→</span></a>
-        <a href="#tracks" class="btn btn-outline">Explore Tracks</a>
+      <div class="hero-cta-btns" style="margin-top: 28px;">
+        <a href="#register" class="btn btn-primary" style="box-shadow: 0 0 25px rgba(124, 58, 237, 0.5);">⚡ Register Team Now <span>→</span></a>
+        <a href="#tracks" class="btn btn-outline" style="border-color: rgba(6, 182, 212, 0.4); color: #e2e8f0;">🔍 Explore Tracks</a>
       </div>
     </div>
   </div>
@@ -3580,18 +3650,26 @@
             </button>
           </div>
 
-          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER -->
-          <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 16px 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.04); text-align: center;">
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;">
+          <!-- WHATSAPP BROADCAST GROUP JOIN BANNER WITH QR CODE -->
+          <div class="success-whatsapp-box" style="margin: 0 auto 18px; max-width: 540px; padding: 20px; border: 1px dashed #25d366; border-radius: var(--r-md); background: rgba(37, 211, 102, 0.05); text-align: center;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px;">
               <span style="font-size:1.3rem;">💬</span>
-              <span style="font-size: 1rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
+              <span style="font-size: 1.05rem; color: #25d366; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Official WhatsApp Group</span>
             </div>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-              Join to receive live hackathon announcements, problem statements, and desk allocations.
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.45;">
+              Scan the QR code below or tap the button to join the official broadcast group for live announcements and team allocations.
             </p>
-            <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 10px 22px; font-size: 0.88rem; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);">
-              Join WhatsApp Group →
-            </a>
+
+            <!-- WHATSAPP QR CODE CONTAINER -->
+            <div style="display: inline-block; background: #ffffff; padding: 10px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25); margin-bottom: 14px;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=2&data=https%3A%2F%2Fchat.whatsapp.com%2FESMuU0nwLljLXbWpREEmo2" alt="Synora 2026 WhatsApp Group QR" style="display: block; width: 160px; height: 160px; border-radius: 4px;" loading="lazy" />
+            </div>
+
+            <div>
+              <a href="https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2" target="_blank" class="btn" style="background: #25d366; color: white; border: none; padding: 11px 26px; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 18px rgba(37, 211, 102, 0.35);">
+                Join WhatsApp Group Directly →
+              </a>
+            </div>
           </div>
 
           <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
@@ -3663,23 +3741,23 @@
 
       <div class="contacts-layout-grid">
         
-        <!-- Coordinator 1: Hemanth -->
+        <!-- Coordinator 1: Tharani -->
         <div class="contact-item-card">
           <div>
             <div class="contact-card-header">
-              <div class="contact-avatar-badge">👨‍💼</div>
+              <div class="contact-avatar-badge">👩‍💼</div>
               <div>
-                <h4>Hemanth</h4>
+                <h4>Tharani</h4>
                 <div class="contact-role-tag">🌟 Student Coordinator</div>
               </div>
             </div>
             <div class="contact-phone-row">
               <span style="color: #38bdf8;">📞</span>
-              <strong>Mobile:</strong> <a href="tel:+916382122447">+91 63821 22447</a>
+              <strong>Mobile:</strong> <a href="tel:+919014978716">+91 90149 78716</a>
             </div>
           </div>
-          <a href="tel:+916382122447" class="contact-action-btn btn-primary">
-            📞 Call Hemanth
+          <a href="tel:+919014978716" class="contact-action-btn btn-primary">
+            📞 Call Tharani
           </a>
         </div>
 
@@ -3703,23 +3781,23 @@
           </a>
         </div>
 
-        <!-- Coordinator 3: Tharani -->
+        <!-- Coordinator 3: Hemanth -->
         <div class="contact-item-card">
           <div>
             <div class="contact-card-header">
-              <div class="contact-avatar-badge">👩‍💼</div>
+              <div class="contact-avatar-badge">👨‍💼</div>
               <div>
-                <h4>Tharani</h4>
+                <h4>Hemanth</h4>
                 <div class="contact-role-tag">🌟 Student Coordinator</div>
               </div>
             </div>
             <div class="contact-phone-row">
               <span style="color: #38bdf8;">📞</span>
-              <strong>Mobile:</strong> <a href="tel:+919014978716">+91 90149 78716</a>
+              <strong>Mobile:</strong> <a href="tel:+916382122447">+91 63821 22447</a>
             </div>
           </div>
-          <a href="tel:+919014978716" class="contact-action-btn btn-primary">
-            📞 Call Tharani
+          <a href="tel:+916382122447" class="contact-action-btn btn-primary">
+            📞 Call Hemanth
           </a>
         </div>
 
@@ -4321,7 +4399,7 @@
 
   // ─── HERO TYPEWRITER HEADLINE ──────────────────────────────────
   const typeText = document.getElementById('typewriterText');
-  const words = ["GenAI & Software", "Innovate. Code. Solve. Impact.", "Web Innovation", "Cyber Solutions", "IoT Ecosystems"];
+  const words = ["GenAI & Machine Learning", "Medical Biotechnology", "Web3 & Cloud Computing", "Cyber Security", "Smart IoT Ecosystems"];
   let wordIdx = 0;
   let charIdx = 0;
   let isDeleting = false;
