@@ -814,8 +814,8 @@ function sendRegistrationConfirmationEmail(details) {
       
     var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + cleanTeamName + " [" + details.teamId + "]";
     
-    // Active Web App URL
-    var webAppUrl = ACTIVE_WEB_APP_URL;
+    // Universal Public Web App URL (guaranteed without /u/1/ multi-account prefixes)
+    var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
 
     // CLEAN PRIVACY-SAFE PASS URL: ONLY contains action & unique Team ID
     var passUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
