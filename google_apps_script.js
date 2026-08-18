@@ -923,15 +923,32 @@ function doGet(e) {
       var rows = sheet.getDataRange().getValues();
       if (rows.length > 1) {
         var headerMap = getHeaderMap(rows[0]);
+        var cleanQueryId = (queryId || queryTeam || queryEmail || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        var cleanQueryText = (queryTeam || queryId || queryEmail || '').toLowerCase().trim();
+        
         for (var i = 1; i < rows.length; i++) {
           var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
-          var rTeam = (rows[i][headerMap.teamName] || '').toString().trim();
-          var rEmail = (rows[i][headerMap.leaderEmail] || '').toString().trim();
+          var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
+          var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
+          var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
+          
+          var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
+          var rTeamLower = rTeam.toLowerCase();
+          var rEmailLower = rEmail.toLowerCase();
+          var rLeaderLower = rLeader.toLowerCase();
           
           var isMatch = false;
-          if (queryId && rId.toLowerCase() === queryId.toLowerCase()) isMatch = true;
-          else if (queryTeam && rTeam.toLowerCase() === queryTeam.toLowerCase()) isMatch = true;
-          else if (queryEmail && rEmail.toLowerCase() === queryEmail.toLowerCase()) isMatch = true;
+          if (cleanQueryText) {
+            if ((cleanQueryId && cleanRId === cleanQueryId) ||
+                rTeamLower === cleanQueryText ||
+                rEmailLower === cleanQueryText ||
+                rLeaderLower === cleanQueryText ||
+                rTeamLower.indexOf(cleanQueryText) !== -1 ||
+                cleanQueryText.indexOf(rTeamLower) !== -1 ||
+                rEmailLower.indexOf(cleanQueryText) !== -1) {
+              isMatch = true;
+            }
+          }
           
           if (isMatch) {
             var regType = (headerMap.regType !== -1 && rows[i][headerMap.regType]) ? rows[i][headerMap.regType].toString().trim() : 'INTERNAL';
@@ -1027,15 +1044,33 @@ function doGet(e) {
     var foundIndex = -1;
     var teamData = null;
     
+    var rawCheckQuery = (idQuery || teamQuery || emailQuery || '').toString().trim();
+    var cleanCheckId = rawCheckQuery.toLowerCase().replace(/[^a-z0-9]/g, '');
+    var cleanCheckText = rawCheckQuery.toLowerCase();
+    
     for (var i = 1; i < rows.length; i++) {
       var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
-      var rTeam = (rows[i][headerMap.teamName] || '').toString().trim();
-      var rEmail = (rows[i][headerMap.leaderEmail] || '').toString().trim();
+      var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
+      var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
+      var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
+      
+      var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
+      var rTeamLower = rTeam.toLowerCase();
+      var rEmailLower = rEmail.toLowerCase();
+      var rLeaderLower = rLeader.toLowerCase();
       
       var isMatch = false;
-      if (idQuery && rId.toLowerCase() === idQuery.toLowerCase()) isMatch = true;
-      else if (teamQuery && rTeam.toLowerCase() === teamQuery.toLowerCase()) isMatch = true;
-      else if (emailQuery && rEmail.toLowerCase() === emailQuery.toLowerCase()) isMatch = true;
+      if (cleanCheckText) {
+        if ((cleanCheckId && cleanRId === cleanCheckId) ||
+            rTeamLower === cleanCheckText ||
+            rEmailLower === cleanCheckText ||
+            rLeaderLower === cleanCheckText ||
+            rTeamLower.indexOf(cleanCheckText) !== -1 ||
+            cleanCheckText.indexOf(rTeamLower) !== -1 ||
+            rEmailLower.indexOf(cleanCheckText) !== -1) {
+          isMatch = true;
+        }
+      }
       
       if (isMatch) {
         foundIndex = i + 1;
@@ -1234,8 +1269,9 @@ function doGet(e) {
 
   // ─── ACTION: DIRECT 1-CLICK EMAIL TO TEAM LEADER (ADMIN TRIGGERED) ──
   if (action === 'sendTeamEmail' || action === 'sendPassToLeader') {
-    var targetTeamId = (e.parameter.teamId || e.parameter.id || '').toString().trim().toUpperCase();
-    var targetEmail = (e.parameter.email || '').toString().trim().toLowerCase();
+    var rawTarget = (e.parameter.teamId || e.parameter.id || e.parameter.email || e.parameter.query || '').toString().trim();
+    var cleanTargetId = rawTarget.toLowerCase().replace(/[^a-z0-9]/g, '');
+    var cleanTargetText = rawTarget.toLowerCase();
     
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
@@ -1247,20 +1283,50 @@ function doGet(e) {
     var targetDetails = null;
     
     for (var r = 1; r < data.length; r++) {
-      var rowTeamId = (headerMap.teamId !== -1 && data[r][headerMap.teamId]) ? data[r][headerMap.teamId].toString().trim().toUpperCase() : '';
-      var rowLeaderMail = (headerMap.leaderEmail !== -1 && data[r][headerMap.leaderEmail]) ? data[r][headerMap.leaderEmail].toString().trim().toLowerCase() : '';
+      var rowTeamId = (headerMap.teamId !== -1 && data[r][headerMap.teamId]) ? data[r][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + r));
+      var rowTeamName = (headerMap.teamName !== -1 && data[r][headerMap.teamName]) ? data[r][headerMap.teamName].toString().trim() : '';
+      var rowLeaderName = (headerMap.leaderName !== -1 && data[r][headerMap.leaderName]) ? data[r][headerMap.leaderName].toString().trim() : '';
+      var rowLeaderMail = (headerMap.leaderEmail !== -1 && data[r][headerMap.leaderEmail]) ? data[r][headerMap.leaderEmail].toString().trim() : '';
       
-      if ((targetTeamId && rowTeamId === targetTeamId) || (targetEmail && rowLeaderMail === targetEmail)) {
+      var cleanRowId = rowTeamId.toLowerCase().replace(/[^a-z0-9]/g, '');
+      var rowTeamNameLower = rowTeamName.toLowerCase();
+      var rowLeaderMailLower = rowLeaderMail.toLowerCase();
+      var rowLeaderNameLower = rowLeaderName.toLowerCase();
+      
+      var isMatch = false;
+      if (cleanTargetText) {
+        if ((cleanTargetId && cleanRowId === cleanTargetId) ||
+            rowTeamNameLower === cleanTargetText ||
+            rowLeaderMailLower === cleanTargetText ||
+            rowLeaderNameLower === cleanTargetText ||
+            rowTeamNameLower.indexOf(cleanTargetText) !== -1 ||
+            cleanTargetText.indexOf(rowTeamNameLower) !== -1 ||
+            rowLeaderMailLower.indexOf(cleanTargetText) !== -1) {
+          isMatch = true;
+        }
+      }
+      
+      if (isMatch) {
         foundRowIndex = r + 1; // 1-indexed sheet row
+        
+        var membersArray = [];
+        if (headerMap.m1Name !== -1 && data[r][headerMap.m1Name]) membersArray.push(data[r][headerMap.m1Name]);
+        if (headerMap.m2Name !== -1 && data[r][headerMap.m2Name]) membersArray.push(data[r][headerMap.m2Name]);
+        if (headerMap.m3Name !== -1 && data[r][headerMap.m3Name]) membersArray.push(data[r][headerMap.m3Name]);
+        
+        var regType = (headerMap.regType !== -1 && data[r][headerMap.regType]) ? data[r][headerMap.regType].toString().trim() : 'EXTERNAL';
+        var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && data[r][headerMap.college]) ? data[r][headerMap.college].toString().trim() : 'SIMATS Engineering');
+        
         targetDetails = {
           teamId: rowTeamId || generateUniqueTeamId(r),
-          teamName: (headerMap.teamName !== -1) ? data[r][headerMap.teamName] : 'Team',
-          college: (headerMap.college !== -1) ? data[r][headerMap.college] : 'SIMATS Engineering',
-          leaderName: (headerMap.leaderName !== -1) ? data[r][headerMap.leaderName] : 'Team Leader',
+          teamName: rowTeamName || 'Team',
+          college: college,
+          leaderName: rowLeaderName || 'Team Leader',
           leaderEmail: rowLeaderMail,
           leaderPhone: (headerMap.leaderPhone !== -1) ? data[r][headerMap.leaderPhone] : '',
-          membersStr: (headerMap.members !== -1) ? data[r][headerMap.members] : '',
-          regType: (headerMap.regType !== -1) ? data[r][headerMap.regType] : 'EXTERNAL'
+          members: membersArray,
+          membersStr: membersArray.join(', '),
+          regType: regType
         };
         break;
       }
