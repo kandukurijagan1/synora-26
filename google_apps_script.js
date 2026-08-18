@@ -21,6 +21,7 @@ var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
+var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
 var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwTC1A0j43YUIq6FM3Q7PX7LkxYbLtIVoPKXgrpav6Q2JUSmJDI-YOx0w1AoQD7zmgMdA/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
@@ -1059,10 +1060,12 @@ function sendRegistrationConfirmationEmail(details) {
                     "Live Pass Link: " + passUrl + "\n\n" +
                     "Department of Medical Biotechnology,\nSIMATS Engineering.";
     
-    var senderEmail = Session.getActiveUser().getEmail() || "synora2026@gmail.com";
+    var activeEmail = Session.getActiveUser().getEmail();
+    var senderEmail = activeEmail || DEFAULT_ORGANIZER_EMAIL;
+    var replyToEmail = DEFAULT_ORGANIZER_EMAIL || senderEmail;
     var emailOptions = {
       name: "SYNORA '26 Organizing Committee",
-      replyTo: senderEmail,
+      replyTo: replyToEmail,
       htmlBody: htmlBody
     };
     if (qrBlob) {
@@ -1095,7 +1098,7 @@ function sendRegistrationConfirmationEmail(details) {
         var mailAppOpts = {
           to: details.leaderEmail,
           name: "SYNORA '26 Organizing Committee",
-          replyTo: senderEmail,
+          replyTo: replyToEmail,
           subject: subject,
           body: plainBody,
           htmlBody: htmlBody,
