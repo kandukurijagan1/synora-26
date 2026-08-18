@@ -2084,6 +2084,130 @@
       }
     }
 
+    /* ─── PARTICIPATION DIFFERENCE GUIDANCE CARDS ─── */
+    .participation-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    .participation-info-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .participation-info-card:hover {
+      border-color: rgba(6, 182, 212, 0.5);
+      background: rgba(6, 182, 212, 0.04);
+    }
+    .participation-info-card.external.active {
+      background: rgba(6, 182, 212, 0.08);
+      border-color: #06b6d4;
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.18);
+    }
+    .participation-info-card.internal.active {
+      background: rgba(124, 58, 237, 0.12);
+      border-color: #a855f7;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+    }
+    .participation-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .participation-card-title {
+      font-weight: 700;
+      font-size: 0.96rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .participation-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+    .participation-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+    .participation-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+    .participation-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 768px) {
+      .participation-guide-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-top: 10px !important;
+        margin-bottom: 16px !important;
+      }
+      .participation-info-card {
+        padding: 14px 14px !important;
+      }
+      .participation-card-title {
+        font-size: 0.92rem !important;
+      }
+      .participation-card-desc {
+        font-size: 0.78rem !important;
+        margin-bottom: 8px !important;
+      }
+      .participation-card-details {
+        font-size: 0.76rem !important;
+        gap: 5px !important;
+      }
+      .segmented-control {
+        margin-bottom: 16px !important;
+      }
+      .segmented-control-option {
+        padding: 11px 8px !important;
+        font-size: 0.82rem !important;
+      }
+      .qr-scanner-card {
+        padding: 14px !important;
+        gap: 16px !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .segmented-control-option {
+        font-size: 0.76rem !important;
+        padding: 9px 4px !important;
+        gap: 3px !important;
+      }
+      .form-panel-body {
+        padding: 20px 14px !important;
+      }
+      .pane-title {
+        font-size: 1.18rem !important;
+      }
+      .pane-subtitle {
+        font-size: 0.78rem !important;
+        margin-bottom: 16px !important;
+      }
+    }
+
     /* ─── ADVANCED PAYMENT & VERIFICATION UI STYLES ─── */
     .segmented-control {
       display: flex;
@@ -3362,6 +3486,12 @@
           <strong>All students must bring their official college ID cards</strong> and adhere to academic integrity rules.
         </div>
       </div>
+      <div class="faq-item-box reveal">
+        <button class="faq-trigger-btn"><span>Will food and accommodation be provided?</span><span class="faq-expand-icon">+</span></button>
+        <div class="faq-answer-block">
+          Food is <strong>NOT provided</strong> by the organizers. Multiple multi-cuisine food courts, cafeterias, and snack kiosks will be open throughout the SIMATS Engineering campus during the event. Workspaces, high-speed Wi-Fi, power sockets, and mentorship will be fully provided.
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -3528,48 +3658,19 @@
             <div class="pane-title">Verification & Fees Payment</div>
             <div class="pane-subtitle">Choose your college status and provide verification details.</div>
             
-            <!-- Clear Participation Difference Guide Cards -->
-            <div class="participation-guide-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; margin-bottom: 20px;">
-              <!-- External Participation Card (Default) -->
-              <div class="participation-info-card external active" id="cardInfoExternal" onclick="selectCollegeStatus('external')" style="background: rgba(6, 182, 212, 0.08); border: 1.5px solid #06b6d4; border-radius: var(--r-md); padding: 18px; cursor: pointer; transition: all 0.3s ease; position: relative; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <div style="font-weight: 700; font-size: 0.98rem; color: #38bdf8; display: flex; align-items: center; gap: 6px;">🌐 External College Team</div>
-                  <span class="participation-badge" style="background: rgba(6, 182, 212, 0.2); color: #38bdf8; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 9999px; border: 1px solid rgba(6, 182, 212, 0.4);">Default / All Colleges</span>
-                </div>
-                <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
-                  Open to all engineering & polytechnic students from <strong>colleges across India</strong>.
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; color: var(--text);">
-                  <div style="display: flex; align-items: center; gap: 6px;">💳 <strong>Fee:</strong> <span style="color: #34d399; font-weight: 700;">₹100 per member</span></div>
-                  <div style="display: flex; align-items: center; gap: 6px;">📑 <strong>Verification:</strong> UPI Transaction/UTR ID + Screenshot</div>
-                  <div style="display: flex; align-items: center; gap: 6px;">🎁 <strong>Perks:</strong> Official Pass, Food, Mentorship & Cash Prizes</div>
-                </div>
-              </div>
-
-              <!-- Internal Participation Card -->
-              <div class="participation-info-card internal" id="cardInfoInternal" onclick="selectCollegeStatus('internal')" style="background: rgba(255, 255, 255, 0.02); border: 1.5px solid var(--border); border-radius: var(--r-md); padding: 18px; cursor: pointer; transition: all 0.3s ease; position: relative;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                  <div style="font-weight: 700; font-size: 0.98rem; color: #c084fc; display: flex; align-items: center; gap: 6px;">🏫 Internal Student</div>
-                  <span class="participation-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.3);">Free Entry (₹0)</span>
-                </div>
-                <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 10px;">
-                  Exclusively for currently enrolled students of <strong>SIMATS Engineering</strong>.
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 5px; font-size: 0.8rem; color: var(--text);">
-                  <div style="display: flex; align-items: center; gap: 6px;">🎟️ <strong>Fee:</strong> <span style="color: #34d399; font-weight: 700;">₹0 (100% Free Registration)</span></div>
-                  <div style="display: flex; align-items: center; gap: 6px;">🆔 <strong>Verification:</strong> Team Leader Reg No. + College ID Card</div>
-                  <div style="display: flex; align-items: center; gap: 6px;">⚠️ <strong>Note:</strong> Requires valid SIMATS Engineering ID</div>
-                </div>
-              </div>
+            <!-- Clean Single-Line Participation Guidance -->
+            <div class="participation-one-liner" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px; margin-top: 8px; margin-bottom: 16px; font-size: 0.82rem;">
+              <div>🌐 <strong>External Teams (All Colleges):</strong> <span style="color:#34d399; font-weight:600;">₹100/member (UPI Payment)</span></div>
+              <div>🏫 <strong>Internal (SIMATS only):</strong> <span style="color:#c084fc; font-weight:600;">Free Entry (ID Verification)</span></div>
             </div>
 
             <div class="form-fields-grid" style="margin-bottom: 12px;">
               <div class="form-field-group span-2">
-                <div class="form-label-title" style="font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:8px;">Select Participation Mode <span class="req">*</span></div>
+                <div class="form-label-title" style="font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:8px;">College Group Status <span class="req">*</span></div>
                 <div class="segmented-control" id="collegeStatusToggle" data-active="external">
                   <div class="segmented-control-slider"></div>
-                  <div class="segmented-control-option" data-value="internal">🏫 Internal Student</div>
-                  <div class="segmented-control-option active" data-value="external">🌐 External Team</div>
+                  <div class="segmented-control-option" data-value="internal">🏫 Internal Student (SIMATS)</div>
+                  <div class="segmented-control-option active" data-value="external">🌐 External Team (All Colleges)</div>
                 </div>
                 <!-- Hidden inputs to maintain compatibility with existing JS radio value mappings -->
                 <div style="display: none;">
@@ -5291,8 +5392,6 @@
   const sectionInternalCol = document.getElementById('sectionInternalCol');
   const sectionExternalCol = document.getElementById('sectionExternalCol');
   const regTypeHidden = document.getElementById('regType');
-  const cardInfoInternal = document.getElementById('cardInfoInternal');
-  const cardInfoExternal = document.getElementById('cardInfoExternal');
   const toggleWrapper = document.getElementById('collegeStatusToggle');
   const toggleOptions = document.querySelectorAll('.segmented-control-option');
   const radioInternal = document.getElementById('radioStatusInternal');
@@ -5316,27 +5415,6 @@
       toggleOptions.forEach(opt => {
         opt.classList.toggle('active', opt.getAttribute('data-value') === type);
       });
-
-      // Update Guidance Info Cards
-      if (cardInfoInternal && cardInfoExternal) {
-        if (type === 'internal') {
-          cardInfoInternal.style.borderColor = '#a855f7';
-          cardInfoInternal.style.background = 'rgba(124, 58, 237, 0.12)';
-          cardInfoInternal.style.boxShadow = '0 4px 20px rgba(124, 58, 237, 0.2)';
-          
-          cardInfoExternal.style.borderColor = 'var(--border)';
-          cardInfoExternal.style.background = 'rgba(255, 255, 255, 0.02)';
-          cardInfoExternal.style.boxShadow = 'none';
-        } else {
-          cardInfoExternal.style.borderColor = '#06b6d4';
-          cardInfoExternal.style.background = 'rgba(6, 182, 212, 0.08)';
-          cardInfoExternal.style.boxShadow = '0 4px 20px rgba(6, 182, 212, 0.15)';
-          
-          cardInfoInternal.style.borderColor = 'var(--border)';
-          cardInfoInternal.style.background = 'rgba(255, 255, 255, 0.02)';
-          cardInfoInternal.style.boxShadow = 'none';
-        }
-      }
 
       if (type === 'internal') {
         sectionInternalCol.style.display = 'grid';
