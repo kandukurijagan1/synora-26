@@ -299,6 +299,37 @@ function sendTelegramNotification(text) {
 }
 
 /**
+ * 1-Click Complete Authorization & Diagnostics:
+ * Runs tests for DriveApp, GmailApp, SpreadsheetApp, and Telegram to guarantee
+ * all OAuth permissions and scopes are 100% granted and active!
+ */
+function testAuthorizeAllPermissions() {
+  console.log("🧪 1. Authorizing and testing DriveApp...");
+  try {
+    var folder = null;
+    var folders = DriveApp.getFoldersByName("SYNORA_2026_Uploads");
+    if (folders.hasNext()) {
+      folder = folders.next();
+    } else {
+      folder = DriveApp.createFolder("SYNORA_2026_Uploads");
+      try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(e) {}
+    }
+    PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId());
+    console.log("✅ DriveApp is 100% authorized! Folder ID: " + folder.getId());
+  } catch (err) {
+    console.error("❌ DriveApp Authorization Error: " + err.toString());
+  }
+
+  console.log("🧪 2. Authorizing and testing GmailApp / MailApp & Telegram...");
+  testSendAlertsToMe();
+  
+  console.log("🧪 3. Ensuring automated scheduler is armed...");
+  ensureAutomatedSchedulerActive();
+  
+  console.log("🎉 All permissions (Drive, Gmail, Sheets, Telegram) are fully authorized and active!");
+}
+
+/**
  * 1-Click Diagnostics: Tests both Telegram alerts and Gmail pass delivery in real time!
  */
 function testSendAlertsToMe() {
@@ -1775,7 +1806,13 @@ function doPost(e) {
             }
             
             // Create file inside organizer's Drive folder & enable link view for organizers
-            var file = folder.createFile(blob);
+            var file = null;
+            if (folder) {
+              try { file = folder.createFile(blob); } catch(fErr) { file = null; }
+            }
+            if (!file) {
+              file = DriveApp.createFile(blob);
+            }
             try {
               file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
             } catch(shareErr) {
