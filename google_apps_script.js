@@ -22,6 +22,7 @@ var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
+var OFFICIAL_PORTAL_URL       = 'https://kandukurijagan1.github.io/synora-26/';
 var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwTC1A0j43YUIq6FM3Q7PX7LkxYbLtIVoPKXgrpav6Q2JUSmJDI-YOx0w1AoQD7zmgMdA/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
@@ -814,11 +815,15 @@ function sendRegistrationConfirmationEmail(details) {
       
     var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + cleanTeamName + " [" + details.teamId + "]";
     
-    // Universal Public Web App URL (guaranteed without /u/1/ multi-account prefixes)
+    // Universal Website Portal Link (Guaranteed universal access with zero Google login conflicts)
+    var portalUrl = (OFFICIAL_PORTAL_URL || 'https://kandukurijagan1.github.io/synora-26/') + "?id=" + encodeURIComponent(details.teamId);
+    
+    // Direct Web App Pass URL (cleaned from any /u/1/ prefixes)
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
+    var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
 
-    // CLEAN PRIVACY-SAFE PASS URL: ONLY contains action & unique Team ID
-    var passUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
+    // Primary Pass Link
+    var passUrl = portalUrl;
     
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
@@ -932,9 +937,9 @@ function sendRegistrationConfirmationEmail(details) {
                           <div style="font-size: 13px; font-weight: 700; color: #059669; letter-spacing: 0.5px;">
                             ✓ SCAN AT REGISTRATION DESK FOR CHECK-IN
                           </div>
-                          <div style="margin-top: 8px;">
-                            <a href="${passUrl}" target="_blank" style="display:inline-block; background-color:#0284c7; color:#ffffff; font-size:12px; font-weight:700; text-decoration:none; padding:8px 18px; border-radius:6px;">
-                              ⚡ View Live Web Pass & Event State
+                          <div style="margin-top: 10px;">
+                            <a href="${portalUrl}" target="_blank" style="display:inline-block; background-color:#0284c7; color:#ffffff; font-size:13px; font-weight:700; text-decoration:none; padding:10px 22px; border-radius:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+                              ⚡ View Official Pass & Download PDF
                             </a>
                           </div>
                         </td>
