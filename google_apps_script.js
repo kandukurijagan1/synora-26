@@ -713,14 +713,25 @@ function sendRegistrationConfirmationEmail(details) {
                 <!-- BADGE & GREETING -->
                 <tr>
                   <td style="padding: 28px 28px 12px 28px;">
-                    <div style="display:inline-block; background-color:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; font-size:12px; font-weight:700; padding:4px 12px; border-radius:9999px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px;">
-                      ✅ Registration Verified · ID: ${details.teamId}
+                    <div style="display:inline-block; background-color:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; font-size:12px; font-weight:700; padding:4px 12px; border-radius:9999px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:14px;">
+                      ✅ Registration Received · ID: ${details.teamId}
                     </div>
-                    <h2 style="margin:0 0 12px 0; font-size:20px; color:#0f172a;">
+
+                    <!-- PROVISIONAL / SAMPLE MAIL DISCLAIMER -->
+                    <div style="background-color: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+                      <div style="font-size: 13px; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                        ⚠️ Important: Sample Acknowledgment Notice
+                      </div>
+                      <div style="font-size: 13px; line-height: 1.5; color: #92400e;">
+                        Please note that <strong>this is an initial sample confirmation email</strong>. Our organizing committee is reviewing your team submission and will <strong>reach out to you directly for final confirmation</strong> and venue onboarding.
+                      </div>
+                    </div>
+
+                    <h2 style="margin:0 0 10px 0; font-size:20px; color:#0f172a;">
                       Hello ${details.leaderName},
                     </h2>
                     <p style="margin:0; font-size:15px; line-height:1.6; color:#475569;">
-                      Congratulations! Your team <strong>${details.teamName}</strong> has been officially confirmed for <strong>SYNORA '26</strong>.
+                      Thank you for enrolling in <strong>SYNORA '26</strong>! Your team <strong>${details.teamName}</strong> has been provisionally registered with the details below.
                     </p>
                   </td>
                 </tr>
@@ -858,7 +869,8 @@ function sendRegistrationConfirmationEmail(details) {
     `;
     
     var plainBody = "Dear " + details.leaderName + ",\n\n" +
-                    "Your team " + details.teamName + " [Team ID: " + details.teamId + "] is confirmed for SYNORA '26!\n\n" +
+                    "Thank you for enrolling in SYNORA '26! Your team " + details.teamName + " [Team ID: " + details.teamId + "] has been registered.\n\n" +
+                    "⚠️ IMPORTANT NOTICE: Please note that this is an initial sample confirmation email. Our organizing committee is currently reviewing your registration details (college ID verification, track selection & roster) and will reach out to you directly for final confirmation.\n\n" +
                     "Event Date: August 28, 2026\n" +
                     "Reporting Time: 08:00 AM IST\n" +
                     "Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai.\n\n" +
@@ -1578,6 +1590,13 @@ function renderStateMachinePassHtml(data) {
         <div class="pass-body">
           
           <!-- STAGE-SPECIFIC DYNAMIC STATE CARDS -->
+          ${!isCheckedIn ? `
+          <div class="state-highlight-box" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); color:#fef3c7;">
+            <div style="font-weight:700; color:#fbbf24; margin-bottom:4px; font-size:13.5px;">⚠️ Sample Acknowledgment Pass</div>
+            <div style="font-size:12.5px; color:#fde68a;">This is an initial sample registration pass. The organizing committee is reviewing your details and will reach out to you directly for final confirmation and venue allocation.</div>
+          </div>
+          ` : ''}
+
           ${isCheckedIn ? `
           <div class="state-highlight-box" style="background:rgba(6,182,212,0.08); border:1px solid rgba(6,182,212,0.3); color:#e0f2fe;">
             <div style="font-weight:700; color:#38bdf8; margin-bottom:4px; font-size:14px;">⚡ Venue Check-In Complete</div>
