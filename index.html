@@ -4717,8 +4717,19 @@
     if (stepperStep === 4) composeSummaryReceipt();
     if (stepperStep === 5) updateRegistrationFee();
     
-    // Smooth scroll disabled during step transitions to keep the form container locked in view
-    // window.scrollTo({ top: document.getElementById('register').offsetTop - 80, behavior: 'smooth' });
+    // Smooth scroll to top of 5-step progress bar on every step change
+    setTimeout(() => {
+      const stepperHeader = document.getElementById('stepperProgressBar');
+      if (stepperHeader) {
+        const headerOffset = 90; // Fixed navbar clearance
+        const elementPosition = stepperHeader.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: Math.max(0, offsetPosition),
+          behavior: 'smooth'
+        });
+      }
+    }, 10);
   }
 
   function validateInputStep(stepIndex) {
