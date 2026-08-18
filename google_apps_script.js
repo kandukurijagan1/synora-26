@@ -554,7 +554,7 @@ function processPendingRegistrationEmails(forceDispatch) {
         
         // Check if ready to dispatch: strictly requires 5 full minutes to elapse
         if (schedTimeMs && nowMs >= schedTimeMs && leaderEmail && leaderEmail.indexOf("@") !== -1) {
-          console.log("⏳ 5-Minute delay elapsed! Dispatching confirmation email for Team: " + teamName + " [ID: " + teamId + "] to " + leaderEmail + (memberEmails.length > 0 ? " (CC: " + memberEmails.join(', ') + ")" : ""));
+          console.log("⏳ 5-Minute delay elapsed! Dispatching confirmation email strictly to Team Leader: " + leaderEmail + " [Team: " + teamName + ", ID: " + teamId + "]");
           
           var emailSent = sendRegistrationConfirmationEmail({
             teamId: teamId,
@@ -563,8 +563,7 @@ function processPendingRegistrationEmails(forceDispatch) {
             leaderName: leaderName,
             leaderEmail: leaderEmail,
             leaderPhone: leaderPhone,
-            membersStr: membersStr,
-            memberEmails: memberEmails
+            membersStr: membersStr
           });
           
           if (emailSent) {
