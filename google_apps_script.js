@@ -23,7 +23,19 @@ var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL       = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwTC1A0j43YUIq6FM3Q7PX7LkxYbLtIVoPKXgrpav6Q2JUSmJDI-YOx0w1AoQD7zmgMdA/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwYJ-SW25m9ssKTTV3XNES0hoLHQOFjy2KKhmuC4XTJLKz0bwjOKfQy3e8OKaB6ffX4/exec';
+
+// ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
+/**
+ * Safe helper to get the active Registrations sheet in any context.
+ */
+function getSpreadsheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) return null;
+  var sheet = ss.getSheetByName("Registrations");
+  if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
+  return sheet;
+}
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
 /**
@@ -167,6 +179,7 @@ function getHeaderMap(headers) {
     status: -1,
     checkInTime: -1,
     emailSentTime: -1,
+    validationStatus: -1,
     members: -1,
     college: -1
   };
@@ -199,6 +212,7 @@ function getHeaderMap(headers) {
     else if (h === 'status' || h === 'checkinstatus' || h === 'eventstate') map.status = c;
     else if (h === 'checkintime') map.checkInTime = c;
     else if (h === 'emailsenttime' || h === 'senttime') map.emailSentTime = c;
+    else if (h === 'validationstatus' || h === 'validation') map.validationStatus = c;
     else if (h === 'members' || h === 'memberroster') map.members = c;
     else if (h === 'college' || h === 'institution') map.college = c;
   }
@@ -207,7 +221,7 @@ function getHeaderMap(headers) {
 }
 
 /**
- * Standardizes production column headers with unique Team ID, all member details, and college support.
+ * Standardizes production column headers with exact 25 columns.
  */
 function setupSheetHeaders() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -219,7 +233,6 @@ function setupSheetHeaders() {
     "Team ID",
     "Timestamp", 
     "Team Name", 
-    "College",
     "Team Leader Name", 
     "Team Leader Mail", 
     "Team Leader Mobile", 
@@ -240,13 +253,14 @@ function setupSheetHeaders() {
     "ConfirmationEmailStatus", 
     "Status", 
     "CheckInTime", 
-    "EmailSentTime"
+    "EmailSentTime",
+    "Validation Status"
   ];
   
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
   SpreadsheetApp.flush();
-  console.log("✅ Standardized Production Headers Configured (All Member & Leader Details)!");
+  console.log("✅ Exact 25 Standardized Production Headers Configured!");
 }
 
 /**
@@ -765,6 +779,83 @@ function processPendingRegistrationEmails(forceDispatch) {
 }
 
 /**
+ * ONE-CLICK BULK RESEND FUNCTION:
+ * Forces sending the latest confirmation email (with updated 7-hour schedule,
+ * no-refreshments notice, and live pass links) to ALL registered teams in the spreadsheet.
+ */
+function resendAllConfirmationEmailsToEveryone() {
+  var sheet = getSpreadsheet();
+  if (!sheet) {
+    console.error("Spreadsheet not found");
+    return 0;
+  }
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) {
+    console.log("No registrations found to send.");
+    return 0;
+  }
+  
+  var headers = data[0];
+  var headerMap = {};
+  for (var h = 0; h < headers.length; h++) {
+    var hName = headers[h].toString().trim().toLowerCase().replace(/[\s_\-]/g, '');
+    headerMap[hName] = h;
+  }
+  
+  var statusCol = -1;
+  for (var c = 0; c < headers.length; c++) {
+    if (headers[c].toString().trim().toLowerCase().indexOf("confirmationemailstatus") !== -1) {
+      statusCol = c;
+      break;
+    }
+  }
+  
+  var sentCount = 0;
+  console.log("🚀 Starting bulk resend to all " + (data.length - 1) + " teams...");
+  
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var teamId = (headerMap.teamid !== undefined) ? (row[headerMap.teamid] || '') : (row[0] || '');
+    var teamName = (headerMap.teamname !== undefined) ? (row[headerMap.teamname] || '') : (row[2] || row[1] || '');
+    var leaderName = (headerMap.teamleadername !== undefined) ? (row[headerMap.teamleadername] || '') : ((headerMap.leadername !== undefined) ? (row[headerMap.leadername] || '') : (row[3] || ''));
+    var leaderEmail = (headerMap.teamleadermail !== undefined) ? (row[headerMap.teamleadermail] || '') : ((headerMap.leaderemail !== undefined) ? (row[headerMap.leaderemail] || '') : (row[4] || ''));
+    var leaderPhone = (headerMap.teamleadermobile !== undefined) ? (row[headerMap.teamleadermobile] || '') : ((headerMap.leaderphone !== undefined) ? (row[headerMap.leaderphone] || '') : (row[5] || ''));
+    
+    var regType = (headerMap.registrationtype !== undefined && row[headerMap.registrationtype]) ? row[headerMap.registrationtype].toString().trim() : 'INTERNAL';
+    var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== undefined && row[headerMap.college]) ? row[headerMap.college].toString().trim() : 'External College');
+    
+    var membersList = [];
+    if (headerMap.member1name !== undefined && row[headerMap.member1name]) membersList.push(row[headerMap.member1name].toString().trim());
+    if (headerMap.member2name !== undefined && row[headerMap.member2name]) membersList.push(row[headerMap.member2name].toString().trim());
+    if (headerMap.member3name !== undefined && row[headerMap.member3name]) membersList.push(row[headerMap.member3name].toString().trim());
+    var membersStr = membersList.length > 0 ? membersList.join(', ') : ((headerMap.teammembers !== undefined && row[headerMap.teammembers]) ? row[headerMap.teammembers].toString().trim() : '');
+    
+    if (leaderEmail && leaderEmail.toString().indexOf('@') !== -1) {
+      console.log("📨 Resending to Team [" + teamId + "] " + teamName + " -> " + leaderEmail);
+      var ok = sendRegistrationConfirmationEmail({
+        teamId: teamId,
+        teamName: teamName,
+        college: college,
+        leaderName: leaderName,
+        leaderEmail: leaderEmail,
+        leaderPhone: leaderPhone,
+        membersStr: membersStr
+      });
+      if (ok === true) {
+        sentCount++;
+        if (statusCol !== -1) {
+          sheet.getRange(i + 1, statusCol + 1).setValue("Sent (" + formatISTDateTime(new Date()) + ")");
+        }
+      }
+      Utilities.sleep(1000); // 1-second interval to ensure optimal inbox deliverability
+    }
+  }
+  SpreadsheetApp.flush();
+  console.log("🎉 Successfully delivered updated confirmation passes to " + sentCount + " teams!");
+  return sentCount;
+}
+
+/**
  * Convenience test function: Sends a test confirmation pass directly to your logged-in Google email.
  * Run this in Apps Script Editor to verify delivery in your inbox!
  */
@@ -815,15 +906,12 @@ function sendRegistrationConfirmationEmail(details) {
       
     var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + cleanTeamName + " [" + details.teamId + "]";
     
-    // Universal Website Portal Link (Guaranteed universal access with zero Google login conflicts)
-    var portalUrl = (OFFICIAL_PORTAL_URL || 'https://kandukurijagan1.github.io/synora-26/') + "?id=" + encodeURIComponent(details.teamId);
-    
-    // Direct Web App Pass URL (cleaned from any /u/1/ prefixes)
+    // Direct Universal Web App Pass URL (Matches the exact pass card layout)
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
     var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
 
-    // Primary Pass Link
-    var passUrl = portalUrl;
+    // Primary Pass Link for QR code and email button
+    var passUrl = directPassUrl;
     
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
@@ -938,8 +1026,8 @@ function sendRegistrationConfirmationEmail(details) {
                             ✓ SCAN AT REGISTRATION DESK FOR CHECK-IN
                           </div>
                           <div style="margin-top: 10px;">
-                            <a href="${portalUrl}" target="_blank" style="display:inline-block; background-color:#0284c7; color:#ffffff; font-size:13px; font-weight:700; text-decoration:none; padding:10px 22px; border-radius:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
-                              ⚡ View Official Pass & Download PDF
+                            <a href="${passUrl}" target="_blank" style="display:inline-block; background-color:#0284c7; color:#ffffff; font-size:13px; font-weight:700; text-decoration:none; padding:10px 22px; border-radius:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+                              ⚡ View & Download Live Entry Pass
                             </a>
                           </div>
                         </td>
@@ -2171,6 +2259,7 @@ function doPost(e) {
       if (headerMap.status !== -1) rowToAppend[headerMap.status] = "Registered";
       if (headerMap.checkInTime !== -1) rowToAppend[headerMap.checkInTime] = "";
       if (headerMap.emailSentTime !== -1) rowToAppend[headerMap.emailSentTime] = "";
+      if (headerMap.validationStatus !== -1) rowToAppend[headerMap.validationStatus] = (reg.regType === "INTERNAL") ? "Verified (Internal ID)" : "Pending Payment Verification";
       
       sheet.appendRow(rowToAppend);
       SpreadsheetApp.flush();
