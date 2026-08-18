@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL       = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwYJ-SW25m9ssKTTV3XNES0hoLHQOFjy2KKhmuC4XTJLKz0bwjOKfQy3e8OKaB6ffX4/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwrUGjs2ntT40RdKOwRScLpBp0t02rX6JWct42sS-Nt3-oAt6H_ETxT1OOcoSJZ6E5i/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -1114,10 +1114,10 @@ function sendRegistrationConfirmationEmail(details) {
                   <td style="padding: 0 28px 16px 28px;">
                     <div style="background-color: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 14px; text-align: left;">
                       <strong style="color: #166534; font-size: 13px; display: block; margin-bottom: 4px;">
-                        🪪 Mandatory Check-In Requirement
+                        🪪 Mandatory Entry Requirement
                       </strong>
                       <span style="color: #14532d; font-size: 12.5px; line-height: 1.5;">
-                        <strong>All students must bring their official college ID cards</strong> and downloaded digital pass for campus security verification and physical desk check-in.
+                        <strong>All students must bring their official physical college ID cards</strong> for campus entry and verification.
                       </span>
                     </div>
                   </td>
