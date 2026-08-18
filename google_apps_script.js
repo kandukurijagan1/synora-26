@@ -707,7 +707,7 @@ function processPendingRegistrationEmails(forceDispatch) {
             membersStr: membersStr
           });
           
-          if (emailSent) {
+          if (emailSent === true) {
             // Update status column to Sent
             if (statusCol !== -1) {
               sheet.getRange(i + 1, statusCol + 1).setValue("Sent");
@@ -729,6 +729,18 @@ function processPendingRegistrationEmails(forceDispatch) {
               'Email  : ' + leaderEmail + '\n' +
               'Time   : ' + formatISTDateTime(new Date())
             );
+          } else if (emailSent === "QUOTA_EXHAUSTED") {
+            // Daily quota limit reached - hold until tomorrow without repeatedly bouncing
+            if (statusCol !== -1) {
+              sheet.getRange(i + 1, statusCol + 1).setValue("Queued (Daily Limit Reached - Resumes 24h)");
+            }
+            SpreadsheetApp.flush();
+            sendTelegramNotification(
+              '⚠️ DAILY EMAIL LIMIT REACHED\n\n' +
+              'Google Daily Email Quota is currently exhausted for this account.\n' +
+              'Pending passes remain queued and can be viewed directly via the Live Web Pass portal.'
+            );
+            break; // Stop loop to avoid repeated failures
           } else {
             // Update status column to indicate invalid email address / delivery error
             if (statusCol !== -1) {
@@ -791,7 +803,15 @@ function sendRegistrationConfirmationEmail(details) {
     
     console.log("📨 Preparing confirmation email for Team: " + details.teamName + " -> " + details.leaderEmail);
     
-    var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + details.teamName + " [" + details.teamId + "]";
+    var cleanTeamName = (details.teamName || '')
+      .toString()
+      .replace(/&amp;/g, '&')
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+      
+    var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + cleanTeamName + " [" + details.teamId + "]";
     
     // Active Web App URL
     var webAppUrl = ACTIVE_WEB_APP_URL;
@@ -1049,11 +1069,28 @@ function sendRegistrationConfirmationEmail(details) {
       emailOptions.inlineImages = { synoraQrPass: qrBlob };
     }
 
+    var quota = 100;
+    try {
+      quota = MailApp.getRemainingDailyQuota();
+    } catch(qErr) {
+      quota = 100;
+    }
+    
+    if (quota <= 0) {
+      console.warn("⚠️ Cannot send email to " + details.leaderEmail + ": Daily Google Mail Quota is 0 remaining today. Email remains queued.");
+      return "QUOTA_EXHAUSTED";
+    }
+
     try {
       GmailApp.sendEmail(details.leaderEmail, subject, plainBody, emailOptions);
       console.log("📨 Confirmation email sent strictly to Team Leader: " + details.leaderEmail);
       return true;
     } catch (gErr) {
+      var gErrMsg = gErr.toString();
+      if (gErrMsg.indexOf("limit") !== -1 || gErrMsg.indexOf("quota") !== -1) {
+        console.warn("⚠️ Google Mail quota limit hit during send: " + gErrMsg);
+        return "QUOTA_EXHAUSTED";
+      }
       try {
         var mailAppOpts = {
           to: details.leaderEmail,
@@ -1068,7 +1105,12 @@ function sendRegistrationConfirmationEmail(details) {
         console.log("📨 Confirmation email sent strictly to Team Leader via MailApp: " + details.leaderEmail);
         return true;
       } catch (mErr) {
-        console.log("❌ Email send error: " + mErr.toString());
+        var mErrMsg = mErr.toString();
+        if (mErrMsg.indexOf("limit") !== -1 || mErrMsg.indexOf("quota") !== -1) {
+          console.warn("⚠️ Google Mail quota limit hit during MailApp send: " + mErrMsg);
+          return "QUOTA_EXHAUSTED";
+        }
+        console.log("❌ Email send error: " + mErrMsg);
         return false;
       }
     }
