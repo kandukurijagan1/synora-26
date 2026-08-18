@@ -989,25 +989,29 @@ function sendRegistrationConfirmationEmail(details) {
                 </tr>
                 ` : ''}
 
-                <!-- LATE NIGHT STORY & 24-HOUR HACKATHON LOGISTICS -->
+                <!-- 7-HOUR INTENSIVE HACKATHON SCHEDULE & LOGISTICS -->
                 <tr>
                   <td style="padding: 0 28px 16px 28px;">
-                    <div style="background: linear-gradient(135deg, #1e1035 0%, #090514 100%); border: 1.5px solid #7c3aed; border-radius: 12px; padding: 18px; text-align: left; color: #f8fafc;">
-                      <div style="font-size: 11px; font-weight: 700; color: #c084fc; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">
-                        🌙 THE 24-HOUR EXPERIENCE
+                    <div style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border: 1.5px solid #6366f1; border-radius: 12px; padding: 18px; text-align: left; color: #f8fafc;">
+                      <div style="font-size: 11px; font-weight: 700; color: #818cf8; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">
+                        ⚡ 7-HOUR NATIONAL HACKATHON
                       </div>
                       <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 800; color: #ffffff;">
-                        Late Night Coding Marathon & Campus Lore
+                        Event Schedule & Venue Guidelines
                       </h3>
                       <p style="margin: 0 0 10px 0; font-size: 13px; line-height: 1.6; color: #cbd5e1;">
-                        Get ready for an electrifying <strong>non-stop 24-hour innovation sprint</strong>! When the sun sets, SYNORA '26 comes alive with intense development, mentor power-hours, and high-energy midnight activities:
+                        SYNORA '26 is an intensive <strong>7-hour daytime innovation sprint</strong> from <strong>08:30 AM to 03:30 PM</strong> at NEW SCAD, SIMATS Engineering:
                       </p>
-                      <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: #e2e8f0;">
-                        <li style="margin-bottom: 4px;"><strong>⚡ Midnight Energy Hubs:</strong> 24/7 unlimited high-speed campus Wi-Fi, tea, coffee & midnight snack stations.</li>
-                        <li style="margin-bottom: 4px;"><strong>🎮 01:00 AM Surprise Challenge:</strong> Rapid lightning mini-hacks & live gaming chill zones with instant rewards.</li>
-                        <li style="margin-bottom: 4px;"><strong>🛌 Recharging & Rest Zones:</strong> Dedicated, secure resting lounges for male and female participants.</li>
-                        <li style="margin-bottom: 4px;"><strong>🛡️ 24/7 Safety & Medical Care:</strong> Round-the-clock campus security, volunteer helpdesks, and emergency health center.</li>
+                      <ul style="margin: 0 0 12px 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: #e2e8f0;">
+                        <li style="margin-bottom: 4px;"><strong>🕒 08:00 AM – 08:30 AM:</strong> Physical Check-in, ID Verification & Table Allotment.</li>
+                        <li style="margin-bottom: 4px;"><strong>💻 08:30 AM – 01:00 PM:</strong> 7-Hour Build Sprint & Mid-Day Mentor Review.</li>
+                        <li style="margin-bottom: 4px;"><strong>🎯 01:30 PM – 03:00 PM:</strong> Final Prototype Pitch Presentations & Jury Evaluation.</li>
+                        <li style="margin-bottom: 4px;"><strong>🏆 03:00 PM – 03:30 PM:</strong> Grand Valedictory, Certificate Distribution & Awards.</li>
+                        <li style="margin-bottom: 4px;"><strong>📶 Technical Facility:</strong> High-speed campus Wi-Fi & continuous power supply provided at all tables.</li>
                       </ul>
+                      <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #fca5a5; line-height: 1.5;">
+                        <strong>⚠️ Notice regarding Food & Refreshments:</strong> Free refreshments and lunch are <strong>NOT provided</strong>. All participants are kindly requested to bring their own lunch/water bottles or utilize the on-campus university cafeterias.
+                      </div>
                     </div>
                   </td>
                 </tr>
@@ -1049,14 +1053,16 @@ function sendRegistrationConfirmationEmail(details) {
                     "⚠️ IMPORTANT NOTICE: Please note that this is an initial sample confirmation email. Our organizing committee is currently reviewing your registration details (college ID verification, track selection & roster) and will reach out to you directly for final confirmation.\n\n" +
                     "Event Date: August 28, 2026\n" +
                     "Reporting Time: 08:00 AM IST\n" +
+                    "Hackathon Duration: 7 Hours (08:30 AM – 03:30 PM)\n" +
                     "Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai.\n\n" +
-                    "🌙 LATE NIGHT STORY & 24-HOUR HACKATHON LOGISTICS:\n" +
-                    "• 24/7 Campus Wi-Fi & Continuous Power Outlets\n" +
-                    "• Midnight Snack & Coffee Stations at Cafeteria Lounge\n" +
-                    "• 01:00 AM Midnight Surprise Mini-Challenge\n" +
-                    "• Dedicated Rest & Recharging Lounges for Male/Female participants\n" +
-                    "• 24-Hour Campus Security & Medical Emergency Support\n\n" +
-                    "⚠️ MANDATORY: All students must bring their official physical college ID cards and laptops.\n\n" +
+                    "⚡ 7-HOUR HACKATHON SCHEDULE & LOGISTICS:\n" +
+                    "• 08:00 AM – 08:30 AM: Physical Check-In & Table Allotment\n" +
+                    "• 08:30 AM – 01:00 PM: 7-Hour Build Sprint & Mentor Progress Checkpoint\n" +
+                    "• 01:30 PM – 03:00 PM: Final Prototype Pitch & Jury Evaluation\n" +
+                    "• 03:00 PM – 03:30 PM: Grand Valedictory Ceremony & Prize Awarding\n" +
+                    "• Facilities: High-Speed Campus Wi-Fi & Continuous Power Outlets\n\n" +
+                    "⚠️ REFRESHMENTS NOTICE: Free refreshments/lunch will NOT be provided. Participants are requested to carry their own food/water or use the on-campus food courts.\n\n" +
+                    "⚠️ MANDATORY: All students must bring their physical college ID cards and laptops.\n\n" +
                     "Live Pass Link: " + passUrl + "\n\n" +
                     "Department of Medical Biotechnology,\nSIMATS Engineering.";
     
@@ -1862,7 +1868,9 @@ function renderStateMachinePassHtml(data) {
             <div style="font-size:12.5px; line-height:1.6; color:#cbd5e1;">
               <div><strong>📍 Venue:</strong> NEW SCAD, SIMATS Engineering, Thandalam, Chennai</div>
               <div><strong>⏰ Reporting:</strong> August 28, 2026 · 08:00 AM IST</div>
+              <div><strong>⚡ Duration:</strong> 7-Hour Innovation Sprint (08:30 AM – 03:30 PM)</div>
               <div><strong>🪪 Requirement:</strong> All students must bring their official college ID cards and laptops.</div>
+              <div style="margin-top:6px; color:#fca5a5; font-size:12px;"><strong>⚠️ Note:</strong> Free food/refreshments are not provided. Please carry your own lunch/water.</div>
             </div>
           </div>
         </div>
