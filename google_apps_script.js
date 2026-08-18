@@ -21,7 +21,7 @@ var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbxx1WixihT3FrxRY1o_CkihTE4COkfV6jQyEzun4yFMiEU0kl6Ch5TgvFv2h6b8sFBkMQ/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbzvH5d1bt3eMokz5QxO0Lz71-MsNy-L0QazUsVGJcFo-UG6w8Tj95TBXuU-jOFnSWVsdQ/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
 /**
@@ -664,7 +664,6 @@ function sendRegistrationConfirmationEmail(details) {
     
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
-    var qrBase64 = "";
     var qrEndpoints = [
       "https://quickchart.io/qr?size=350&margin=1&text=" + encodeURIComponent(passUrl),
       "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=2&data=" + encodeURIComponent(passUrl)
@@ -675,7 +674,6 @@ function sendRegistrationConfirmationEmail(details) {
         var qrResp = UrlFetchApp.fetch(qrEndpoints[q], { muteHttpExceptions: true });
         if (qrResp.getResponseCode() === 200) {
           qrBlob = qrResp.getBlob().setName("SYNORA_Pass_" + details.teamId + ".png").setContentType("image/png");
-          qrBase64 = Utilities.base64Encode(qrBlob.getBytes());
           break;
         }
       } catch(qrFetchErr) {
@@ -683,7 +681,7 @@ function sendRegistrationConfirmationEmail(details) {
       }
     }
 
-    var qrImgSrc = qrBase64 ? ("data:image/png;base64," + qrBase64) : (qrBlob ? "cid:synoraQrPass" : qrEndpoints[0]);
+    var qrImgSrc = qrBlob ? "cid:synoraQrPass" : qrEndpoints[0];
     
     var membersListHtml = "";
     if (details.membersStr) {
@@ -871,7 +869,6 @@ function sendRegistrationConfirmationEmail(details) {
     };
     if (qrBlob) {
       emailOptions.inlineImages = { synoraQrPass: qrBlob };
-      emailOptions.attachments = [qrBlob];
     }
 
     try {
@@ -887,8 +884,7 @@ function sendRegistrationConfirmationEmail(details) {
           subject: subject,
           body: plainBody,
           htmlBody: htmlBody,
-          inlineImages: qrBlob ? { synoraQrPass: qrBlob } : undefined,
-          attachments: qrBlob ? [qrBlob] : undefined
+          inlineImages: qrBlob ? { synoraQrPass: qrBlob } : undefined
         };
         MailApp.sendEmail(mailAppOpts);
         console.log("📨 Confirmation email sent strictly to Team Leader via MailApp: " + details.leaderEmail);
@@ -1234,6 +1230,78 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
     return ContentService.createTextOutput(dispatchPayload).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ─── ACTION: DIRECT 1-CLICK EMAIL TO TEAM LEADER (ADMIN TRIGGERED) ──
+  if (action === 'sendTeamEmail' || action === 'sendPassToLeader') {
+    var targetTeamId = (e.parameter.teamId || e.parameter.id || '').toString().trim().toUpperCase();
+    var targetEmail = (e.parameter.email || '').toString().trim().toLowerCase();
+    
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Registrations");
+    if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
+    
+    var data = sheet.getDataRange().getValues();
+    var headerMap = getHeaderMap(data[0]);
+    var foundRowIndex = -1;
+    var targetDetails = null;
+    
+    for (var r = 1; r < data.length; r++) {
+      var rowTeamId = (headerMap.teamId !== -1 && data[r][headerMap.teamId]) ? data[r][headerMap.teamId].toString().trim().toUpperCase() : '';
+      var rowLeaderMail = (headerMap.leaderEmail !== -1 && data[r][headerMap.leaderEmail]) ? data[r][headerMap.leaderEmail].toString().trim().toLowerCase() : '';
+      
+      if ((targetTeamId && rowTeamId === targetTeamId) || (targetEmail && rowLeaderMail === targetEmail)) {
+        foundRowIndex = r + 1; // 1-indexed sheet row
+        targetDetails = {
+          teamId: rowTeamId || generateUniqueTeamId(r),
+          teamName: (headerMap.teamName !== -1) ? data[r][headerMap.teamName] : 'Team',
+          college: (headerMap.college !== -1) ? data[r][headerMap.college] : 'SIMATS Engineering',
+          leaderName: (headerMap.leaderName !== -1) ? data[r][headerMap.leaderName] : 'Team Leader',
+          leaderEmail: rowLeaderMail,
+          leaderPhone: (headerMap.leaderPhone !== -1) ? data[r][headerMap.leaderPhone] : '',
+          membersStr: (headerMap.members !== -1) ? data[r][headerMap.members] : '',
+          regType: (headerMap.regType !== -1) ? data[r][headerMap.regType] : 'EXTERNAL'
+        };
+        break;
+      }
+    }
+    
+    if (!targetDetails || !targetDetails.leaderEmail) {
+      var notFoundPayload = JSON.stringify({
+        status: "error",
+        message: "Team not found in registrations: '" + (targetTeamId || targetEmail) + "'"
+      });
+      if (callback) {
+        return ContentService.createTextOutput(callback + "(" + notFoundPayload + ")")
+          .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      }
+      return ContentService.createTextOutput(notFoundPayload).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    var emailSent = sendRegistrationConfirmationEmail(targetDetails);
+    if (emailSent && foundRowIndex > 0) {
+      if (headerMap.confirmationEmailStatus !== -1) {
+        sheet.getRange(foundRowIndex, headerMap.confirmationEmailStatus + 1).setValue("Sent (" + formatISTDateTime(new Date()) + ")");
+      }
+      if (headerMap.emailSentTime !== -1) {
+        sheet.getRange(foundRowIndex, headerMap.emailSentTime + 1).setValue(formatISTDateTime(new Date()));
+      }
+      SpreadsheetApp.flush();
+    }
+    
+    var sendPayload = JSON.stringify({
+      status: emailSent ? "success" : "error",
+      message: emailSent ? ("Confirmation pass email sent strictly to Team Leader: " + targetDetails.leaderEmail) : "Email dispatch failed. Please check Gmail quota.",
+      teamId: targetDetails.teamId,
+      leaderEmail: targetDetails.leaderEmail,
+      leaderName: targetDetails.leaderName
+    });
+    
+    if (callback) {
+      return ContentService.createTextOutput(callback + "(" + sendPayload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(sendPayload).setMimeType(ContentService.MimeType.JSON);
   }
   
   return ContentService.createTextOutput("SYNORA '26 Backend API Ready.");
@@ -1587,12 +1655,18 @@ function doPost(e) {
                 folder = folders.next();
               } else {
                 folder = DriveApp.createFolder("SYNORA_2026_Uploads");
+                try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(fShareErr) {}
               }
               try { PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId()); } catch(pErr) {}
             }
             
-            // Create file inside organizer's Drive folder
+            // Create file inside organizer's Drive folder & enable link view for organizers
             var file = folder.createFile(blob);
+            try {
+              file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+            } catch(shareErr) {
+              console.log("File setSharing error: " + shareErr.toString());
+            }
             fileRecord = "https://drive.google.com/file/d/" + file.getId() + "/view?usp=drivesdk";
           }
         } catch(fileErr) {
@@ -1674,7 +1748,7 @@ function doPost(e) {
         if (!isValidFormat) {
           return ContentService.createTextOutput(JSON.stringify({
             status: "error",
-            message: "Invalid College Register Number format: '" + rNo + "'. The register number must be exactly 9 characters, start with '192' (e.g. 192401045 or 19240104A), and contain at most one alphabet letter."
+            message: "Invalid College Register Number. Please verify and enter a valid register number."
           })).setMimeType(ContentService.MimeType.JSON);
         }
       }
