@@ -134,26 +134,8 @@ function parseDateSafe(val) {
 
 function calculateScheduledEmailDate(date) {
   var now = date || new Date();
-  var istStr = Utilities.formatDate(now, DEFAULT_TIMEZONE, "yyyy/MM/dd/HH/mm/ss");
-  var parts = istStr.split('/');
-  var year   = parseInt(parts[0], 10);
-  var month  = parseInt(parts[1], 10) - 1;
-  var day    = parseInt(parts[2], 10);
-  var hour   = parseInt(parts[3], 10);
-  var minute = parseInt(parts[4], 10);
-  
-  // Nighttime (10:00 PM to 11:59 PM IST) -> Next Day 08:00 AM IST
-  if (hour >= 22) {
-    var nextDayStr = Utilities.formatDate(new Date(now.getTime() + 24 * 60 * 60 * 1000), DEFAULT_TIMEZONE, "yyyy-MM-dd");
-    return new Date(nextDayStr + "T08:00:00+05:30");
-  }
-  // Early morning (12:00 AM to 06:59 AM IST) -> Same Day 08:00 AM IST
-  if (hour < 7) {
-    var todayStr = Utilities.formatDate(now, DEFAULT_TIMEZONE, "yyyy-MM-dd");
-    return new Date(todayStr + "T08:00:00+05:30");
-  }
-  // Daytime -> 5-Minute Delay
-  return new Date(now.getTime() + (DEFAULT_DELAY_MINUTES * 60 * 1000));
+  // Strictly 5-Minute Automated Delay for all registrations 24/7
+  return new Date(now.getTime() + (5 * 60 * 1000));
 }
 
 // ─── SHEET HEADER MAPPING & UNIQUE ID GENERATOR ──────────────────────
@@ -820,6 +802,29 @@ function sendRegistrationConfirmationEmail(details) {
                 </tr>
                 ` : ''}
 
+                <!-- LATE NIGHT STORY & 24-HOUR HACKATHON LOGISTICS -->
+                <tr>
+                  <td style="padding: 0 28px 16px 28px;">
+                    <div style="background: linear-gradient(135deg, #1e1035 0%, #090514 100%); border: 1.5px solid #7c3aed; border-radius: 12px; padding: 18px; text-align: left; color: #f8fafc;">
+                      <div style="font-size: 11px; font-weight: 700; color: #c084fc; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px;">
+                        🌙 THE 24-HOUR EXPERIENCE
+                      </div>
+                      <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 800; color: #ffffff;">
+                        Late Night Coding Marathon & Campus Lore
+                      </h3>
+                      <p style="margin: 0 0 10px 0; font-size: 13px; line-height: 1.6; color: #cbd5e1;">
+                        Get ready for an electrifying <strong>non-stop 24-hour innovation sprint</strong>! When the sun sets, SYNORA '26 comes alive with intense development, mentor power-hours, and high-energy midnight activities:
+                      </p>
+                      <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.6; color: #e2e8f0;">
+                        <li style="margin-bottom: 4px;"><strong>⚡ Midnight Energy Hubs:</strong> 24/7 unlimited high-speed campus Wi-Fi, tea, coffee & midnight snack stations.</li>
+                        <li style="margin-bottom: 4px;"><strong>🎮 01:00 AM Surprise Challenge:</strong> Rapid lightning mini-hacks & live gaming chill zones with instant rewards.</li>
+                        <li style="margin-bottom: 4px;"><strong>🛌 Recharging & Rest Zones:</strong> Dedicated, secure resting lounges for male and female participants.</li>
+                        <li style="margin-bottom: 4px;"><strong>🛡️ 24/7 Safety & Medical Care:</strong> Round-the-clock campus security, volunteer helpdesks, and emergency health center.</li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+
                 <!-- ID CARD MANDATORY NOTICE -->
                 <tr>
                   <td style="padding: 0 28px 16px 28px;">
@@ -853,10 +858,16 @@ function sendRegistrationConfirmationEmail(details) {
     `;
     
     var plainBody = "Dear " + details.leaderName + ",\n\n" +
-                    "Your team " + details.teamName + " [Team ID: " + details.teamId + "] is confirmed for SYNORA'26!\n\n" +
+                    "Your team " + details.teamName + " [Team ID: " + details.teamId + "] is confirmed for SYNORA '26!\n\n" +
                     "Event Date: August 28, 2026\n" +
                     "Reporting Time: 08:00 AM IST\n" +
                     "Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai.\n\n" +
+                    "🌙 LATE NIGHT STORY & 24-HOUR HACKATHON LOGISTICS:\n" +
+                    "• 24/7 Campus Wi-Fi & Continuous Power Outlets\n" +
+                    "• Midnight Snack & Coffee Stations at Cafeteria Lounge\n" +
+                    "• 01:00 AM Midnight Surprise Mini-Challenge\n" +
+                    "• Dedicated Rest & Recharging Lounges for Male/Female participants\n" +
+                    "• 24-Hour Campus Security & Medical Emergency Support\n\n" +
                     "⚠️ MANDATORY: All students must bring their official physical college ID cards and laptops.\n\n" +
                     "Live Pass Link: " + passUrl + "\n\n" +
                     "Department of Medical Biotechnology,\nSIMATS Engineering.";
@@ -1967,10 +1978,8 @@ function doPost(e) {
       sheet.appendRow(rowToAppend);
       SpreadsheetApp.flush();
 
-      // Late-Night (10:00 PM - 06:59 AM) & 5-Minute Daytime Delay Detection
-      var istHour = parseInt(Utilities.formatDate(now, DEFAULT_TIMEZONE, "HH"), 10);
-      var isLateNight = (istHour >= 22 || istHour < 7);
-      var queueModeDesc = isLateNight ? '🌙 Late-Night Queue (Delivers 08:00 AM IST)' : '⏳ 5-Minute Delay Scheduled Queue';
+      // Strictly 5-Minute Automated Delay Mode (Zero coordinator manual action needed)
+      var queueModeDesc = '⏳ 5-Minute Automated Pass Dispatch Queue';
       
       // Real-Time Telegram Alert to Both Organizers with ALL Team & Member Details
       var tgMsg = '🚀 NEW SYNORA \'26 REGISTRATION\n\n' +
@@ -2004,11 +2013,22 @@ function doPost(e) {
       var webAppUrlForTg = ACTIVE_WEB_APP_URL;
       
       tgMsg += '\n🎫 Live Pass: ' + webAppUrlForTg + '?action=pass&id=' + encodeURIComponent(teamId) + '\n' +
-               '📧 Pass Email: ' + queueModeDesc + '\n' +
+               '📧 Pass Email: ' + queueModeDesc + ' (Auto-Dispatch)\n' +
                '⏰ Scheduled Delivery: ' + formattedScheduledTime + '\n' +
                '⏱️ Registered: ' + formattedTimestamp;
 
       sendTelegramNotification(tgMsg);
+
+      // AUTOMATIC ZERO-HUMAN TRIGGER: Schedules automatic execution in 5 minutes
+      try {
+        ScriptApp.newTrigger('processPendingRegistrationEmails')
+          .timeBased()
+          .after(5 * 60 * 1000)
+          .create();
+        console.log("⏱️ Scheduled automatic 5-minute background trigger for Team " + teamId);
+      } catch (trigErr) {
+        console.warn("Trigger notice: " + trigErr.toString());
+      }
       
       return ContentService.createTextOutput(JSON.stringify({ 
         status: "success", 
