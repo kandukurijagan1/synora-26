@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL       = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwrUGjs2ntT40RdKOwRScLpBp0t02rX6JWct42sS-Nt3-oAt6H_ETxT1OOcoSJZ6E5i/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbxLpVk3sQl0JI8BvkRpgwcXboWHP9evbu1qZBOAPrvwlf-FWaDKD7JdaKeRfGo5Iw9U/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -146,9 +146,36 @@ function parseDateSafe(val) {
   return null;
 }
 
+/**
+ * Calculates scheduled email dispatch time with intelligent Late-Night Quiet Hours:
+ * - Daytime (08:00 AM - 10:00 PM IST): 5-Minute automated delay queue.
+ * - Late Night (10:00 PM - 07:59 AM IST): Held safely and delivered next morning at 08:00:00 AM IST.
+ */
 function calculateScheduledEmailDate(date) {
   var now = date || new Date();
-  // Strictly 5-Minute Automated Delay for all registrations 24/7
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var tz = (ss && ss.getSpreadsheetTimeZone()) ? ss.getSpreadsheetTimeZone() : DEFAULT_TIMEZONE;
+  
+  // Extract current hour in IST (0 to 23)
+  var hourStr = Utilities.formatDate(now, tz, "HH");
+  var hour = parseInt(hourStr, 10);
+  
+  // Late Night Window: 10:00 PM (22:00) to 07:59 AM (07:59) IST
+  if (hour >= 22 || hour < 8) {
+    var target = new Date(now.getTime());
+    if (hour >= 22) {
+      // Advance to next day
+      target.setDate(target.getDate() + 1);
+    }
+    var yearMonthDay = Utilities.formatDate(target, tz, "yyyy-MM-dd");
+    var nextMorningIso = yearMonthDay + "T08:00:00+05:30";
+    var nextMorningDate = new Date(nextMorningIso);
+    if (!isNaN(nextMorningDate.getTime())) {
+      return nextMorningDate;
+    }
+  }
+  
+  // Normal Daytime: 5-Minute Automated Delay
   return new Date(now.getTime() + (5 * 60 * 1000));
 }
 
@@ -488,18 +515,25 @@ function ensureAutomatedSchedulerActive() {
     var triggers = ScriptApp.getProjectTriggers();
     var hasRecurring = false;
     var toDelete = [];
+    var nowMs = new Date().getTime();
+    
     for (var i = 0; i < triggers.length; i++) {
       var t = triggers[i];
-      if (t.getHandlerFunction() === 'processPendingRegistrationEmails') {
-        if (!hasRecurring) {
-          hasRecurring = true;
-        } else {
-          toDelete.push(t);
+      var fn = t.getHandlerFunction();
+      if (fn === 'processPendingRegistrationEmails') {
+        var triggerSource = t.getTriggerSource();
+        if (triggerSource === ScriptApp.TriggerSource.CLOCK) {
+          // If it's a recurring trigger or has already fired, manage appropriately
+          if (!hasRecurring) {
+            hasRecurring = true;
+          } else {
+            toDelete.push(t);
+          }
         }
       }
     }
     for (var d = 0; d < toDelete.length; d++) {
-      ScriptApp.deleteTrigger(toDelete[d]);
+      try { ScriptApp.deleteTrigger(toDelete[d]); } catch(e) {}
     }
     if (!hasRecurring) {
       ScriptApp.newTrigger('processPendingRegistrationEmails')
@@ -513,9 +547,26 @@ function ensureAutomatedSchedulerActive() {
   }
 }
 
+/**
+ * Creates an exact 5-minute one-shot wake-up trigger for newly registered teams.
+ */
+function schedulePrecisionWakeUpTrigger() {
+  try {
+    ScriptApp.newTrigger('processPendingRegistrationEmails')
+      .timeBased()
+      .after(5 * 60 * 1000 + 2000) // 5 minutes 2 seconds
+      .create();
+    console.log("⚡ Precision 5-minute delayed wake-up trigger scheduled in Google Cloud.");
+  } catch (e) {
+    console.warn("Precision trigger note: " + e.toString());
+  }
+}
+
 function setupAutomatedEmailTrigger() {
   ensureAutomatedSchedulerActive();
-  console.log("✅ Verified single 1-minute recurring cron trigger for processPendingRegistrationEmails");
+  schedulePrecisionWakeUpTrigger();
+  processPendingRegistrationEmails(true); // also sweep any overdue now
+  console.log("✅ Verified 24/7 self-healing automated trigger engine and swept pending queue!");
 }
 
 // ─── EMAIL DISPATCH PERMISSION (FULLY AUTOMATED 24/7 MODE) ───────────
@@ -1103,7 +1154,7 @@ function sendRegistrationConfirmationEmail(details) {
                         <li style="margin-bottom: 4px;"><strong>📶 Technical Facility:</strong> High-speed campus Wi-Fi & continuous power supply provided at all tables.</li>
                       </ul>
                       <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #fca5a5; line-height: 1.5;">
-                        <strong>⚠️ Notice regarding Food & Refreshments:</strong> Free refreshments and lunch are <strong>NOT provided</strong>. All participants are kindly requested to bring their own lunch/water bottles or utilize the on-campus university cafeterias.
+                        <strong>⚠️ Notice regarding Food & Refreshments:</strong> Drinking water will be provided at the venue. However, free food/lunch and refreshments are <strong>NOT provided</strong>. All participants are kindly requested to bring their own lunch or utilize the on-campus university cafeterias.
                       </div>
                     </div>
                   </td>
@@ -1154,7 +1205,7 @@ function sendRegistrationConfirmationEmail(details) {
                     "• 01:30 PM – 03:00 PM: Final Prototype Pitch & Jury Evaluation\n" +
                     "• 03:00 PM – 03:30 PM: Grand Valedictory Ceremony & Prize Awarding\n" +
                     "• Facilities: High-Speed Campus Wi-Fi & Continuous Power Outlets\n\n" +
-                    "⚠️ REFRESHMENTS NOTICE: Free refreshments/lunch will NOT be provided. Participants are requested to carry their own food/water or use the on-campus food courts.\n\n" +
+                    "⚠️ REFRESHMENTS NOTICE: Drinking water will be provided at the venue. However, free food/lunch/refreshments will NOT be provided. Participants are requested to carry their own lunch or use the on-campus food courts.\n\n" +
                     "⚠️ MANDATORY: All students must bring their physical college ID cards and laptops.\n\n" +
                     "Live Pass Link: " + passUrl + "\n\n" +
                     "Department of Medical Biotechnology,\nSIMATS Engineering.";
@@ -1226,11 +1277,33 @@ function sendRegistrationConfirmationEmail(details) {
 function doGet(e) {
   ensureAutomatedSchedulerActive();
   
+  // Fail-Safe Layer 2: Passive Queue Sweeper on every incoming web hit
+  try {
+    processPendingRegistrationEmails(false);
+  } catch (swErr) {
+    console.warn("Passive sweeper warning: " + swErr.toString());
+  }
+  
   if (!e || !e.parameter) {
     return ContentService.createTextOutput("SYNORA '26 Backend API Online. Requests must specify an action.");
   }
   
   var action = e.parameter.action;
+  
+  // ─── ACTION: SWEEP PENDING EMAILS (FAIL-SAFE KEEPALIVE ENDPOINT) ───
+  if (action === 'sweep_pending_emails' || action === 'sweep' || action === 'checkPending') {
+    var sweptCount = 0;
+    try {
+      sweptCount = processPendingRegistrationEmails(false);
+    } catch(swErr) {}
+    var sweepRes = JSON.stringify({
+      status: "success",
+      sweptCount: sweptCount,
+      pendingCount: countPendingEmails(),
+      timestamp: formatISTDateTime(new Date())
+    });
+    return ContentService.createTextOutput(sweepRes).setMimeType(ContentService.MimeType.JSON);
+  }
   
   // ─── ACTION: 4-STAGE EVENT STATE MACHINE QR PASS RENDERER ──────────
   if (action === 'pass' || action === 'verify') {
@@ -1963,7 +2036,7 @@ function renderStateMachinePassHtml(data) {
               <div><strong>⏰ Reporting:</strong> August 28, 2026 · 08:00 AM IST</div>
               <div><strong>⚡ Duration:</strong> 7-Hour Innovation Sprint (08:30 AM – 03:30 PM)</div>
               <div><strong>🪪 Requirement:</strong> All students must bring their official college ID cards and laptops.</div>
-              <div style="margin-top:6px; color:#fca5a5; font-size:12px;"><strong>⚠️ Note:</strong> Free food/refreshments are not provided. Please carry your own lunch/water.</div>
+              <div style="margin-top:6px; color:#fca5a5; font-size:12px;"><strong>⚠️ Note:</strong> Drinking water is provided. Free food/lunch is not provided; please carry your own lunch or use campus cafeterias.</div>
             </div>
           </div>
         </div>
@@ -2263,6 +2336,14 @@ function doPost(e) {
       
       sheet.appendRow(rowToAppend);
       SpreadsheetApp.flush();
+
+      // Multi-Layer Fail-Safe: Schedule precision 5-minute wake-up & ensure cron is active
+      try {
+        ensureAutomatedSchedulerActive();
+        schedulePrecisionWakeUpTrigger();
+      } catch (tErr) {
+        console.warn("Trigger registration note: " + tErr.toString());
+      }
 
       // Strictly 5-Minute Automated Delay Mode (Zero coordinator manual action needed)
       var queueModeDesc = '⏳ 5-Minute Automated Pass Dispatch Queue';
