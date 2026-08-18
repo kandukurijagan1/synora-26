@@ -21,7 +21,7 @@ var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbwepMP2uTbHqBXQOylIjn_lUGLa4_YVnZO0tOZAJ9B2F-zsTXlqloYi_zcE76QvwV7qAQ/exec';
+var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbxx1WixihT3FrxRY1o_CkihTE4COkfV6jQyEzun4yFMiEU0kl6Ch5TgvFv2h6b8sFBkMQ/exec';
 
 // ─── SECURE SCRIPT PROPERTIES HELPER ─────────────────────────────────
 /**
@@ -360,9 +360,55 @@ function setupAutomatedEmailTrigger() {
   console.log("✅ Configured single 1-minute recurring cron trigger for processPendingRegistrationEmails");
 }
 
-// ─── BACKGROUND QUEUE PROCESSOR: 5-MIN DELAYED EMAILS ────────────────
-function processPendingRegistrationEmails() {
+// ─── EMAIL DISPATCH PERMISSION CONTROLLER (ADMIN CONTROLLED) ──────────
+function isEmailDispatchAllowed() {
+  var props = PropertiesService.getScriptProperties();
+  var setting = props.getProperty('SYNORA_EMAIL_DISPATCH_ENABLED');
+  if (setting === null || setting === undefined) {
+    return true; // Default to enabled unless toggled off by admin
+  }
+  return setting === 'true';
+}
+
+function countPendingEmails() {
   try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Registrations");
+    if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
+    if (!sheet) return 0;
+    var data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return 0;
+    var headerMap = getHeaderMap(data[0]);
+    var pendingCount = 0;
+    for (var i = 1; i < data.length; i++) {
+      var row = data[i];
+      if (!row || row.length === 0) continue;
+      var status = (headerMap.confirmationEmailStatus !== -1 && row[headerMap.confirmationEmailStatus]) ? row[headerMap.confirmationEmailStatus].toString().trim().toLowerCase() : "";
+      if (status === "pending") {
+        pendingCount++;
+      } else {
+        for (var c = 0; c < row.length; c++) {
+          if (row[c] && row[c].toString().trim().toLowerCase() === "pending") {
+            pendingCount++;
+            break;
+          }
+        }
+      }
+    }
+    return pendingCount;
+  } catch(e) {
+    return 0;
+  }
+}
+
+// ─── BACKGROUND QUEUE PROCESSOR: 5-MIN DELAYED EMAILS ────────────────
+function processPendingRegistrationEmails(forceDispatch) {
+  try {
+    if (!forceDispatch && !isEmailDispatchAllowed()) {
+      console.log("⏸️ Auto-email dispatch is paused by Admin. Holding confirmation emails until enabled or approved.");
+      return 0;
+    }
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
@@ -817,29 +863,12 @@ function sendRegistrationConfirmationEmail(details) {
                     "Live Pass Link: " + passUrl + "\n\n" +
                     "Department of Medical Biotechnology,\nSIMATS Engineering.";
     
-    // Build CC list for all team member emails
-    var ccEmails = [];
-    if (details.memberEmails && Array.isArray(details.memberEmails)) {
-      for (var em = 0; em < details.memberEmails.length; em++) {
-        var mEmail = (details.memberEmails[em] || "").toString().trim();
-        if (mEmail && mEmail.indexOf("@") !== -1 && mEmail.toLowerCase() !== details.leaderEmail.toLowerCase()) {
-          if (ccEmails.indexOf(mEmail) === -1) {
-            ccEmails.push(mEmail);
-          }
-        }
-      }
-    }
-
     var senderEmail = Session.getActiveUser().getEmail() || "synora2026@gmail.com";
     var emailOptions = {
       name: "SYNORA '26 Organizing Committee",
       replyTo: senderEmail,
       htmlBody: htmlBody
     };
-    if (ccEmails.length > 0) {
-      emailOptions.cc = ccEmails.join(",");
-      console.log("👥 Also CC'ing team members on confirmation email: " + emailOptions.cc);
-    }
     if (qrBlob) {
       emailOptions.inlineImages = { synoraQrPass: qrBlob };
       emailOptions.attachments = [qrBlob];
@@ -847,6 +876,7 @@ function sendRegistrationConfirmationEmail(details) {
 
     try {
       GmailApp.sendEmail(details.leaderEmail, subject, plainBody, emailOptions);
+      console.log("📨 Confirmation email sent strictly to Team Leader: " + details.leaderEmail);
       return true;
     } catch (gErr) {
       try {
@@ -860,21 +890,12 @@ function sendRegistrationConfirmationEmail(details) {
           inlineImages: qrBlob ? { synoraQrPass: qrBlob } : undefined,
           attachments: qrBlob ? [qrBlob] : undefined
         };
-        if (ccEmails.length > 0) {
-          mailAppOpts.cc = ccEmails.join(",");
-        }
         MailApp.sendEmail(mailAppOpts);
+        console.log("📨 Confirmation email sent strictly to Team Leader via MailApp: " + details.leaderEmail);
         return true;
       } catch (mErr) {
-        console.log("❌ Email primary/CC error: " + mErr.toString() + ". Attempting individual sends...");
-        // Fallback: Attempt individual dispatch to leader
-        try {
-          MailApp.sendEmail(details.leaderEmail, subject, plainBody, { htmlBody: htmlBody });
-          return true;
-        } catch (indErr) {
-          console.log("❌ Individual email send failed: " + indErr.toString());
-          return false;
-        }
+        console.log("❌ Email send error: " + mErr.toString());
+        return false;
       }
     }
   } catch (err) {
@@ -1147,14 +1168,72 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  // ─── ACTION: ON-DEMAND EMAIL QUEUE DISPATCHER ──────────────────────
-  if (action === 'processEmails' || action === 'sendPendingEmails' || action === 'triggerEmails') {
-    var processed = processPendingRegistrationEmails();
-    return ContentService.createTextOutput(JSON.stringify({
+  // ─── ACTION: EMAIL DISPATCH & PERMISSION SETTINGS (ADMIN CONTROLLED) ─
+  if (action === 'getEmailSettings') {
+    var quota = 100;
+    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    var payload = JSON.stringify({
       status: "success",
-      message: "Email dispatch queue executed.",
-      processedCount: processed
-    })).setMimeType(ContentService.MimeType.JSON);
+      emailDispatchEnabled: isEmailDispatchAllowed(),
+      pendingCount: countPendingEmails(),
+      remainingQuota: quota
+    });
+    if (callback) {
+      return ContentService.createTextOutput(callback + "(" + payload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(payload).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'setEmailSettings' || action === 'toggleEmailDispatch') {
+    if (!authResult.authorized) {
+      var errPayload = JSON.stringify({
+        status: "unauthorized",
+        message: "Invalid admin authentication key."
+      });
+      if (callback) {
+        return ContentService.createTextOutput(callback + "(" + errPayload + ")")
+          .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      }
+      return ContentService.createTextOutput(errPayload).setMimeType(ContentService.MimeType.JSON);
+    }
+    var enableVal = (e.parameter.enabled === 'true' || e.parameter.enabled === true || e.parameter.enabled === '1');
+    PropertiesService.getScriptProperties().setProperty('SYNORA_EMAIL_DISPATCH_ENABLED', enableVal ? 'true' : 'false');
+    console.log("⚙️ Admin updated SYNORA_EMAIL_DISPATCH_ENABLED to: " + enableVal);
+    
+    var quota = 100;
+    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    var successPayload = JSON.stringify({
+      status: "success",
+      emailDispatchEnabled: enableVal,
+      pendingCount: countPendingEmails(),
+      remainingQuota: quota,
+      message: enableVal ? "Email auto-dispatch is now ENABLED." : "Email auto-dispatch is now PAUSED. Emails will be held until approved."
+    });
+    if (callback) {
+      return ContentService.createTextOutput(callback + "(" + successPayload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(successPayload).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // ─── ACTION: ON-DEMAND EMAIL QUEUE DISPATCHER ──────────────────────
+  if (action === 'processEmails' || action === 'sendPendingEmails' || action === 'triggerEmails' || action === 'dispatchPendingEmails') {
+    var processed = processPendingRegistrationEmails(true); // force dispatch regardless of pause state
+    var quota = 100;
+    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    var dispatchPayload = JSON.stringify({
+      status: "success",
+      message: "Email dispatch queue executed successfully.",
+      processedCount: processed,
+      pendingCount: countPendingEmails(),
+      remainingQuota: quota
+    });
+    if (callback) {
+      return ContentService.createTextOutput(callback + "(" + dispatchPayload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(dispatchPayload).setMimeType(ContentService.MimeType.JSON);
   }
   
   return ContentService.createTextOutput("SYNORA '26 Backend API Ready.");
@@ -1581,6 +1660,24 @@ function doPost(e) {
       var targetTeamNorm = (reg.teamName || '').toLowerCase().trim();
       var targetRegNoNorm = (reg.regNumber || '').toLowerCase().trim();
       var targetTxnNorm = (reg.transactionId || '').toLowerCase().trim();
+
+      // 1.1 Format validation for INTERNAL registration number
+      if (reg.regType === 'INTERNAL') {
+        var rNo = (reg.regNumber || '').toString().trim();
+        var isValidFormat = (rNo.length === 9 && rNo.indexOf('192') === 0 && /^192[0-9a-zA-Z]{6}$/i.test(rNo));
+        if (isValidFormat) {
+          var letterMatches = rNo.match(/[a-zA-Z]/g);
+          if (letterMatches && letterMatches.length > 1) {
+            isValidFormat = false;
+          }
+        }
+        if (!isValidFormat) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "error",
+            message: "Invalid College Register Number format: '" + rNo + "'. The register number must be exactly 9 characters, start with '192' (e.g. 192401045 or 19240104A), and contain at most one alphabet letter."
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
 
       // 2. Intra-team duplicate check (within the same submission)
       for (var a = 0; a < incomingEmails.length; a++) {
