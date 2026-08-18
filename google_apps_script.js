@@ -325,31 +325,46 @@ function testSendAlertsToMe() {
   console.log("✅ Diagnostic complete! Check your Telegram and your Gmail inbox (" + myEmail + ")!");
 }
 
-// ─── CRON TRIGGER MANAGEMENT (SINGLE, CLEAN TRIGGER) ─────────────────
-function setupAutomatedEmailTrigger() {
-  var triggers = ScriptApp.getProjectTriggers();
-  for (var i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === 'processPendingRegistrationEmails') {
-      ScriptApp.deleteTrigger(triggers[i]);
+// ─── CRON TRIGGER MANAGEMENT (SELF-HEALING 24/7 AUTOMATED ENGINE) ────
+function ensureAutomatedSchedulerActive() {
+  try {
+    var triggers = ScriptApp.getProjectTriggers();
+    var hasRecurring = false;
+    var toDelete = [];
+    for (var i = 0; i < triggers.length; i++) {
+      var t = triggers[i];
+      if (t.getHandlerFunction() === 'processPendingRegistrationEmails') {
+        if (!hasRecurring) {
+          hasRecurring = true;
+        } else {
+          toDelete.push(t);
+        }
+      }
     }
+    for (var d = 0; d < toDelete.length; d++) {
+      ScriptApp.deleteTrigger(toDelete[d]);
+    }
+    if (!hasRecurring) {
+      ScriptApp.newTrigger('processPendingRegistrationEmails')
+        .timeBased()
+        .everyMinutes(1)
+        .create();
+      console.log("⚡ Auto-installed 1-minute 24/7 background email dispatcher engine.");
+    }
+  } catch (e) {
+    console.warn("Scheduler check note: " + e.toString());
   }
-  
-  ScriptApp.newTrigger('processPendingRegistrationEmails')
-    .timeBased()
-    .everyMinutes(1)
-    .create();
-    
-  console.log("✅ Configured single 1-minute recurring cron trigger for processPendingRegistrationEmails");
 }
 
-// ─── EMAIL DISPATCH PERMISSION CONTROLLER (ADMIN CONTROLLED) ──────────
+function setupAutomatedEmailTrigger() {
+  ensureAutomatedSchedulerActive();
+  console.log("✅ Verified single 1-minute recurring cron trigger for processPendingRegistrationEmails");
+}
+
+// ─── EMAIL DISPATCH PERMISSION (FULLY AUTOMATED 24/7 MODE) ───────────
 function isEmailDispatchAllowed() {
-  var props = PropertiesService.getScriptProperties();
-  var setting = props.getProperty('SYNORA_EMAIL_DISPATCH_ENABLED');
-  if (setting === null || setting === undefined) {
-    return true; // Default to enabled unless toggled off by admin
-  }
-  return setting === 'true';
+  // Fully automated 24/7 delivery with zero human intervention required
+  return true;
 }
 
 function countPendingEmails() {
@@ -925,6 +940,8 @@ function sendRegistrationConfirmationEmail(details) {
 
 // ─── GET REQUEST HANDLER (DECOUPLED & HIGH PERFORMANCE) ───────────────
 function doGet(e) {
+  ensureAutomatedSchedulerActive();
+  
   if (!e || !e.parameter) {
     return ContentService.createTextOutput("SYNORA '26 Backend API Online. Requests must specify an action.");
   }
@@ -1677,6 +1694,8 @@ function renderStateMachinePassHtml(data) {
 
 // ─── POST REQUEST HANDLER (OPTIMIZED & PRIVATE DRIVE UPLOADS) ─────────
 function doPost(e) {
+  ensureAutomatedSchedulerActive();
+  
   try {
     var postData = null;
     var action = null;
