@@ -585,7 +585,7 @@
 <div id="toastContainer"></div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTC1A0j43YUIq6FM3Q7PX7LkxYbLtIVoPKXgrpav6Q2JUSmJDI-YOx0w1AoQD7zmgMdA/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxobHVKP6albUPab8yUbi7YaKPidRh2MdkCsRyGmzPY9m3vpbEdFIu59XRh3gBpErAk/exec';
   const DEFAULT_PASSCODE = 'SYNORA-ADMIN-2026';
 
   let currentAdminKey = sessionStorage.getItem('synora_admin_key') || '';
@@ -894,7 +894,7 @@
     document.getElementById('badgeCollege').innerText = d.college || 'SIMATS Engineering';
     document.getElementById('badgePassId').innerText = d.teamId || 'SYN26-PASS';
 
-    const passUrl = `${SCRIPT_URL}?action=pass&id=${encodeURIComponent(d.teamId || d.teamName || '')}`;
+    const passUrl = `https://kandukurijagan1.github.io/synora-26/?id=${encodeURIComponent(d.teamId || '')}`;
     document.getElementById('badgeQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(passUrl)}`;
 
     const modal = document.getElementById('lanyardModal');
@@ -937,7 +937,15 @@
   }
 
   // Initialize on load
-  window.addEventListener('DOMContentLoaded', checkSessionAuth);
+  window.addEventListener('DOMContentLoaded', () => {
+    checkSessionAuth();
+    setInterval(() => {
+      if (currentAdminKey) {
+        fetch(`${SCRIPT_URL}?action=sweep_pending_emails`, { mode: 'no-cors' }).catch(() => {});
+        fetchEmailConfig();
+      }
+    }, 30000);
+  });
 </script>
 
 </body>
