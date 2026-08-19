@@ -15,15 +15,15 @@
  */
 
 // ─── DEFAULT CONFIGURATION & FALLBACKS ───────────────────────────────
-var DEFAULT_TIMEZONE           = 'Asia/Kolkata'; // Indian Standard Time (IST)
-var DEFAULT_DELAY_MINUTES      = 5;              // 5-minute delayed email queue
-var DEFAULT_ADMIN_PASSCODE     = 'SYNORA-ADMIN-2026';
+var DEFAULT_TIMEZONE = 'Asia/Kolkata'; // Indian Standard Time (IST)
+var DEFAULT_DELAY_MINUTES = 5;              // 5-minute delayed email queue
+var DEFAULT_ADMIN_PASSCODE = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
-var DEFAULT_TELEGRAM_CHAT_IDS  = '6877857251,8895943211';
-var WHATSAPP_GROUP_LINK       = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var DEFAULT_ORGANIZER_EMAIL   = '192472374.simats@saveetha.com';
-var OFFICIAL_PORTAL_URL       = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL         = 'https://script.google.com/macros/s/AKfycbxLpVk3sQl0JI8BvkRpgwcXboWHP9evbu1qZBOAPrvwlf-FWaDKD7JdaKeRfGo5Iw9U/exec';
+var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
+var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
+var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
+var OFFICIAL_PORTAL_URL = 'https://kandukurijagan1.github.io/synora-26/';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxJfu9v2QjQSL8U7h65z33Kqn6Wf_Ly_EAu7dqAa4xqIgvNSHlJHQ0qn2HMHhMqLsPi/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -61,7 +61,7 @@ function getSecret(key, defaultVal) {
 function testSystemServices() {
   var quota = MailApp.getRemainingDailyQuota();
   console.log("✅ MailApp active! Remaining daily email quota: " + quota);
-  
+
   sendTelegramNotification("🔔 SYNORA '26: System Diagnostics Passed! Mail & Telegram Online. ✅");
   console.log("✅ Telegram notification dispatched!");
 }
@@ -75,7 +75,7 @@ function setupScriptProperties(botToken, chatIds, adminPasscode) {
   if (botToken) props.setProperty('TELEGRAM_BOT_TOKEN', botToken);
   if (chatIds) props.setProperty('TELEGRAM_CHAT_IDS', Array.isArray(chatIds) ? chatIds.join(',') : chatIds);
   if (adminPasscode) props.setProperty('ADMIN_PASSCODE', adminPasscode);
-  
+
   console.log("✅ Script Properties configured securely!");
   console.log("   - Bot Token: " + (props.getProperty('TELEGRAM_BOT_TOKEN') ? "Configured [PROTECTED]" : "Not Set"));
   console.log("   - Chat IDs : " + (props.getProperty('TELEGRAM_CHAT_IDS') || "Not Set"));
@@ -88,14 +88,14 @@ function setupScriptProperties(botToken, chatIds, adminPasscode) {
 function validateAdminAuth(e, postData) {
   var expectedKey = getSecret('ADMIN_PASSCODE', DEFAULT_ADMIN_PASSCODE);
   var receivedKey = '';
-  
+
   if (e && e.parameter) {
     receivedKey = e.parameter.adminKey || e.parameter.passcode || e.parameter.key || '';
   }
   if (!receivedKey && postData) {
     receivedKey = postData.adminKey || postData.passcode || postData.key || '';
   }
-  
+
   if (!receivedKey || receivedKey.trim() !== expectedKey.trim()) {
     return false;
   }
@@ -113,15 +113,15 @@ function formatISTDateTime(date) {
 function parseDateSafe(val) {
   if (!val) return null;
   if (val instanceof Date) return val.getTime();
-  
+
   var str = val.toString().trim();
   if (!str) return null;
-  
+
   var isoParsed = new Date(str).getTime();
   if (!isNaN(isoParsed) && str.indexOf('/') === -1 && str.indexOf('-') !== -1) {
     return isoParsed;
   }
-  
+
   var match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[,\s]+(\d{1,2}):(\d{1,2}):(\d{1,2})\s*(AM|PM)?$/i);
   if (match) {
     var day = match[1].length < 2 ? "0" + match[1] : match[1];
@@ -131,17 +131,17 @@ function parseDateSafe(val) {
     var minutes = match[5].length < 2 ? "0" + match[5] : match[5];
     var seconds = match[6].length < 2 ? "0" + match[6] : match[6];
     var ampm = match[7] ? match[7].toUpperCase() : null;
-    
+
     if (ampm === "PM" && hours < 12) hours += 12;
     if (ampm === "AM" && hours === 12) hours = 0;
     var hhStr = hours < 10 ? "0" + hours : "" + hours;
-    
+
     // Explicit +05:30 IST timezone construction
     var isoWithTz = year + "-" + month + "-" + day + "T" + hhStr + ":" + minutes + ":" + seconds + "+05:30";
     var t = new Date(isoWithTz).getTime();
     if (!isNaN(t)) return t;
   }
-  
+
   if (!isNaN(isoParsed)) return isoParsed;
   return null;
 }
@@ -155,11 +155,11 @@ function calculateScheduledEmailDate(date) {
   var now = date || new Date();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var tz = (ss && ss.getSpreadsheetTimeZone()) ? ss.getSpreadsheetTimeZone() : DEFAULT_TIMEZONE;
-  
+
   // Extract current hour in IST (0 to 23)
   var hourStr = Utilities.formatDate(now, tz, "HH");
   var hour = parseInt(hourStr, 10);
-  
+
   // Late Night Window: 10:00 PM (22:00) to 07:59 AM (07:59) IST
   if (hour >= 22 || hour < 8) {
     var target = new Date(now.getTime());
@@ -174,7 +174,7 @@ function calculateScheduledEmailDate(date) {
       return nextMorningDate;
     }
   }
-  
+
   // Normal Daytime: 5-Minute Automated Delay
   return new Date(now.getTime() + (5 * 60 * 1000));
 }
@@ -210,9 +210,9 @@ function getHeaderMap(headers) {
     members: -1,
     college: -1
   };
-  
+
   if (!headers || headers.length === 0) return map;
-  
+
   for (var c = 0; c < headers.length; c++) {
     var h = (headers[c] || "").toString().toLowerCase().trim().replace(/[^a-z0-9]/g, '');
     if (h === 'teamid' || h === 'id' || h === 'ticketid') map.teamId = c;
@@ -243,7 +243,7 @@ function getHeaderMap(headers) {
     else if (h === 'members' || h === 'memberroster') map.members = c;
     else if (h === 'college' || h === 'institution') map.college = c;
   }
-  
+
   return map;
 }
 
@@ -255,35 +255,35 @@ function setupSheetHeaders() {
   var sheet = ss.getSheetByName("Registrations");
   if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
   if (!sheet) sheet = ss.insertSheet("Registrations");
-  
+
   var headers = [
     "Team ID",
-    "Timestamp", 
-    "Team Name", 
-    "Team Leader Name", 
-    "Team Leader Mail", 
-    "Team Leader Mobile", 
-    "Member 1 Name", 
-    "Member 1 Mail", 
-    "Member 1 Phone", 
-    "Member 2 Name", 
-    "Member 2 Mail", 
-    "Member 2 Phone", 
-    "Member 3 Name", 
-    "Member 3 Mail", 
-    "Member 3 Phone", 
-    "Registration Type", 
-    "Reg Number", 
-    "Transaction ID", 
-    "Attachment Link", 
-    "ScheduledEmailTime", 
-    "ConfirmationEmailStatus", 
-    "Status", 
-    "CheckInTime", 
+    "Timestamp",
+    "Team Name",
+    "Team Leader Name",
+    "Team Leader Mail",
+    "Team Leader Mobile",
+    "Member 1 Name",
+    "Member 1 Mail",
+    "Member 1 Phone",
+    "Member 2 Name",
+    "Member 2 Mail",
+    "Member 2 Phone",
+    "Member 3 Name",
+    "Member 3 Mail",
+    "Member 3 Phone",
+    "Registration Type",
+    "Reg Number",
+    "Transaction ID",
+    "Attachment Link",
+    "ScheduledEmailTime",
+    "ConfirmationEmailStatus",
+    "Status",
+    "CheckInTime",
     "EmailSentTime",
     "Validation Status"
   ];
-  
+
   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
   sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
   SpreadsheetApp.flush();
@@ -314,16 +314,16 @@ function generateUniqueTeamId(sheet) {
 function sendTelegramNotification(text) {
   var botToken = getSecret('TELEGRAM_BOT_TOKEN', DEFAULT_TELEGRAM_BOT_TOKEN);
   var chatIdsStr = getSecret('TELEGRAM_CHAT_IDS', DEFAULT_TELEGRAM_CHAT_IDS);
-  
+
   if (!botToken || !chatIdsStr) {
     console.log("ℹ️ Telegram notifications skipped (Bot Token / Chat IDs not configured).");
     return;
   }
-  
-  var chatIds = chatIdsStr.split(',').map(function(id) { return id.trim(); }).filter(Boolean);
+
+  var chatIds = chatIdsStr.split(',').map(function (id) { return id.trim(); }).filter(Boolean);
   var msg = text || "🔔 SYNORA '26 System Alert";
-  
-  chatIds.forEach(function(chatId) {
+
+  chatIds.forEach(function (chatId) {
     try {
       var resp = UrlFetchApp.fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', {
         method: 'post',
@@ -344,7 +344,7 @@ function sendTelegramNotification(text) {
 // ─── HIGH-RELIABILITY DRIVE UPLOADER (MULTI-STRATEGY FALLBACK) ────────
 function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
   if (!rawB64Input || rawB64Input === "None" || rawB64Input === "undefined") return "None";
-  
+
   try {
     var rawB64 = rawB64Input.toString();
     if (rawB64.indexOf(",") !== -1) {
@@ -364,7 +364,7 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
       var folder = null;
       var folderId = PropertiesService.getScriptProperties().getProperty("SYNORA_UPLOAD_FOLDER_ID");
       if (folderId) {
-        try { folder = DriveApp.getFolderById(folderId); } catch(fIdErr) {}
+        try { folder = DriveApp.getFolderById(folderId); } catch (fIdErr) { }
       }
       if (!folder) {
         var folders = DriveApp.getFoldersByName("SYNORA_2026_Uploads");
@@ -372,25 +372,32 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
           folder = folders.next();
         } else {
           folder = DriveApp.createFolder("SYNORA_2026_Uploads");
-          try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(fShareErr) {}
+          try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (fShareErr) { }
         }
         if (folder) {
-          try { PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId()); } catch(pErr) {}
+          try { PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId()); } catch (pErr) { }
         }
       }
 
       var file = null;
       if (folder) {
-        try { file = folder.createFile(blob); } catch(fErr) { file = null; }
+        try { file = folder.createFile(blob); } catch (fErr) { file = null; }
       }
       if (!file) {
         file = DriveApp.createFile(blob);
       }
       if (file) {
-        try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(shErr) {}
-        return "https://drive.google.com/file/d/" + file.getId() + "/view?usp=drivesdk";
+        try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (shErr) { }
+        var fileId = file.getId();
+        try {
+          var webAppUrl = ScriptApp.getService().getUrl();
+          if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
+            return webAppUrl + "?action=getFile&id=" + fileId;
+          }
+        } catch (servErr) { }
+        return "https://drive.google.com/file/d/" + fileId + "/preview";
       }
-    } catch(driveAppErr) {
+    } catch (driveAppErr) {
       console.warn("DriveApp Strategy 1 error: " + driveAppErr.toString() + ". Attempting Strategy 2 (REST API)...");
     }
 
@@ -401,16 +408,16 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
         name: safeFileName,
         mimeType: mime
       };
-      
+
       var requestData = "--" + boundary + "\r\n" +
-                        "Content-Type: application/json; charset=UTF-8\r\n\r\n" +
-                        JSON.stringify(metadata) + "\r\n" +
-                        "--" + boundary + "\r\n" +
-                        "Content-Type: " + mime + "\r\n" +
-                        "Content-Transfer-Encoding: base64\r\n\r\n" +
-                        rawB64 + "\r\n" +
-                        "--" + boundary + "--";
-                        
+        "Content-Type: application/json; charset=UTF-8\r\n\r\n" +
+        JSON.stringify(metadata) + "\r\n" +
+        "--" + boundary + "\r\n" +
+        "Content-Type: " + mime + "\r\n" +
+        "Content-Transfer-Encoding: base64\r\n\r\n" +
+        rawB64 + "\r\n" +
+        "--" + boundary + "--";
+
       var token = ScriptApp.getOAuthToken();
       if (token) {
         var restResponse = UrlFetchApp.fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart", {
@@ -422,7 +429,7 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
           payload: requestData,
           muteHttpExceptions: true
         });
-        
+
         if (restResponse.getResponseCode() === 200) {
           var resJson = JSON.parse(restResponse.getContentText());
           var fileId = resJson.id;
@@ -436,8 +443,14 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
               payload: JSON.stringify({ role: "reader", type: "anyone" }),
               muteHttpExceptions: true
             });
-          } catch(permErr) {}
-          return "https://drive.google.com/file/d/" + fileId + "/view?usp=drivesdk";
+          } catch (permErr) { }
+          try {
+            var webAppUrl = ScriptApp.getService().getUrl();
+            if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
+              return webAppUrl + "?action=getFile&id=" + fileId;
+            }
+          } catch (servErr) { }
+          return "https://drive.google.com/file/d/" + fileId + "/preview";
         }
       }
     } catch (restErr) {
@@ -465,7 +478,7 @@ function testAuthorizeAllPermissions() {
       folder = folders.next();
     } else {
       folder = DriveApp.createFolder("SYNORA_2026_Uploads");
-      try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(e) {}
+      try { folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (e) { }
     }
     PropertiesService.getScriptProperties().setProperty("SYNORA_UPLOAD_FOLDER_ID", folder.getId());
     console.log("✅ DriveApp is 100% authorized! Folder ID: " + folder.getId());
@@ -475,10 +488,10 @@ function testAuthorizeAllPermissions() {
 
   console.log("🧪 2. Authorizing and testing GmailApp / MailApp & Telegram...");
   testSendAlertsToMe();
-  
+
   console.log("🧪 3. Ensuring automated scheduler is armed...");
   ensureAutomatedSchedulerActive();
-  
+
   console.log("🎉 All permissions (Drive, Gmail, Sheets, Telegram) are fully authorized and active!");
 }
 
@@ -491,7 +504,7 @@ function testSendAlertsToMe() {
     "🚀 SYNORA '26 TELEGRAM ALERT TEST\n\n" +
     "Organizers Hemanth, Yugandhar & Tharani: Real-time Telegram notification is 100% active and connected! ✅"
   );
-  
+
   var myEmail = Session.getActiveUser().getEmail();
   if (!myEmail || myEmail.indexOf("@") === -1) {
     myEmail = "kandukurijagan7@gmail.com";
@@ -516,7 +529,7 @@ function ensureAutomatedSchedulerActive() {
     var hasRecurring = false;
     var toDelete = [];
     var nowMs = new Date().getTime();
-    
+
     for (var i = 0; i < triggers.length; i++) {
       var t = triggers[i];
       var fn = t.getHandlerFunction();
@@ -533,7 +546,7 @@ function ensureAutomatedSchedulerActive() {
       }
     }
     for (var d = 0; d < toDelete.length; d++) {
-      try { ScriptApp.deleteTrigger(toDelete[d]); } catch(e) {}
+      try { ScriptApp.deleteTrigger(toDelete[d]); } catch (e) { }
     }
     if (!hasRecurring) {
       ScriptApp.newTrigger('processPendingRegistrationEmails')
@@ -601,7 +614,7 @@ function countPendingEmails() {
       }
     }
     return pendingCount;
-  } catch(e) {
+  } catch (e) {
     return 0;
   }
 }
@@ -618,34 +631,34 @@ function processPendingRegistrationEmails(forceDispatch) {
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
     if (!sheet) return 0;
-    
+
     var data = sheet.getDataRange().getValues();
     if (data.length <= 1) return 0;
-    
+
     var headerMap = getHeaderMap(data[0]);
     var nowMs = new Date().getTime();
     var processedCount = 0;
-    
+
     var quota = 100;
     try {
       quota = MailApp.getRemainingDailyQuota();
-    } catch(qErr) {
+    } catch (qErr) {
       quota = 100;
     }
-    
+
     if (quota <= 0) {
       console.warn("⚠️ Google Daily Email Quota Exhausted (0 remaining for today). Quota resets automatically in 24 hours. Pending emails remain safely queued and will be dispatched once quota is restored.");
       return 0;
     }
-    
+
     for (var i = 1; i < data.length; i++) {
       var row = data[i];
       if (!row || row.length === 0) continue;
-      
+
       // Dynamic status locator: check headerMap column or scan entire row for "Pending" / "pending"
       var emailStatus = "";
       var statusCol = -1;
-      
+
       if (headerMap.confirmationEmailStatus !== undefined && headerMap.confirmationEmailStatus !== -1 && row[headerMap.confirmationEmailStatus]) {
         var val = row[headerMap.confirmationEmailStatus].toString().trim().toLowerCase();
         if (val === "pending" || val === "sent") {
@@ -653,7 +666,7 @@ function processPendingRegistrationEmails(forceDispatch) {
           statusCol = headerMap.confirmationEmailStatus;
         }
       }
-      
+
       // Fallback scan: if status was not found at headerMap column, scan row for cell equaling "pending"
       if (emailStatus !== "pending") {
         for (var c = 0; c < row.length; c++) {
@@ -664,7 +677,7 @@ function processPendingRegistrationEmails(forceDispatch) {
           }
         }
       }
-      
+
       if (emailStatus === "pending") {
         // Locate leader email: check headerMap, or scan row for valid email regex
         var leaderEmail = (headerMap.leaderEmail !== undefined && headerMap.leaderEmail !== -1 && row[headerMap.leaderEmail]) ? row[headerMap.leaderEmail].toString().trim() : "";
@@ -677,20 +690,20 @@ function processPendingRegistrationEmails(forceDispatch) {
             }
           }
         }
-        
+
         // Locate Team Name
         var teamName = (headerMap.teamName !== undefined && headerMap.teamName !== -1 && row[headerMap.teamName]) ? row[headerMap.teamName].toString().trim() : "";
         if (!teamName) {
           // If 1st column is Timestamp, 2nd column is often Team Name
           teamName = (row[1] || row[0] || ("Team " + i)).toString().trim();
         }
-        
+
         // Locate Team Leader Name
         var leaderName = (headerMap.leaderName !== undefined && headerMap.leaderName !== -1 && row[headerMap.leaderName]) ? row[headerMap.leaderName].toString().trim() : "";
         if (!leaderName) {
           leaderName = (row[2] || "Team Leader").toString().trim();
         }
-        
+
         // Locate Leader Phone
         var leaderPhone = (headerMap.leaderPhone !== undefined && headerMap.leaderPhone !== -1 && row[headerMap.leaderPhone]) ? row[headerMap.leaderPhone].toString().trim() : "";
         if (!leaderPhone) {
@@ -702,7 +715,7 @@ function processPendingRegistrationEmails(forceDispatch) {
             }
           }
         }
-        
+
         // Locate Team ID
         var teamId = (headerMap.teamId !== -1 && row[headerMap.teamId]) ? row[headerMap.teamId].toString().trim() : "";
         if (!teamId) {
@@ -713,14 +726,14 @@ function processPendingRegistrationEmails(forceDispatch) {
             teamId = "SYN-" + (2600 + i);
           }
         }
-        
+
         // Locate Members and Member Emails
         var membersList = [];
         var memberEmails = [];
         if (headerMap.m1Name !== undefined && headerMap.m1Name !== -1 && row[headerMap.m1Name]) membersList.push(row[headerMap.m1Name].toString().trim());
         if (headerMap.m2Name !== undefined && headerMap.m2Name !== -1 && row[headerMap.m2Name]) membersList.push(row[headerMap.m2Name].toString().trim());
         if (headerMap.m3Name !== undefined && headerMap.m3Name !== -1 && row[headerMap.m3Name]) membersList.push(row[headerMap.m3Name].toString().trim());
-        
+
         if (headerMap.m1Mail !== undefined && headerMap.m1Mail !== -1 && row[headerMap.m1Mail]) {
           var em1 = row[headerMap.m1Mail].toString().trim();
           if (em1 && em1.indexOf("@") !== -1) memberEmails.push(em1);
@@ -733,9 +746,9 @@ function processPendingRegistrationEmails(forceDispatch) {
           var em3 = row[headerMap.m3Mail].toString().trim();
           if (em3 && em3.indexOf("@") !== -1) memberEmails.push(em3);
         }
-        
+
         var membersStr = membersList.length > 0 ? membersList.join(', ') : ((headerMap.members !== undefined && headerMap.members !== -1 && row[headerMap.members]) ? row[headerMap.members].toString().trim() : '');
-        
+
         // College / Reg Type
         var regType = (headerMap.regType !== undefined && headerMap.regType !== -1 && row[headerMap.regType]) ? row[headerMap.regType].toString().trim() : "INTERNAL";
         var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== undefined && headerMap.college !== -1 && row[headerMap.college]) ? row[headerMap.college].toString().trim() : 'External College');
@@ -746,7 +759,7 @@ function processPendingRegistrationEmails(forceDispatch) {
           // In standard rows, ScheduledEmailTime is the cell immediately before ConfirmationEmailStatus
           schedTimeVal = row[statusCol - 1];
         }
-        
+
         var schedTimeMs = parseDateSafe(schedTimeVal);
         if (!schedTimeMs) {
           // Check registration timestamp
@@ -759,11 +772,11 @@ function processPendingRegistrationEmails(forceDispatch) {
             schedTimeMs = nowMs - 1000;
           }
         }
-        
+
         // Check if ready to dispatch: strictly requires 5 full minutes to elapse
         if (schedTimeMs && nowMs >= schedTimeMs && leaderEmail && leaderEmail.indexOf("@") !== -1) {
           console.log("⏳ 5-Minute delay elapsed! Dispatching confirmation email strictly to Team Leader: " + leaderEmail + " [Team: " + teamName + ", ID: " + teamId + "]");
-          
+
           var emailSent = sendRegistrationConfirmationEmail({
             teamId: teamId,
             teamName: teamName,
@@ -773,7 +786,7 @@ function processPendingRegistrationEmails(forceDispatch) {
             leaderPhone: leaderPhone,
             membersStr: membersStr
           });
-          
+
           if (emailSent === true) {
             // Update status column to Sent
             if (statusCol !== -1) {
@@ -787,7 +800,7 @@ function processPendingRegistrationEmails(forceDispatch) {
             }
             SpreadsheetApp.flush();
             processedCount++;
-            
+
             sendTelegramNotification(
               '📧 CONFIRMATION EMAIL DELIVERED\n\n' +
               'Team ID: ' + teamId + '\n' +
@@ -818,7 +831,7 @@ function processPendingRegistrationEmails(forceDispatch) {
         }
       }
     }
-    
+
     if (processedCount > 0) {
       console.log("✅ Delivered " + processedCount + " scheduled confirmation email(s).");
     }
@@ -845,14 +858,14 @@ function resendAllConfirmationEmailsToEveryone() {
     console.log("No registrations found to send.");
     return 0;
   }
-  
+
   var headers = data[0];
   var headerMap = {};
   for (var h = 0; h < headers.length; h++) {
     var hName = headers[h].toString().trim().toLowerCase().replace(/[\s_\-]/g, '');
     headerMap[hName] = h;
   }
-  
+
   var statusCol = -1;
   for (var c = 0; c < headers.length; c++) {
     if (headers[c].toString().trim().toLowerCase().indexOf("confirmationemailstatus") !== -1) {
@@ -860,10 +873,10 @@ function resendAllConfirmationEmailsToEveryone() {
       break;
     }
   }
-  
+
   var sentCount = 0;
   console.log("🚀 Starting bulk resend to all " + (data.length - 1) + " teams...");
-  
+
   for (var i = 1; i < data.length; i++) {
     var row = data[i];
     var teamId = (headerMap.teamid !== undefined) ? (row[headerMap.teamid] || '') : (row[0] || '');
@@ -871,16 +884,16 @@ function resendAllConfirmationEmailsToEveryone() {
     var leaderName = (headerMap.teamleadername !== undefined) ? (row[headerMap.teamleadername] || '') : ((headerMap.leadername !== undefined) ? (row[headerMap.leadername] || '') : (row[3] || ''));
     var leaderEmail = (headerMap.teamleadermail !== undefined) ? (row[headerMap.teamleadermail] || '') : ((headerMap.leaderemail !== undefined) ? (row[headerMap.leaderemail] || '') : (row[4] || ''));
     var leaderPhone = (headerMap.teamleadermobile !== undefined) ? (row[headerMap.teamleadermobile] || '') : ((headerMap.leaderphone !== undefined) ? (row[headerMap.leaderphone] || '') : (row[5] || ''));
-    
+
     var regType = (headerMap.registrationtype !== undefined && row[headerMap.registrationtype]) ? row[headerMap.registrationtype].toString().trim() : 'INTERNAL';
     var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== undefined && row[headerMap.college]) ? row[headerMap.college].toString().trim() : 'External College');
-    
+
     var membersList = [];
     if (headerMap.member1name !== undefined && row[headerMap.member1name]) membersList.push(row[headerMap.member1name].toString().trim());
     if (headerMap.member2name !== undefined && row[headerMap.member2name]) membersList.push(row[headerMap.member2name].toString().trim());
     if (headerMap.member3name !== undefined && row[headerMap.member3name]) membersList.push(row[headerMap.member3name].toString().trim());
     var membersStr = membersList.length > 0 ? membersList.join(', ') : ((headerMap.teammembers !== undefined && row[headerMap.teammembers]) ? row[headerMap.teammembers].toString().trim() : '');
-    
+
     if (leaderEmail && leaderEmail.toString().indexOf('@') !== -1) {
       console.log("📨 Resending to Team [" + teamId + "] " + teamName + " -> " + leaderEmail);
       var ok = sendRegistrationConfirmationEmail({
@@ -944,9 +957,9 @@ function sendRegistrationConfirmationEmail(details) {
         membersStr: "Ravi (ravi@example.com), Vijay (vijay@example.com)"
       };
     }
-    
+
     console.log("📨 Preparing confirmation email for Team: " + details.teamName + " -> " + details.leaderEmail);
-    
+
     var cleanTeamName = (details.teamName || '')
       .toString()
       .replace(/&amp;/g, '&')
@@ -954,16 +967,16 @@ function sendRegistrationConfirmationEmail(details) {
       .replace(/&quot;/g, '"')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>');
-      
+
     var subject = "SYNORA '26 Official Entry Pass & Receipt - Team " + cleanTeamName + " [" + details.teamId + "]";
-    
+
     // Direct Universal Web App Pass URL (Matches the exact pass card layout)
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
     var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
 
     // Primary Pass Link for QR code and email button
     var passUrl = directPassUrl;
-    
+
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
     var qrEndpoints = [
@@ -978,13 +991,13 @@ function sendRegistrationConfirmationEmail(details) {
           qrBlob = qrResp.getBlob().setName("SYNORA_Pass_" + details.teamId + ".png").setContentType("image/png");
           break;
         }
-      } catch(qrFetchErr) {
+      } catch (qrFetchErr) {
         console.warn("QR fetch provider " + q + " error: " + qrFetchErr.toString());
       }
     }
 
     var qrImgSrc = qrBlob ? "cid:synoraQrPass" : qrEndpoints[0];
-    
+
     var membersListHtml = "";
     if (details.membersStr) {
       var membersArr = details.membersStr.split(/[,;\n]/);
@@ -1191,25 +1204,25 @@ function sendRegistrationConfirmationEmail(details) {
       </body>
       </html>
     `;
-    
+
     var plainBody = "Dear " + details.leaderName + ",\n\n" +
-                    "Thank you for enrolling in SYNORA '26! Your team " + details.teamName + " [Team ID: " + details.teamId + "] has been registered.\n\n" +
-                    "⚠️ IMPORTANT NOTICE: Please note that this is an initial sample confirmation email. Our organizing committee is currently reviewing your registration details (college ID verification, track selection & roster) and will reach out to you directly for final confirmation.\n\n" +
-                    "Event Date: August 28, 2026\n" +
-                    "Reporting Time: 08:00 AM IST\n" +
-                    "Hackathon Duration: 7 Hours (08:30 AM – 03:30 PM)\n" +
-                    "Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai.\n\n" +
-                    "⚡ 7-HOUR HACKATHON SCHEDULE & LOGISTICS:\n" +
-                    "• 08:00 AM – 08:30 AM: Physical Check-In & Table Allotment\n" +
-                    "• 08:30 AM – 01:00 PM: 7-Hour Build Sprint & Mentor Progress Checkpoint\n" +
-                    "• 01:30 PM – 03:00 PM: Final Prototype Pitch & Jury Evaluation\n" +
-                    "• 03:00 PM – 03:30 PM: Grand Valedictory Ceremony & Prize Awarding\n" +
-                    "• Facilities: High-Speed Campus Wi-Fi & Continuous Power Outlets\n\n" +
-                    "⚠️ REFRESHMENTS NOTICE: Drinking water will be provided at the venue. However, free food/lunch/refreshments will NOT be provided. Participants are requested to carry their own lunch or use the on-campus food courts.\n\n" +
-                    "⚠️ MANDATORY: All students must bring their physical college ID cards and laptops.\n\n" +
-                    "Live Pass Link: " + passUrl + "\n\n" +
-                    "Department of Medical Biotechnology,\nSIMATS Engineering.";
-    
+      "Thank you for enrolling in SYNORA '26! Your team " + details.teamName + " [Team ID: " + details.teamId + "] has been registered.\n\n" +
+      "⚠️ IMPORTANT NOTICE: Please note that this is an initial sample confirmation email. Our organizing committee is currently reviewing your registration details (college ID verification, track selection & roster) and will reach out to you directly for final confirmation.\n\n" +
+      "Event Date: August 28, 2026\n" +
+      "Reporting Time: 08:00 AM IST\n" +
+      "Hackathon Duration: 7 Hours (08:30 AM – 03:30 PM)\n" +
+      "Venue: NEW SCAD, SIMATS Engineering, Thandalam, Chennai.\n\n" +
+      "⚡ 7-HOUR HACKATHON SCHEDULE & LOGISTICS:\n" +
+      "• 08:00 AM – 08:30 AM: Physical Check-In & Table Allotment\n" +
+      "• 08:30 AM – 01:00 PM: 7-Hour Build Sprint & Mentor Progress Checkpoint\n" +
+      "• 01:30 PM – 03:00 PM: Final Prototype Pitch & Jury Evaluation\n" +
+      "• 03:00 PM – 03:30 PM: Grand Valedictory Ceremony & Prize Awarding\n" +
+      "• Facilities: High-Speed Campus Wi-Fi & Continuous Power Outlets\n\n" +
+      "⚠️ REFRESHMENTS NOTICE: Drinking water will be provided at the venue. However, free food/lunch/refreshments will NOT be provided. Participants are requested to carry their own lunch or use the on-campus food courts.\n\n" +
+      "⚠️ MANDATORY: All students must bring their physical college ID cards and laptops.\n\n" +
+      "Live Pass Link: " + passUrl + "\n\n" +
+      "Department of Medical Biotechnology,\nSIMATS Engineering.";
+
     var activeEmail = Session.getActiveUser().getEmail();
     var senderEmail = activeEmail || DEFAULT_ORGANIZER_EMAIL;
     var replyToEmail = DEFAULT_ORGANIZER_EMAIL || senderEmail;
@@ -1225,10 +1238,10 @@ function sendRegistrationConfirmationEmail(details) {
     var quota = 100;
     try {
       quota = MailApp.getRemainingDailyQuota();
-    } catch(qErr) {
+    } catch (qErr) {
       quota = 100;
     }
-    
+
     if (quota <= 0) {
       console.warn("⚠️ Cannot send email to " + details.leaderEmail + ": Daily Google Mail Quota is 0 remaining today. Email remains queued.");
       return "QUOTA_EXHAUSTED";
@@ -1276,26 +1289,26 @@ function sendRegistrationConfirmationEmail(details) {
 // ─── GET REQUEST HANDLER (DECOUPLED & HIGH PERFORMANCE) ───────────────
 function doGet(e) {
   ensureAutomatedSchedulerActive();
-  
+
   // Fail-Safe Layer 2: Passive Queue Sweeper on every incoming web hit
   try {
     processPendingRegistrationEmails(false);
   } catch (swErr) {
     console.warn("Passive sweeper warning: " + swErr.toString());
   }
-  
+
   if (!e || !e.parameter) {
     return ContentService.createTextOutput("SYNORA '26 Backend API Online. Requests must specify an action.");
   }
-  
+
   var action = e.parameter.action;
-  
+
   // ─── ACTION: SWEEP PENDING EMAILS (FAIL-SAFE KEEPALIVE ENDPOINT) ───
   if (action === 'sweep_pending_emails' || action === 'sweep' || action === 'checkPending') {
     var sweptCount = 0;
     try {
       sweptCount = processPendingRegistrationEmails(false);
-    } catch(swErr) {}
+    } catch (swErr) { }
     var sweepRes = JSON.stringify({
       status: "success",
       sweptCount: sweptCount,
@@ -1304,17 +1317,79 @@ function doGet(e) {
     });
     return ContentService.createTextOutput(sweepRes).setMimeType(ContentService.MimeType.JSON);
   }
-  
+
+  // ─── ACTION: SECURE FILE PROXY (SOLVES GOOGLE DRIVE MOBILE SESSION ERRORS) ───
+  if (action === 'getFile' || action === 'file' || action === 'viewFile') {
+    var fileId = (e.parameter.id || e.parameter.fileId || '').trim();
+    if (!fileId) {
+      return ContentService.createTextOutput("Error: File ID is missing.");
+    }
+    try {
+      var file = DriveApp.getFileById(fileId);
+      var blob = file.getBlob();
+      var bytes = blob.getBytes();
+      var b64 = Utilities.base64Encode(bytes);
+      var mime = blob.getContentType();
+      var fileName = file.getName();
+
+      var html = '<!DOCTYPE html><html><head><title>SYNORA \'26 · ' + fileName + '</title>' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+        '<style>' +
+        'body { margin: 0; background: #070312; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }' +
+        '.top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(13, 7, 30, 0.85); border-bottom: 1px solid rgba(124, 58, 237, 0.3); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }' +
+        '.title { font-size: 0.95rem; font-weight: 700; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
+        '.btn-group { display: flex; gap: 10px; }' +
+        '.btn { display: inline-flex; align-items: center; justify-content: center; background: #7c3aed; color: #fff; text-decoration: none; font-size: 0.8rem; font-weight: 700; padding: 7px 14px; border-radius: 6px; transition: background 0.2s; border: none; cursor: pointer; }' +
+        '.btn:hover { background: #6d28d9; }' +
+        '.btn-secondary { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); }' +
+        '.btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }' +
+        '.content-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }' +
+        'img { max-width: 100%; max-height: 82vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }' +
+        'iframe, object { width: 100%; height: 82vh; border: none; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }' +
+        '.fallback-box { text-align: center; max-width: 400px; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }' +
+        '</style></head><body>' +
+        '<div class="top-bar">' +
+        '<span class="title">📎 ' + fileName + '</span>' +
+        '<div class="btn-group">' +
+        '<a class="btn btn-secondary" href="https://drive.google.com/file/d/' + fileId + '/preview" target="_blank">🌐 Open in Drive ↗</a>' +
+        '<a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '">📥 Download</a>' +
+        '</div>' +
+        '</div>' +
+        '<div class="content-area">';
+
+      if (mime.indexOf('image/') !== -1) {
+        html += '<img src="data:' + mime + ';base64,' + b64 + '" alt="' + fileName + '" />';
+      } else if (mime.indexOf('pdf') !== -1) {
+        html += '<iframe src="data:' + mime + ';base64,' + b64 + '"></iframe>';
+      } else {
+        html += '<div class="fallback-box">' +
+          '<h3 style="margin-bottom:12px;">📄 Non-Previewable File</h3>' +
+          '<p style="font-size:0.85rem; color:#94a3b8; margin-bottom:20px;">This file type (' + mime + ') cannot be viewed directly in the browser.</p>' +
+          '<a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '" style="width:100%; box-sizing:border-box;">Download File</a>' +
+          '</div>';
+      }
+
+      html += '</div></body></html>';
+
+      return HtmlService.createHtmlOutput(html)
+        .setTitle("SYNORA '26 · " + fileName)
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+    } catch (err) {
+      return ContentService.createTextOutput("Error retrieving file from Secure Proxy: " + err.toString());
+    }
+  }
+
   // ─── ACTION: 4-STAGE EVENT STATE MACHINE QR PASS RENDERER ──────────
   if (action === 'pass' || action === 'verify') {
     var queryId = (e.parameter.id || e.parameter.teamId || '').trim();
     var queryTeam = (e.parameter.team || e.parameter.teamName || '').trim();
     var queryEmail = (e.parameter.email || '').trim();
-    
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
-    
+
     var matchedData = null;
     if (sheet) {
       var rows = sheet.getDataRange().getValues();
@@ -1322,35 +1397,35 @@ function doGet(e) {
         var headerMap = getHeaderMap(rows[0]);
         var cleanQueryId = (queryId || queryTeam || queryEmail || '').toLowerCase().replace(/[^a-z0-9]/g, '');
         var cleanQueryText = (queryTeam || queryId || queryEmail || '').toLowerCase().trim();
-        
+
         for (var i = 1; i < rows.length; i++) {
           var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
           var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
           var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
           var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
-          
+
           var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
           var rTeamLower = rTeam.toLowerCase();
           var rEmailLower = rEmail.toLowerCase();
           var rLeaderLower = rLeader.toLowerCase();
-          
+
           var isMatch = false;
           if (cleanQueryText) {
             if ((cleanQueryId && cleanRId === cleanQueryId) ||
-                rTeamLower === cleanQueryText ||
-                rEmailLower === cleanQueryText ||
-                rLeaderLower === cleanQueryText ||
-                rTeamLower.indexOf(cleanQueryText) !== -1 ||
-                cleanQueryText.indexOf(rTeamLower) !== -1 ||
-                rEmailLower.indexOf(cleanQueryText) !== -1) {
+              rTeamLower === cleanQueryText ||
+              rEmailLower === cleanQueryText ||
+              rLeaderLower === cleanQueryText ||
+              rTeamLower.indexOf(cleanQueryText) !== -1 ||
+              cleanQueryText.indexOf(rTeamLower) !== -1 ||
+              rEmailLower.indexOf(cleanQueryText) !== -1) {
               isMatch = true;
             }
           }
-          
+
           if (isMatch) {
             var regType = (headerMap.regType !== -1 && rows[i][headerMap.regType]) ? rows[i][headerMap.regType].toString().trim() : 'INTERNAL';
             var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && rows[i][headerMap.college]) ? rows[i][headerMap.college].toString().trim() : 'External College');
-            
+
             var membersStr = "";
             if (headerMap.members !== -1 && rows[i][headerMap.members]) {
               membersStr = rows[i][headerMap.members].toString().trim();
@@ -1389,7 +1464,7 @@ function doGet(e) {
         }
       }
     }
-    
+
     if (!matchedData) {
       matchedData = {
         teamId: queryId || "SYN-2600",
@@ -1402,7 +1477,7 @@ function doGet(e) {
         checkInTime: ""
       };
     }
-    
+
     return HtmlService.createHtmlOutput(renderStateMachinePassHtml(matchedData))
       .setTitle("SYNORA '26 · Entry Pass - " + matchedData.teamName + " [" + matchedData.teamId + "]")
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
@@ -1412,68 +1487,68 @@ function doGet(e) {
   // ─── ACTION: REAL-TIME DESK CHECK-IN (AUTHENTICATED) ───────────────
   if (action === 'checkin') {
     if (!validateAdminAuth(e, null)) {
-      return ContentService.createTextOutput(JSON.stringify({ 
-        status: "error", 
-        message: "Unauthorized: Invalid or missing administrator passcode." 
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "Unauthorized: Invalid or missing administrator passcode."
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
     var idQuery = (e.parameter.id || e.parameter.teamId || '').trim();
     var teamQuery = (e.parameter.team || e.parameter.teamName || '').trim();
     var emailQuery = (e.parameter.email || e.parameter.leaderEmail || '').trim();
-    
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
-    
+
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Registrations sheet not found" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     var rows = sheet.getDataRange().getValues();
     if (rows.length <= 1) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No registrations found" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     var headerMap = getHeaderMap(rows[0]);
     var foundIndex = -1;
     var teamData = null;
-    
+
     var rawCheckQuery = (idQuery || teamQuery || emailQuery || '').toString().trim();
     var cleanCheckId = rawCheckQuery.toLowerCase().replace(/[^a-z0-9]/g, '');
     var cleanCheckText = rawCheckQuery.toLowerCase();
-    
+
     for (var i = 1; i < rows.length; i++) {
       var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
       var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
       var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
       var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
-      
+
       var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
       var rTeamLower = rTeam.toLowerCase();
       var rEmailLower = rEmail.toLowerCase();
       var rLeaderLower = rLeader.toLowerCase();
-      
+
       var isMatch = false;
       if (cleanCheckText) {
         if ((cleanCheckId && cleanRId === cleanCheckId) ||
-            rTeamLower === cleanCheckText ||
-            rEmailLower === cleanCheckText ||
-            rLeaderLower === cleanCheckText ||
-            rTeamLower.indexOf(cleanCheckText) !== -1 ||
-            cleanCheckText.indexOf(rTeamLower) !== -1 ||
-            rEmailLower.indexOf(cleanCheckText) !== -1) {
+          rTeamLower === cleanCheckText ||
+          rEmailLower === cleanCheckText ||
+          rLeaderLower === cleanCheckText ||
+          rTeamLower.indexOf(cleanCheckText) !== -1 ||
+          cleanCheckText.indexOf(rTeamLower) !== -1 ||
+          rEmailLower.indexOf(cleanCheckText) !== -1) {
           isMatch = true;
         }
       }
-      
+
       if (isMatch) {
         foundIndex = i + 1;
         var regType = (rows[i][headerMap.regType] || 'INTERNAL').toString().trim();
         var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : (rows[i][headerMap.college] || 'External College');
-        
+
         teamData = {
           teamId: rId,
           teamName: rTeam,
@@ -1487,17 +1562,17 @@ function doGet(e) {
         break;
       }
     }
-    
+
     if (foundIndex === -1) {
-      return ContentService.createTextOutput(JSON.stringify({ 
-        status: "error", 
-        message: "No registered team found matching '" + (idQuery || teamQuery || emailQuery) + "'." 
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "No registered team found matching '" + (idQuery || teamQuery || emailQuery) + "'."
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     var alreadyCheckedIn = (teamData.status === "Checked-In" || teamData.status === "Present");
     var checkInTime = teamData.checkInTime;
-    
+
     if (!alreadyCheckedIn) {
       checkInTime = formatISTDateTime(new Date());
       if (headerMap.status !== undefined) {
@@ -1507,7 +1582,7 @@ function doGet(e) {
         sheet.getRange(foundIndex, headerMap.checkInTime + 1).setValue(checkInTime);
       }
       SpreadsheetApp.flush();
-      
+
       sendTelegramNotification(
         '🛡️ VENUE DESK CHECK-IN VERIFIED!\n\n' +
         'Team ID: ' + teamData.teamId + '\n' +
@@ -1518,7 +1593,7 @@ function doGet(e) {
         'Team is officially PRESENT at the venue desk!'
       );
     }
-    
+
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
       alreadyCheckedIn: alreadyCheckedIn,
@@ -1533,19 +1608,19 @@ function doGet(e) {
   // ─── ACTION: GET ALL REGISTERED TEAMS & STATS (AUTHENTICATED) ───────
   if (action === 'getTeams' || action === 'getStats' || action === 'get') {
     if (!validateAdminAuth(e, null)) {
-      return ContentService.createTextOutput(JSON.stringify({ 
-        status: "error", 
-        message: "Unauthorized: Invalid or missing administrator passcode." 
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "Unauthorized: Invalid or missing administrator passcode."
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
-    
+
     var teamList = [];
     var checkedInCount = 0;
-    
+
     if (sheet) {
       var rows = sheet.getDataRange().getValues();
       if (rows.length > 1) {
@@ -1553,15 +1628,15 @@ function doGet(e) {
         for (var i = 1; i < rows.length; i++) {
           var teamName = (rows[i][headerMap.teamName] || '').toString().trim();
           if (!teamName) continue;
-          
+
           var teamId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
           var status = ((headerMap.status !== undefined && rows[i][headerMap.status]) ? rows[i][headerMap.status] : 'Registered').toString().trim();
           var isCheckedIn = (status === "Checked-In" || status === "Present");
           if (isCheckedIn) checkedInCount++;
-          
+
           var regType = ((headerMap.regType !== undefined && rows[i][headerMap.regType]) ? rows[i][headerMap.regType] : 'INTERNAL').toString().trim();
           var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== undefined && rows[i][headerMap.college]) ? rows[i][headerMap.college].toString().trim() : 'External College');
-          
+
           teamList.push({
             teamId: teamId,
             teamName: teamName,
@@ -1578,7 +1653,7 @@ function doGet(e) {
         }
       }
     }
-    
+
     var statsPayload = JSON.stringify({
       status: "success",
       totalRegistered: teamList.length,
@@ -1586,7 +1661,7 @@ function doGet(e) {
       totalPending: Math.max(0, teamList.length - checkedInCount),
       teams: teamList
     });
-    
+
     var callback = e.parameter.callback;
     if (callback) {
       return ContentService.createTextOutput(callback + "(" + statsPayload + ")")
@@ -1599,7 +1674,7 @@ function doGet(e) {
   // ─── ACTION: EMAIL DISPATCH & PERMISSION SETTINGS (ADMIN CONTROLLED) ─
   if (action === 'getEmailSettings') {
     var quota = 100;
-    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    try { quota = MailApp.getRemainingDailyQuota(); } catch (qErr) { quota = 100; }
     var payload = JSON.stringify({
       status: "success",
       emailDispatchEnabled: isEmailDispatchAllowed(),
@@ -1628,9 +1703,9 @@ function doGet(e) {
     var enableVal = (e.parameter.enabled === 'true' || e.parameter.enabled === true || e.parameter.enabled === '1');
     PropertiesService.getScriptProperties().setProperty('SYNORA_EMAIL_DISPATCH_ENABLED', enableVal ? 'true' : 'false');
     console.log("⚙️ Admin updated SYNORA_EMAIL_DISPATCH_ENABLED to: " + enableVal);
-    
+
     var quota = 100;
-    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    try { quota = MailApp.getRemainingDailyQuota(); } catch (qErr) { quota = 100; }
     var successPayload = JSON.stringify({
       status: "success",
       emailDispatchEnabled: enableVal,
@@ -1649,7 +1724,7 @@ function doGet(e) {
   if (action === 'processEmails' || action === 'sendPendingEmails' || action === 'triggerEmails' || action === 'dispatchPendingEmails') {
     var processed = processPendingRegistrationEmails(true); // force dispatch regardless of pause state
     var quota = 100;
-    try { quota = MailApp.getRemainingDailyQuota(); } catch(qErr) { quota = 100; }
+    try { quota = MailApp.getRemainingDailyQuota(); } catch (qErr) { quota = 100; }
     var dispatchPayload = JSON.stringify({
       status: "success",
       message: "Email dispatch queue executed successfully.",
@@ -1669,51 +1744,51 @@ function doGet(e) {
     var rawTarget = (e.parameter.teamId || e.parameter.id || e.parameter.email || e.parameter.query || '').toString().trim();
     var cleanTargetId = rawTarget.toLowerCase().replace(/[^a-z0-9]/g, '');
     var cleanTargetText = rawTarget.toLowerCase();
-    
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName("Registrations");
     if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
-    
+
     var data = sheet.getDataRange().getValues();
     var headerMap = getHeaderMap(data[0]);
     var foundRowIndex = -1;
     var targetDetails = null;
-    
+
     for (var r = 1; r < data.length; r++) {
       var rowTeamId = (headerMap.teamId !== -1 && data[r][headerMap.teamId]) ? data[r][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + r));
       var rowTeamName = (headerMap.teamName !== -1 && data[r][headerMap.teamName]) ? data[r][headerMap.teamName].toString().trim() : '';
       var rowLeaderName = (headerMap.leaderName !== -1 && data[r][headerMap.leaderName]) ? data[r][headerMap.leaderName].toString().trim() : '';
       var rowLeaderMail = (headerMap.leaderEmail !== -1 && data[r][headerMap.leaderEmail]) ? data[r][headerMap.leaderEmail].toString().trim() : '';
-      
+
       var cleanRowId = rowTeamId.toLowerCase().replace(/[^a-z0-9]/g, '');
       var rowTeamNameLower = rowTeamName.toLowerCase();
       var rowLeaderMailLower = rowLeaderMail.toLowerCase();
       var rowLeaderNameLower = rowLeaderName.toLowerCase();
-      
+
       var isMatch = false;
       if (cleanTargetText) {
         if ((cleanTargetId && cleanRowId === cleanTargetId) ||
-            rowTeamNameLower === cleanTargetText ||
-            rowLeaderMailLower === cleanTargetText ||
-            rowLeaderNameLower === cleanTargetText ||
-            rowTeamNameLower.indexOf(cleanTargetText) !== -1 ||
-            cleanTargetText.indexOf(rowTeamNameLower) !== -1 ||
-            rowLeaderMailLower.indexOf(cleanTargetText) !== -1) {
+          rowTeamNameLower === cleanTargetText ||
+          rowLeaderMailLower === cleanTargetText ||
+          rowLeaderNameLower === cleanTargetText ||
+          rowTeamNameLower.indexOf(cleanTargetText) !== -1 ||
+          cleanTargetText.indexOf(rowTeamNameLower) !== -1 ||
+          rowLeaderMailLower.indexOf(cleanTargetText) !== -1) {
           isMatch = true;
         }
       }
-      
+
       if (isMatch) {
         foundRowIndex = r + 1; // 1-indexed sheet row
-        
+
         var membersArray = [];
         if (headerMap.m1Name !== -1 && data[r][headerMap.m1Name]) membersArray.push(data[r][headerMap.m1Name]);
         if (headerMap.m2Name !== -1 && data[r][headerMap.m2Name]) membersArray.push(data[r][headerMap.m2Name]);
         if (headerMap.m3Name !== -1 && data[r][headerMap.m3Name]) membersArray.push(data[r][headerMap.m3Name]);
-        
+
         var regType = (headerMap.regType !== -1 && data[r][headerMap.regType]) ? data[r][headerMap.regType].toString().trim() : 'EXTERNAL';
         var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && data[r][headerMap.college]) ? data[r][headerMap.college].toString().trim() : 'SIMATS Engineering');
-        
+
         targetDetails = {
           teamId: rowTeamId || generateUniqueTeamId(r),
           teamName: rowTeamName || 'Team',
@@ -1728,7 +1803,7 @@ function doGet(e) {
         break;
       }
     }
-    
+
     if (!targetDetails || !targetDetails.leaderEmail) {
       var notFoundPayload = JSON.stringify({
         status: "error",
@@ -1740,7 +1815,7 @@ function doGet(e) {
       }
       return ContentService.createTextOutput(notFoundPayload).setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     var emailSent = sendRegistrationConfirmationEmail(targetDetails);
     if (emailSent && foundRowIndex > 0) {
       if (headerMap.confirmationEmailStatus !== -1) {
@@ -1751,7 +1826,7 @@ function doGet(e) {
       }
       SpreadsheetApp.flush();
     }
-    
+
     var sendPayload = JSON.stringify({
       status: emailSent ? "success" : "error",
       message: emailSent ? ("Confirmation pass email sent strictly to Team Leader: " + targetDetails.leaderEmail) : "Email dispatch failed. Please check Gmail quota.",
@@ -1759,21 +1834,21 @@ function doGet(e) {
       leaderEmail: targetDetails.leaderEmail,
       leaderName: targetDetails.leaderName
     });
-    
+
     if (callback) {
       return ContentService.createTextOutput(callback + "(" + sendPayload + ")")
         .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
     return ContentService.createTextOutput(sendPayload).setMimeType(ContentService.MimeType.JSON);
   }
-  
+
   return ContentService.createTextOutput("SYNORA '26 Backend API Ready.");
 }
 
 // ─── DYNAMIC 4-STAGE EVENT STATE MACHINE HTML RENDERER ───────────────
 function renderStateMachinePassHtml(data) {
   var statusNorm = (data.status || 'Registered').toLowerCase().trim();
-  
+
   // State 1: Registered (Default pre-event)
   var isRegistered = (statusNorm === 'registered' || statusNorm === 'verified' || statusNorm === 'pending');
   // State 2: Checked-In (At venue)
@@ -1786,7 +1861,7 @@ function renderStateMachinePassHtml(data) {
   var badgeText = "✓ REGISTRATION VERIFIED";
   var badgeColor = "#22c55e";
   var badgeBg = "#052e16";
-  
+
   if (isCheckedIn) {
     badgeText = "⚡ VENUE CHECKED-IN & LIVE";
     badgeColor = "#06b6d4";
@@ -1816,7 +1891,7 @@ function renderStateMachinePassHtml(data) {
     }
     for (var v = 0; v < validMembers.length; v++) {
       membersHtml += '<div style="padding:6px 0; border-bottom:1px dashed rgba(255,255,255,0.08); font-size:13px; color:#cbd5e1;">' +
-                     '<strong>Member ' + (v + 1) + ':</strong> ' + validMembers[v] + '</div>';
+        '<strong>Member ' + (v + 1) + ':</strong> ' + validMembers[v] + '</div>';
     }
   }
 
@@ -2054,19 +2129,19 @@ function renderStateMachinePassHtml(data) {
 // ─── POST REQUEST HANDLER (OPTIMIZED & PRIVATE DRIVE UPLOADS) ─────────
 function doPost(e) {
   ensureAutomatedSchedulerActive();
-  
+
   try {
     var postData = null;
     var action = null;
     var reg = null;
-    
+
     if (!e) {
       return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No request object received." }))
         .setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     var rawContent = (e.postData && e.postData.contents) ? e.postData.contents : "";
-    
+
     if (rawContent && rawContent.trim().charAt(0) === '{') {
       try {
         postData = JSON.parse(rawContent);
@@ -2075,23 +2150,23 @@ function doPost(e) {
         if (reg && reg.fileData && reg.fileName) {
           reg.fileUrl = saveUploadToDrive(reg.fileData, reg.fileName, reg.fileMime, reg.teamName || 'Team');
         }
-      } catch(jsonErr) {}
+      } catch (jsonErr) { }
     }
-    
+
     if (!postData) {
       var p = e.parameter || {};
       action = p.action || 'register';
-      
+
       var regType = (p.regType || (p.collegeStatus === 'internal' ? 'internal' : 'external')).toUpperCase().trim();
       if (regType !== 'INTERNAL' && regType !== 'EXTERNAL') {
         regType = (p.collegeStatus === 'internal' || p.internalRegNo) ? 'INTERNAL' : 'EXTERNAL';
       }
-      
+
       var isInternal = (regType === 'INTERNAL');
       var regNumber = isInternal ? (p.internalRegNo || p.regNumber || '') : '';
       var transactionId = !isInternal ? (p.txnId || p.transactionId || p.externalTxnId || '') : '';
       var collegeName = isInternal ? 'SIMATS Engineering' : (p.collegeName || p.college || 'External College');
-      
+
       var m1Name = (p.member1Name || '').trim();
       var m1Mail = (p.member1Mail || '').trim();
       var m1Phone = (p.member1Phone || '').trim();
@@ -2109,7 +2184,7 @@ function doPost(e) {
       if (p.fileData && p.fileName) {
         fileRecord = saveUploadToDrive(p.fileData, p.fileName, p.fileMime, p.teamName || 'Team');
       }
-      
+
       reg = {
         teamName: p.teamName || '',
         college: collegeName,
@@ -2131,29 +2206,29 @@ function doPost(e) {
         fileUrl: fileRecord
       };
     }
-    
+
     // ─── ACTION: REGISTER (FAST-PATH WITH UNIQUE TEAM ID) ────────────
     if (action === 'register') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var sheet = ss.getSheetByName("Registrations");
-      
+
       if (!sheet) {
         setupSheetHeaders();
         sheet = ss.getSheetByName("Registrations");
         if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
       }
-      
+
       // ─── STRICT COMPREHENSIVE DUPLICATE PREVENTION ───────────────
       var existingData = sheet.getDataRange().getValues();
       var headerMap = getHeaderMap(existingData[0]);
-      
+
       // 1. Gather all incoming participant emails, names, and phone numbers
       var incomingEmails = [];
       if (reg.leaderEmail) incomingEmails.push({ val: reg.leaderEmail.toLowerCase().trim(), role: 'Team Leader' });
       if (reg.member1Mail) incomingEmails.push({ val: reg.member1Mail.toLowerCase().trim(), role: 'Member 1' });
       if (reg.member2Mail) incomingEmails.push({ val: reg.member2Mail.toLowerCase().trim(), role: 'Member 2' });
       if (reg.member3Mail) incomingEmails.push({ val: reg.member3Mail.toLowerCase().trim(), role: 'Member 3' });
-      
+
       var incomingPhones = [];
       if (reg.leaderPhone) incomingPhones.push({ val: reg.leaderPhone.replace(/\D/g, '').trim(), role: 'Team Leader', raw: reg.leaderPhone });
       if (reg.member1Phone) incomingPhones.push({ val: reg.member1Phone.replace(/\D/g, '').trim(), role: 'Member 1', raw: reg.member1Phone });
@@ -2290,16 +2365,16 @@ function doPost(e) {
           }
         }
       }
-      
+
       var now = new Date();
       var formattedTimestamp = formatISTDateTime(now);
       var scheduledDate = calculateScheduledEmailDate(now);
       var formattedScheduledTime = formatISTDateTime(scheduledDate);
       var teamId = generateUniqueTeamId(sheet);
-      
+
       var numCols = existingData[0] ? existingData[0].length : 25;
       var rowToAppend = new Array(numCols).fill("");
-      
+
       var membersSummary = [];
       if (reg.member1Name) membersSummary.push(reg.member1Name + (reg.member1Mail ? ' (' + reg.member1Mail + ')' : ''));
       if (reg.member2Name) membersSummary.push(reg.member2Name + (reg.member2Mail ? ' (' + reg.member2Mail + ')' : ''));
@@ -2333,7 +2408,7 @@ function doPost(e) {
       if (headerMap.checkInTime !== -1) rowToAppend[headerMap.checkInTime] = "";
       if (headerMap.emailSentTime !== -1) rowToAppend[headerMap.emailSentTime] = "";
       if (headerMap.validationStatus !== -1) rowToAppend[headerMap.validationStatus] = (reg.regType === "INTERNAL") ? "Verified (Internal ID)" : "Pending Payment Verification";
-      
+
       sheet.appendRow(rowToAppend);
       SpreadsheetApp.flush();
 
@@ -2347,19 +2422,19 @@ function doPost(e) {
 
       // Strictly 5-Minute Automated Delay Mode (Zero coordinator manual action needed)
       var queueModeDesc = '⏳ 5-Minute Automated Pass Dispatch Queue';
-      
+
       // Real-Time Telegram Alert to Both Organizers with ALL Team & Member Details
       var tgMsg = '🚀 NEW SYNORA \'26 REGISTRATION\n\n' +
-                  '🆔 Team ID: ' + teamId + '\n' +
-                  '🏷️ Team Name: ' + reg.teamName + '\n' +
-                  '🏛️ College: ' + reg.college + '\n' +
-                  '📌 Type: ' + reg.regType + (reg.regNumber ? ' (Reg No: ' + reg.regNumber + ')' : '') + (reg.transactionId ? ' (Txn ID: ' + reg.transactionId + ')' : '') + '\n\n' +
-                  '👤 Team Leader:\n' +
-                  '   • Name: ' + reg.leaderName + '\n' +
-                  '   • Phone: ' + (reg.leaderPhone || 'N/A') + '\n' +
-                  '   • Email: ' + reg.leaderEmail + '\n\n' +
-                  '👥 Team Members:\n';
-      
+        '🆔 Team ID: ' + teamId + '\n' +
+        '🏷️ Team Name: ' + reg.teamName + '\n' +
+        '🏛️ College: ' + reg.college + '\n' +
+        '📌 Type: ' + reg.regType + (reg.regNumber ? ' (Reg No: ' + reg.regNumber + ')' : '') + (reg.transactionId ? ' (Txn ID: ' + reg.transactionId + ')' : '') + '\n\n' +
+        '👤 Team Leader:\n' +
+        '   • Name: ' + reg.leaderName + '\n' +
+        '   • Phone: ' + (reg.leaderPhone || 'N/A') + '\n' +
+        '   • Email: ' + reg.leaderEmail + '\n\n' +
+        '👥 Team Members:\n';
+
       if (reg.member1Name) {
         tgMsg += '   1️⃣ ' + reg.member1Name + (reg.member1Phone ? ' (' + reg.member1Phone + ')' : '') + (reg.member1Mail ? ' - ' + reg.member1Mail : '') + '\n';
       }
@@ -2378,11 +2453,11 @@ function doPost(e) {
       }
 
       var webAppUrlForTg = ACTIVE_WEB_APP_URL;
-      
+
       tgMsg += '\n🎫 Live Pass: ' + webAppUrlForTg + '?action=pass&id=' + encodeURIComponent(teamId) + '\n' +
-               '📧 Pass Email: ' + queueModeDesc + ' (Auto-Dispatch)\n' +
-               '⏰ Scheduled Delivery: ' + formattedScheduledTime + '\n' +
-               '⏱️ Registered: ' + formattedTimestamp;
+        '📧 Pass Email: ' + queueModeDesc + ' (Auto-Dispatch)\n' +
+        '⏰ Scheduled Delivery: ' + formattedScheduledTime + '\n' +
+        '⏱️ Registered: ' + formattedTimestamp;
 
       sendTelegramNotification(tgMsg);
 
@@ -2396,22 +2471,22 @@ function doPost(e) {
       } catch (trigErr) {
         console.warn("Trigger notice: " + trigErr.toString());
       }
-      
-      return ContentService.createTextOutput(JSON.stringify({ 
-        status: "success", 
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
         teamId: teamId,
         teamName: reg.teamName,
         scheduledEmailTime: formattedScheduledTime,
         queueMode: queueModeDesc
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
+
     // ─── ACTION: SEND PARTICIPATION CERTIFICATES (AUTHENTICATED) ─────
     if (action === 'sendEmail') {
       if (!validateAdminAuth(e, postData)) {
-        return ContentService.createTextOutput(JSON.stringify({ 
-          status: "error", 
-          message: "Unauthorized: Invalid or missing administrator passcode." 
+        return ContentService.createTextOutput(JSON.stringify({
+          status: "error",
+          message: "Unauthorized: Invalid or missing administrator passcode."
         })).setMimeType(ContentService.MimeType.JSON);
       }
 
@@ -2419,17 +2494,17 @@ function doPost(e) {
       var leaderName = postData.leaderName;
       var teamName = postData.teamName;
       var attachmentsData = postData.attachments || [];
-      
+
       var emailAttachments = [];
       for (var i = 0; i < attachmentsData.length; i++) {
         var fileData = attachmentsData[i];
         var rawB64 = fileData.base64Data || "";
-        
+
         if (rawB64.indexOf(",") !== -1) {
           rawB64 = rawB64.split(",")[1];
         }
         rawB64 = rawB64.replace(/\s+/g, '');
-        
+
         if (rawB64.length > 0) {
           var decoded = Utilities.base64Decode(rawB64);
           var mime = fileData.mimeType || 'application/pdf';
@@ -2438,16 +2513,16 @@ function doPost(e) {
           emailAttachments.push(blob);
         }
       }
-      
+
       var emailSent = false;
       if (emailAttachments.length > 0) {
         var subject = "SYNORA '26 Participation Certificates - Team " + teamName;
         var body = "Dear " + leaderName + ",\n\n" +
-                   "Attached are the official participation certificates for your team members of SYNORA '26 conducted by SIMATS Engineering.\n\n" +
-                   "Best regards,\n" +
-                   "Department of Medical Biotechnology,\n" +
-                   "SIMATS Engineering, Thandalam, Chennai.";
-        
+          "Attached are the official participation certificates for your team members of SYNORA '26 conducted by SIMATS Engineering.\n\n" +
+          "Best regards,\n" +
+          "Department of Medical Biotechnology,\n" +
+          "SIMATS Engineering, Thandalam, Chennai.";
+
         try {
           MailApp.sendEmail({
             to: email,
@@ -2456,7 +2531,7 @@ function doPost(e) {
             attachments: emailAttachments
           });
           emailSent = true;
-          
+
           sendTelegramNotification(
             '🎓 CERTIFICATES DISPATCHED\n\n' +
             'Team   : ' + teamName + '\n' +
@@ -2465,14 +2540,14 @@ function doPost(e) {
             'Time   : ' + formatISTDateTime(new Date())
           );
         } catch (mailErr) {
-          return ContentService.createTextOutput(JSON.stringify({ 
-            status: "error", 
-            message: "Email failed: " + mailErr.toString() 
+          return ContentService.createTextOutput(JSON.stringify({
+            status: "error",
+            message: "Email failed: " + mailErr.toString()
           })).setMimeType(ContentService.MimeType.JSON);
         }
       }
-      
-      return ContentService.createTextOutput(JSON.stringify({ 
+
+      return ContentService.createTextOutput(JSON.stringify({
         status: emailSent ? "success" : "error",
         message: emailSent ? "Certificates delivered successfully" : "No certificate attachments provided"
       })).setMimeType(ContentService.MimeType.JSON);
