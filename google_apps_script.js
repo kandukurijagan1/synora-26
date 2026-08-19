@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL = 'https://synora26.netlify.app/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx-mqDB3yw9_aZ069wxiMYFAdnaGx8P1rIo4pDfWQQYBOP-T6KicNUda0GgV8R-Xwv0/exec';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx2q3Uef8ToHWtOPgkUKwe4inf8SaLtQV2m_8Ig1dI4NDOMNzsSd5wum6GDRUJTnG1W/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -312,12 +312,55 @@ function manualDispatchAllEmails() {
 }
 
 /**
- * Generates an opaque, unique Team ID (e.g. SYN-2601, SYN-2602) for clean privacy-safe QR links.
+ * Generates an opaque, sequential unique Team ID (e.g. SYN-2601, SYN-2602) based on active registrations.
  */
 function generateUniqueTeamId(sheet) {
-  var lastRow = sheet ? sheet.getLastRow() : 1;
-  var idNum = 2600 + lastRow;
-  return "SYN-" + idNum;
+  if (!sheet) return "SYN-2601";
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return "SYN-2601";
+
+  var maxIdNum = 2600;
+  var countValid = 0;
+  for (var r = 1; r < data.length; r++) {
+    var idVal = (data[r][0] || "").toString().trim();
+    var teamName = (data[r][2] || "").toString().trim();
+    var leaderEmail = (data[r][4] || "").toString().trim();
+
+    if (teamName || leaderEmail || idVal) {
+      countValid++;
+      var match = idVal.match(/SYN-(\d+)/i);
+      if (match) {
+        var n = parseInt(match[1], 10);
+        if (n > maxIdNum) maxIdNum = n;
+      }
+    }
+  }
+  var nextNum = Math.max(maxIdNum + 1, 2600 + countValid + 1);
+  return "SYN-" + nextNum;
+}
+
+/**
+ * Finds the FIRST genuinely empty row in the spreadsheet to avoid gaps caused by ghost/cleared rows.
+ */
+function findFirstEmptyRowIndex(sheet) {
+  if (!sheet) return 2;
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return 2;
+
+  for (var r = 1; r < data.length; r++) {
+    var row = data[r];
+    var teamIdVal = (row[0] || "").toString().trim();
+    var timestampVal = (row[1] || "").toString().trim();
+    var teamNameVal = (row[2] || "").toString().trim();
+    var leaderNameVal = (row[3] || "").toString().trim();
+    var leaderEmailVal = (row[4] || "").toString().trim();
+
+    // If all primary registration columns are empty, this row is available!
+    if (!teamIdVal && !timestampVal && !teamNameVal && !leaderNameVal && !leaderEmailVal) {
+      return r + 1; // 1-indexed row number
+    }
+  }
+  return data.length + 1;
 }
 
 // ─── TELEGRAM NOTIFICATION HELPER (SECURE & GRACEFUL) ────────────────
@@ -984,124 +1027,7 @@ function resendAllConfirmationEmailsToEveryone() {
   return sentCount;
 }
 
-/**
- * 🎯 Dedicated function to send confirmation email ONLY to Team 9 (SYN-2609 / Coresync)!
- * Select and run this in Apps Script Editor to email only that single team!
- */
-function sendEmailToTeam9() {
-  sendEmailToSpecificTeam("SYN-2609");
-}
 
-function sendEmailToSpecificTeam(targetIdOrName) {
-  var target = (targetIdOrName || "SYN-2609").toString().trim();
-  console.log("🎯 Targeting single team for confirmation email: " + target);
-  
-  var sheet = getSpreadsheet();
-  if (!sheet) {
-    console.log("❌ Spreadsheet not found.");
-    return false;
-  }
-  var data = sheet.getDataRange().getValues();
-  if (data.length <= 1) {
-    console.log("❌ No data rows in sheet.");
-    return false;
-  }
-  
-  var headerMap = getHeaderMap(data[0]);
-  var cleanTargetId = target.toLowerCase().replace(/[^a-z0-9]/g, '');
-  var cleanTargetText = target.toLowerCase();
-  
-  for (var r = 1; r < data.length; r++) {
-    var rowTeamId = (headerMap.teamId !== -1 && data[r][headerMap.teamId]) ? data[r][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + r));
-    var rowTeamName = (headerMap.teamName !== -1 && data[r][headerMap.teamName]) ? data[r][headerMap.teamName].toString().trim() : '';
-    var rowLeaderName = (headerMap.leaderName !== -1 && data[r][headerMap.leaderName]) ? data[r][headerMap.leaderName].toString().trim() : '';
-    var rowLeaderMail = (headerMap.leaderEmail !== -1 && data[r][headerMap.leaderEmail]) ? data[r][headerMap.leaderEmail].toString().trim() : '';
-    
-    if (!rowTeamName && !rowLeaderName && !rowLeaderMail && (!data[r][0] || data[r][0].toString().trim() === '')) continue;
-    
-    var cleanRowId = rowTeamId.toLowerCase().replace(/[^a-z0-9]/g, '');
-    var rowNum1 = "syn" + (2600 + r);
-    var rowNum2 = "syn26" + (r < 10 ? "0" + r : r);
-    var rowNum3 = "syn26" + r;
-    
-    var isMatch = false;
-    if (cleanTargetId && (cleanRowId === cleanTargetId || cleanTargetId === rowNum1 || cleanTargetId === rowNum2 || cleanTargetId === rowNum3)) {
-      isMatch = true;
-    } else if (cleanTargetText && cleanTargetText.length >= 3) {
-      if (rowTeamName.toLowerCase().indexOf(cleanTargetText) !== -1 || rowLeaderMail.toLowerCase().indexOf(cleanTargetText) !== -1 || rowLeaderName.toLowerCase().indexOf(cleanTargetText) !== -1) {
-        isMatch = true;
-      }
-    }
-    
-    if (isMatch) {
-      var m1Name = (headerMap.m1Name !== -1 && data[r][headerMap.m1Name]) ? data[r][headerMap.m1Name].toString().trim() : (data[r][6] || '').toString().trim();
-      var m1Mail = (headerMap.m1Mail !== -1 && data[r][headerMap.m1Mail]) ? data[r][headerMap.m1Mail].toString().trim() : (data[r][7] || '').toString().trim();
-      var m1Phone = (headerMap.m1Phone !== -1 && data[r][headerMap.m1Phone]) ? data[r][headerMap.m1Phone].toString().trim() : (data[r][8] || '').toString().trim();
-
-      var m2Name = (headerMap.m2Name !== -1 && data[r][headerMap.m2Name]) ? data[r][headerMap.m2Name].toString().trim() : (data[r][9] || '').toString().trim();
-      var m2Mail = (headerMap.m2Mail !== -1 && data[r][headerMap.m2Mail]) ? data[r][headerMap.m2Mail].toString().trim() : (data[r][10] || '').toString().trim();
-      var m2Phone = (headerMap.m2Phone !== -1 && data[r][headerMap.m2Phone]) ? data[r][headerMap.m2Phone].toString().trim() : (data[r][11] || '').toString().trim();
-
-      var m3Name = (headerMap.m3Name !== -1 && data[r][headerMap.m3Name]) ? data[r][headerMap.m3Name].toString().trim() : (data[r][12] || '').toString().trim();
-      var m3Mail = (headerMap.m3Mail !== -1 && data[r][headerMap.m3Mail]) ? data[r][headerMap.m3Mail].toString().trim() : (data[r][13] || '').toString().trim();
-      var m3Phone = (headerMap.m3Phone !== -1 && data[r][headerMap.m3Phone]) ? data[r][headerMap.m3Phone].toString().trim() : (data[r][14] || '').toString().trim();
-
-      var membersArray = [];
-      var membersRoster = [];
-      var memberEmails = [];
-
-      if (m1Name && m1Name !== "None" && !/^\d+$/.test(m1Name) && m1Name.indexOf("@") === -1) {
-        membersArray.push(m1Name);
-        membersRoster.push({ role: "Member 1", name: m1Name, email: m1Mail, phone: m1Phone });
-        if (m1Mail && m1Mail.indexOf("@") !== -1) memberEmails.push(m1Mail);
-      }
-      if (m2Name && m2Name !== "None" && !/^\d+$/.test(m2Name) && m2Name.indexOf("@") === -1) {
-        membersArray.push(m2Name);
-        membersRoster.push({ role: "Member 2", name: m2Name, email: m2Mail, phone: m2Phone });
-        if (m2Mail && m2Mail.indexOf("@") !== -1) memberEmails.push(m2Mail);
-      }
-      if (m3Name && m3Name !== "None" && !/^\d+$/.test(m3Name) && m3Name.indexOf("@") === -1) {
-        membersArray.push(m3Name);
-        membersRoster.push({ role: "Member 3", name: m3Name, email: m3Mail, phone: m3Phone });
-        if (m3Mail && m3Mail.indexOf("@") !== -1) memberEmails.push(m3Mail);
-      }
-
-      var regType = (headerMap.regType !== -1 && data[r][headerMap.regType]) ? data[r][headerMap.regType].toString().trim() : 'EXTERNAL';
-      var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && data[r][headerMap.college]) ? data[r][headerMap.college].toString().trim() : 'SIMATS Engineering');
-
-      var targetDetails = {
-        teamId: rowTeamId || generateUniqueTeamId(r),
-        teamName: rowTeamName || 'Team',
-        college: college,
-        leaderName: rowLeaderName || 'Team Leader',
-        leaderEmail: rowLeaderMail,
-        leaderPhone: (headerMap.leaderPhone !== -1) ? data[r][headerMap.leaderPhone] : '',
-        members: membersArray,
-        membersStr: membersArray.join(', '),
-        membersRoster: membersRoster,
-        memberEmails: memberEmails,
-        regType: regType
-      };
-
-      console.log("📨 Sending email to [" + targetDetails.teamId + "] " + targetDetails.teamName + " -> " + targetDetails.leaderEmail);
-      var ok = sendRegistrationConfirmationEmail(targetDetails);
-      if (ok) {
-        if (headerMap.confirmationEmailStatus !== -1) {
-          sheet.getRange(r + 1, headerMap.confirmationEmailStatus + 1).setValue("Sent (" + formatISTDateTime(new Date()) + ")");
-        }
-        SpreadsheetApp.flush();
-        console.log("✅ Successfully sent email to " + targetDetails.teamName + " (" + targetDetails.teamId + ")!");
-        return true;
-      } else {
-        console.log("❌ Failed to send email to " + targetDetails.leaderEmail);
-        return false;
-      }
-    }
-  }
-  
-  console.log("❌ Team '" + target + "' not found in sheet.");
-  return false;
-}
 
 /**
  * Convenience test function: Sends a test confirmation pass directly to your logged-in Google email.
@@ -1156,7 +1082,7 @@ function sendRegistrationConfirmationEmail(details) {
 
     // Direct Universal Web App Pass URL (Matches the exact pass card layout)
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
-    var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
+    var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId) + (details.leaderEmail ? "&email=" + encodeURIComponent(details.leaderEmail) : "");
 
     // Primary Pass Link: Direct pass card rendering with Netlify portal fallback
     var passUrl = directPassUrl;
@@ -1777,13 +1703,34 @@ function doGet(e) {
       var rows = sheet.getDataRange().getValues();
       if (rows.length > 1) {
         var headerMap = getHeaderMap(rows[0]);
-        var cleanQueryId = queryId.toLowerCase().replace(/[^a-z0-9]/g, '');
+        var rawQuery = (queryId || e.parameter.email || e.parameter.team || '').toString().toLowerCase().trim();
+        var cleanQueryId = rawQuery.replace(/[^a-z0-9]/g, '');
 
         for (var i = 1; i < rows.length; i++) {
-          var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
-          var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
+          var row = rows[i];
+          if (!row || row.length === 0) continue;
 
-          if (cleanRId === cleanQueryId) {
+          var rId = (headerMap.teamId !== -1 && row[headerMap.teamId]) ? row[headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
+          var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
+          var rowIdNum1 = "syn" + (2600 + i);
+          var rowIdNum2 = "syn26" + (i < 10 ? "0" + i : i);
+          var rowIdNum3 = "syn26" + i;
+
+          var isMatch = false;
+          if (cleanQueryId && (cleanRId === cleanQueryId || cleanQueryId === rowIdNum1 || cleanQueryId === rowIdNum2 || cleanQueryId === rowIdNum3)) {
+            isMatch = true;
+          } else if (rawQuery && rawQuery.length >= 2) {
+            for (var c = 0; c < row.length; c++) {
+              var cellVal = (row[c] || "").toString().trim().toLowerCase();
+              if (!cellVal) continue;
+              if (cellVal === rawQuery || cellVal.replace(/[^a-z0-9]/g, '') === cleanQueryId || (cellVal.indexOf('@') !== -1 && (cellVal === rawQuery || rawQuery.indexOf(cellVal) !== -1 || cellVal.indexOf(rawQuery) !== -1))) {
+                isMatch = true;
+                break;
+              }
+            }
+          }
+
+          if (isMatch) {
             var regType = (headerMap.regType !== -1 && rows[i][headerMap.regType]) ? rows[i][headerMap.regType].toString().trim() : 'EXTERNAL';
             var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && rows[i][headerMap.college]) ? rows[i][headerMap.college].toString().trim() : 'External College');
 
@@ -1847,17 +1794,20 @@ function doGet(e) {
       var rows = sheet.getDataRange().getValues();
       if (rows.length > 1) {
         var headerMap = getHeaderMap(rows[0]);
-        var cleanQueryId = (queryId || queryTeam || queryEmail || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        var cleanQueryText = (queryTeam || queryId || queryEmail || '').toLowerCase().trim();
+        var rawQuery = (queryId || queryTeam || queryEmail || e.parameter.q || e.parameter.query || '').toString().toLowerCase().trim();
+        var cleanQueryId = rawQuery.replace(/[^a-z0-9]/g, '');
 
         for (var i = 1; i < rows.length; i++) {
-          var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
-          var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
-          var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
-          var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
+          var row = rows[i];
+          if (!row || row.length === 0) continue;
+
+          var rId = (headerMap.teamId !== -1 && row[headerMap.teamId]) ? row[headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
+          var rTeam = (headerMap.teamName !== -1 && row[headerMap.teamName] ? row[headerMap.teamName] : '').toString().trim();
+          var rEmail = (headerMap.leaderEmail !== -1 && row[headerMap.leaderEmail] ? row[headerMap.leaderEmail] : '').toString().trim();
+          var rLeader = (headerMap.leaderName !== -1 && row[headerMap.leaderName] ? row[headerMap.leaderName] : '').toString().trim();
 
           // Skip completely empty/blank rows
-          if (!rTeam && !rLeader && !rEmail && (!rows[i][0] || rows[i][0].toString().trim() === '')) continue;
+          if (!rTeam && !rLeader && !rEmail && (!row[0] || row[0].toString().trim() === '')) continue;
 
           var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
           var rTeamLower = rTeam.toLowerCase();
@@ -1870,19 +1820,23 @@ function doGet(e) {
           var isMatch = false;
           if (cleanQueryId && (cleanRId === cleanQueryId || cleanQueryId === rowIdNum1 || cleanQueryId === rowIdNum2 || cleanQueryId === rowIdNum3)) {
             isMatch = true;
-          } else if (cleanQueryText && cleanQueryText.length >= 3) {
-            if (rTeamLower === cleanQueryText ||
-                rEmailLower === cleanQueryText ||
-                rLeaderLower === cleanQueryText ||
-                (rTeamLower && rTeamLower.indexOf(cleanQueryText) !== -1) ||
-                (rEmailLower && rEmailLower.indexOf(cleanQueryText) !== -1) ||
-                (rLeaderLower && rLeaderLower.indexOf(cleanQueryText) !== -1)) {
+          } else if (rawQuery && rawQuery.length >= 2) {
+            if (rTeamLower === rawQuery ||
+                rEmailLower === rawQuery ||
+                rLeaderLower === rawQuery ||
+                (rTeamLower && rTeamLower.indexOf(rawQuery) !== -1) ||
+                (rEmailLower && rEmailLower.indexOf(rawQuery) !== -1) ||
+                (rLeaderLower && rLeaderLower.indexOf(rawQuery) !== -1)) {
               isMatch = true;
             } else {
-              // Check every cell in row for exact query match
-              for (var c = 0; c < rows[i].length; c++) {
-                var cellClean = (rows[i][c] || "").toString().trim().toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (cleanQueryId && cellClean === cleanQueryId) {
+              // Check every cell in row (Member 1, 2, 3 emails, names, phones)
+              for (var c = 0; c < row.length; c++) {
+                var cellVal = (row[c] || "").toString().trim().toLowerCase();
+                if (!cellVal) continue;
+                var cellClean = cellVal.replace(/[^a-z0-9]/g, '');
+                if (cellVal === rawQuery || cellClean === cleanQueryId ||
+                   (cellVal.indexOf('@') !== -1 && (cellVal === rawQuery || rawQuery.indexOf(cellVal) !== -1 || cellVal.indexOf(rawQuery) !== -1)) ||
+                   (rawQuery.length >= 3 && cellVal.indexOf(rawQuery) !== -1)) {
                   isMatch = true;
                   break;
                 }
@@ -2051,26 +2005,47 @@ function doGet(e) {
     var cleanCheckText = rawCheckQuery.toLowerCase();
 
     for (var i = 1; i < rows.length; i++) {
-      var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
-      var rTeam = (headerMap.teamName !== -1 && rows[i][headerMap.teamName] ? rows[i][headerMap.teamName] : '').toString().trim();
-      var rLeader = (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName] ? rows[i][headerMap.leaderName] : '').toString().trim();
-      var rEmail = (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail] ? rows[i][headerMap.leaderEmail] : '').toString().trim();
+      var row = rows[i];
+      if (!row || row.length === 0) continue;
+
+      var rId = (headerMap.teamId !== -1 && row[headerMap.teamId]) ? row[headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
+      var rTeam = (headerMap.teamName !== -1 && row[headerMap.teamName] ? row[headerMap.teamName] : '').toString().trim();
+      var rLeader = (headerMap.leaderName !== -1 && row[headerMap.leaderName] ? row[headerMap.leaderName] : '').toString().trim();
+      var rEmail = (headerMap.leaderEmail !== -1 && row[headerMap.leaderEmail] ? row[headerMap.leaderEmail] : '').toString().trim();
+
+      if (!rTeam && !rLeader && !rEmail && (!row[0] || row[0].toString().trim() === '')) continue;
 
       var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
       var rTeamLower = rTeam.toLowerCase();
       var rEmailLower = rEmail.toLowerCase();
       var rLeaderLower = rLeader.toLowerCase();
+      var rowIdNum1 = "syn" + (2600 + i);
+      var rowIdNum2 = "syn26" + (i < 10 ? "0" + i : i);
+      var rowIdNum3 = "syn26" + i;
 
       var isMatch = false;
-      if (cleanCheckText) {
-        if ((cleanCheckId && cleanRId === cleanCheckId) ||
-          rTeamLower === cleanCheckText ||
-          rEmailLower === cleanCheckText ||
-          rLeaderLower === cleanCheckText ||
-          rTeamLower.indexOf(cleanCheckText) !== -1 ||
-          cleanCheckText.indexOf(rTeamLower) !== -1 ||
-          rEmailLower.indexOf(cleanCheckText) !== -1) {
+      if (cleanCheckId && (cleanRId === cleanCheckId || cleanCheckId === rowIdNum1 || cleanCheckId === rowIdNum2 || cleanCheckId === rowIdNum3)) {
+        isMatch = true;
+      } else if (cleanCheckText && cleanCheckText.length >= 2) {
+        if (rTeamLower === cleanCheckText ||
+            rEmailLower === cleanCheckText ||
+            rLeaderLower === cleanCheckText ||
+            (rTeamLower && rTeamLower.indexOf(cleanCheckText) !== -1) ||
+            (rEmailLower && rEmailLower.indexOf(cleanCheckText) !== -1) ||
+            (rLeaderLower && rLeaderLower.indexOf(cleanCheckText) !== -1)) {
           isMatch = true;
+        } else {
+          for (var c = 0; c < row.length; c++) {
+            var cellVal = (row[c] || "").toString().trim().toLowerCase();
+            if (!cellVal) continue;
+            var cellClean = cellVal.replace(/[^a-z0-9]/g, '');
+            if (cellVal === cleanCheckText || cellClean === cleanCheckId ||
+               (cellVal.indexOf('@') !== -1 && (cellVal === cleanCheckText || cleanCheckText.indexOf(cellVal) !== -1 || cellVal.indexOf(cleanCheckText) !== -1)) ||
+               (cleanCheckText.length >= 3 && cellVal.indexOf(cleanCheckText) !== -1)) {
+              isMatch = true;
+              break;
+            }
+          }
         }
       }
 
@@ -3053,7 +3028,8 @@ function doPost(e) {
       if (headerMap.emailSentTime !== -1) rowToAppend[headerMap.emailSentTime] = "";
       if (headerMap.validationStatus !== -1) rowToAppend[headerMap.validationStatus] = (reg.regType === "INTERNAL") ? "Verified (Internal ID)" : "Pending Payment Verification";
 
-      sheet.appendRow(rowToAppend);
+      var targetRow = findFirstEmptyRowIndex(sheet);
+      sheet.getRange(targetRow, 1, 1, rowToAppend.length).setValues([rowToAppend]);
       SpreadsheetApp.flush();
 
       // Multi-Layer Fail-Safe: Schedule precision 5-minute wake-up & ensure cron is active
