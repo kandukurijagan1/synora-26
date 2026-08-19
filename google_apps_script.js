@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL = 'https://synora26.netlify.app/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw4Es4iaHX40kchNgLm6TfIFd19pP6Tm3w095mJ5kotbO41c73fRWf6goiRCOPnivTw/exec';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzg-P4pNrJGNyO2JtZ0nKbtXDySnZszTpUOKMXmXPcT-rF5HjqpfScsriZjO9V-fP_b/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -442,9 +442,7 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
       if (file) {
         try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (shErr) { }
         var fileId = file.getId();
-        var webAppBase = (typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) ? ACTIVE_WEB_APP_URL.replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/') : '';
-        var proxyUrl = webAppBase ? (webAppBase + "?action=getFile&id=" + fileId) : ("https://drive.google.com/file/d/" + fileId + "/view?usp=sharing");
-        return proxyUrl;
+        return "https://drive.google.com/file/d/" + fileId + "/view?usp=drivesdk";
       }
     } catch (driveAppErr) {
       console.warn("DriveApp Strategy 1 error: " + driveAppErr.toString() + ". Attempting Strategy 2 (REST API)...");
@@ -493,9 +491,7 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
               muteHttpExceptions: true
             });
           } catch (permErr) { }
-          var webAppBase = (typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) ? ACTIVE_WEB_APP_URL.replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/') : '';
-          var proxyUrl = webAppBase ? (webAppBase + "?action=getFile&id=" + fileId) : ("https://drive.google.com/file/d/" + fileId + "/view?usp=sharing");
-          return proxyUrl;
+          return "https://drive.google.com/file/d/" + fileId + "/view?usp=drivesdk";
         }
       }
     } catch (restErr) {
