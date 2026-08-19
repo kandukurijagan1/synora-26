@@ -21,9 +21,8 @@ var DEFAULT_ADMIN_PASSCODE = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
-var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
-var OFFICIAL_PORTAL_URL = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxobHVKP6albUPab8yUbi7YaKPidRh2MdkCsRyGmzPY9m3vpbEdFIu59XRh3gBpErAk/exec';
+var OFFICIAL_PORTAL_URL = 'https://synora26.netlify.app/';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfzoDrbCSFUvRGApDavr6u0Rnr4bpJe_l78ihbg7Sfns2pvy0Bd-hXIF9xCFcgGniW/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -982,12 +981,8 @@ function sendRegistrationConfirmationEmail(details) {
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
     var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
 
-    // Primary Pass Link: Point to public website to avoid Google login blocks in webviews!
-    var portalUrl = OFFICIAL_PORTAL_URL || 'https://kandukurijagan1.github.io/synora-26/';
-    if (portalUrl.charAt(portalUrl.length - 1) !== '/') {
-      portalUrl += '/';
-    }
-    var passUrl = portalUrl + "?id=" + encodeURIComponent(details.teamId);
+    // Primary Pass Link: Direct pass card rendering with Netlify portal fallback
+    var passUrl = directPassUrl;
 
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
@@ -2420,21 +2415,68 @@ function doPost(e) {
     if (rawContent && rawContent.trim().charAt(0) === '{') {
       try {
         postData = JSON.parse(rawContent);
-        action = postData.action;
-        reg = postData.data;
-        if (reg && reg.fileData && reg.fileName) {
-          reg.fileUrl = saveUploadToDrive(reg.fileData, reg.fileName, reg.fileMime, reg.teamName || 'Team');
+        action = postData.action || 'register';
+        var p = postData.data || postData;
+
+        var regType = (p.regType || (p.collegeStatus === 'internal' ? 'internal' : 'external')).toUpperCase().trim();
+        if (regType !== 'INTERNAL' && regType !== 'EXTERNAL') {
+          regType = (p.collegeStatus === 'internal' || p.internalRegNo || p.regNumber) ? 'INTERNAL' : 'EXTERNAL';
         }
-      } catch (jsonErr) { }
+
+        var isInternal = (regType === 'INTERNAL');
+        var regNumber = isInternal ? (p.internalRegNo || p.regNumber || '') : '';
+        var transactionId = !isInternal ? (p.txnId || p.transactionId || p.externalTxnId || '') : '';
+        var collegeName = isInternal ? 'SIMATS Engineering' : (p.collegeName || p.college || 'External College');
+
+        var m1Name = (p.member1Name || '').trim();
+        var m1Mail = (p.member1Mail || '').trim();
+        var m1Phone = (p.member1Phone || '').trim();
+
+        var m2Name = (p.member2Name || '').trim();
+        var m2Mail = (p.member2Mail || '').trim();
+        var m2Phone = (p.member2Phone || '').trim();
+
+        var m3Name = (p.member3Name || '').trim();
+        var m3Mail = (p.member3Mail || '').trim();
+        var m3Phone = (p.member3Phone || '').trim();
+
+        var fileRecord = "None";
+        if (p.fileData && p.fileName) {
+          fileRecord = saveUploadToDrive(p.fileData, p.fileName, p.fileMime, p.teamName || 'Team');
+        }
+
+        reg = {
+          teamName: p.teamName || '',
+          college: collegeName,
+          leaderName: p.teamLeaderName || p.leaderName || '',
+          leaderEmail: p.teamLeaderMail || p.leaderEmail || '',
+          leaderPhone: p.teamLeaderMobile || p.leaderPhone || '',
+          member1Name: m1Name,
+          member1Mail: m1Mail,
+          member1Phone: m1Phone,
+          member2Name: m2Name,
+          member2Mail: m2Mail,
+          member2Phone: m2Phone,
+          member3Name: m3Name,
+          member3Mail: m3Mail,
+          member3Phone: m3Phone,
+          regType: regType,
+          regNumber: regNumber,
+          transactionId: transactionId,
+          fileUrl: fileRecord
+        };
+      } catch (jsonErr) {
+        console.warn("JSON parse error: " + jsonErr.toString());
+      }
     }
 
-    if (!postData) {
+    if (!reg) {
       var p = e.parameter || {};
       action = p.action || 'register';
 
       var regType = (p.regType || (p.collegeStatus === 'internal' ? 'internal' : 'external')).toUpperCase().trim();
       if (regType !== 'INTERNAL' && regType !== 'EXTERNAL') {
-        regType = (p.collegeStatus === 'internal' || p.internalRegNo) ? 'INTERNAL' : 'EXTERNAL';
+        regType = (p.collegeStatus === 'internal' || p.internalRegNo || p.regNumber) ? 'INTERNAL' : 'EXTERNAL';
       }
 
       var isInternal = (regType === 'INTERNAL');
@@ -2463,9 +2505,9 @@ function doPost(e) {
       reg = {
         teamName: p.teamName || '',
         college: collegeName,
-        leaderName: p.teamLeaderName || '',
-        leaderEmail: p.teamLeaderMail || '',
-        leaderPhone: p.teamLeaderMobile || '',
+        leaderName: p.teamLeaderName || p.leaderName || '',
+        leaderEmail: p.teamLeaderMail || p.leaderEmail || '',
+        leaderPhone: p.teamLeaderMobile || p.leaderPhone || '',
         member1Name: m1Name,
         member1Mail: m1Mail,
         member1Phone: m1Phone,
