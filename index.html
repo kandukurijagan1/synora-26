@@ -3016,6 +3016,48 @@
         page-break-inside: avoid !important;
       }
     }
+
+    /* ══ FACULTY ORGANIZERS SECTION ══ */
+    .faculty-org-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 28px;
+    }
+    .faculty-org-card {
+      background: rgba(124, 58, 237, 0.06);
+      border: 1px solid rgba(124, 58, 237, 0.2);
+      border-top: 2.5px solid rgba(124, 58, 237, 0.5);
+      border-radius: var(--r-md);
+      padding: 22px 18px;
+      text-align: center;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .faculty-org-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(124, 58, 237, 0.45);
+      border-top-color: rgba(124, 58, 237, 0.8);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+    }
+    .faculty-org-icon {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+    .faculty-org-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 5px;
+    }
+    .faculty-org-role {
+      font-size: 0.74rem;
+      color: #a78bfa;
+      font-weight: 500;
+    }
+    @media (max-width: 500px) {
+      .faculty-org-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -3881,6 +3923,45 @@
           <button type="button" class="btn btn-outline" id="btnResetApplication" style="padding:10px 24px; font-size:0.85rem; border-color:rgba(255,255,255,0.15); color:var(--text-muted);">+ Register Another Team</button>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FACULTY ORGANIZERS SECTION ════════════════════════════ -->
+<section class="section" id="faculty-organizers">
+  <div class="container">
+    <div class="text-center reveal" style="margin-bottom: 12px;">
+      <div class="section-badge">✦ Academic Leadership</div>
+      <h2 class="section-title">Faculty <span class="grad-text">Organizers</span></h2>
+      <p class="section-sub">Department of Medical Biotechnology, SIMATS Engineering</p>
+    </div>
+
+    <div class="faculty-org-grid reveal">
+
+      <div class="faculty-org-card">
+        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-name">Dr. Ieshita Pan</div>
+        <div class="faculty-org-role">HOD &amp; Chief Organizer</div>
+      </div>
+
+      <div class="faculty-org-card">
+        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-name">Dr. I. Praveen Kumar</div>
+        <div class="faculty-org-role">Faculty Organizer</div>
+      </div>
+
+      <div class="faculty-org-card">
+        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-name">Dr. Ashley George Thomas</div>
+        <div class="faculty-org-role">Faculty Organizer</div>
+      </div>
+
+      <div class="faculty-org-card">
+        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-name">Dr. S. Moogambigai</div>
+        <div class="faculty-org-role">Faculty Organizer</div>
+      </div>
+
     </div>
   </div>
 </section>
