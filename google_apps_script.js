@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL = 'https://kandukurijagan1.github.io/synora-26/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxJfu9v2QjQSL8U7h65z33Kqn6Wf_Ly_EAu7dqAa4xqIgvNSHlJHQ0qn2HMHhMqLsPi/exec';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxobHVKP6albUPab8yUbi7YaKPidRh2MdkCsRyGmzPY9m3vpbEdFIu59XRh3gBpErAk/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -389,13 +389,17 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
       if (file) {
         try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (shErr) { }
         var fileId = file.getId();
+        var proxyUrl = "";
         try {
           var webAppUrl = ScriptApp.getService().getUrl();
           if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
-            return webAppUrl + "?action=getFile&id=" + fileId;
+            proxyUrl = webAppUrl + "?action=getFile&id=" + fileId;
           }
         } catch (servErr) { }
-        return "https://drive.google.com/file/d/" + fileId + "/preview";
+        if (!proxyUrl && typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) {
+          proxyUrl = ACTIVE_WEB_APP_URL + "?action=getFile&id=" + fileId;
+        }
+        return proxyUrl || ("https://drive.google.com/file/d/" + fileId + "/preview");
       }
     } catch (driveAppErr) {
       console.warn("DriveApp Strategy 1 error: " + driveAppErr.toString() + ". Attempting Strategy 2 (REST API)...");
@@ -444,13 +448,17 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
               muteHttpExceptions: true
             });
           } catch (permErr) { }
+          var proxyUrl = "";
           try {
             var webAppUrl = ScriptApp.getService().getUrl();
             if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
-              return webAppUrl + "?action=getFile&id=" + fileId;
+              proxyUrl = webAppUrl + "?action=getFile&id=" + fileId;
             }
           } catch (servErr) { }
-          return "https://drive.google.com/file/d/" + fileId + "/preview";
+          if (!proxyUrl && typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) {
+            proxyUrl = ACTIVE_WEB_APP_URL + "?action=getFile&id=" + fileId;
+          }
+          return proxyUrl || ("https://drive.google.com/file/d/" + fileId + "/preview");
         }
       }
     } catch (restErr) {
@@ -974,8 +982,12 @@ function sendRegistrationConfirmationEmail(details) {
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
     var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId);
 
-    // Primary Pass Link for QR code and email button
-    var passUrl = directPassUrl;
+    // Primary Pass Link: Point to public website to avoid Google login blocks in webviews!
+    var portalUrl = OFFICIAL_PORTAL_URL || 'https://kandukurijagan1.github.io/synora-26/';
+    if (portalUrl.charAt(portalUrl.length - 1) !== '/') {
+      portalUrl += '/';
+    }
+    var passUrl = portalUrl + "?id=" + encodeURIComponent(details.teamId);
 
     // High-Reliability Multi-Provider QR Generator
     var qrBlob = null;
@@ -1331,45 +1343,238 @@ function doGet(e) {
       var b64 = Utilities.base64Encode(bytes);
       var mime = blob.getContentType();
       var fileName = file.getName();
+      var fileSize = file.getSize();
+
+      var sizeStr = "";
+      if (fileSize < 1024) {
+        sizeStr = fileSize + " B";
+      } else if (fileSize < 1048576) {
+        sizeStr = (fileSize / 1024).toFixed(1) + " KB";
+      } else {
+        sizeStr = (fileSize / 1048576).toFixed(1) + " MB";
+      }
+
+      var isImg = mime.indexOf('image/') !== -1;
 
       var html = '<!DOCTYPE html><html><head><title>SYNORA \'26 · ' + fileName + '</title>' +
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+        '<link rel="preconnect" href="https://fonts.googleapis.com">' +
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+        '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">' +
         '<style>' +
-        'body { margin: 0; background: #070312; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; flex-direction: column; min-height: 100vh; }' +
-        '.top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: rgba(13, 7, 30, 0.85); border-bottom: 1px solid rgba(124, 58, 237, 0.3); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 10; }' +
-        '.title { font-size: 0.95rem; font-weight: 700; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
-        '.btn-group { display: flex; gap: 10px; }' +
-        '.btn { display: inline-flex; align-items: center; justify-content: center; background: #7c3aed; color: #fff; text-decoration: none; font-size: 0.8rem; font-weight: 700; padding: 7px 14px; border-radius: 6px; transition: background 0.2s; border: none; cursor: pointer; }' +
-        '.btn:hover { background: #6d28d9; }' +
-        '.btn-secondary { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); }' +
-        '.btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }' +
-        '.content-area { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }' +
-        'img { max-width: 100%; max-height: 82vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }' +
-        'iframe, object { width: 100%; height: 82vh; border: none; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }' +
-        '.fallback-box { text-align: center; max-width: 400px; padding: 30px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }' +
+        '  :root {' +
+        '    --bg: #03000a;' +
+        '    --card: rgba(14, 7, 31, 0.75);' +
+        '    --primary: #7c3aed;' +
+        '    --primary-hover: #6d28d9;' +
+        '    --secondary: #06b6d4;' +
+        '    --border: rgba(124, 58, 237, 0.25);' +
+        '    --text: #f8fafc;' +
+        '    --text-muted: #94a3b8;' +
+        '  }' +
+        '  body {' +
+        '    margin: 0;' +
+        '    background: var(--bg);' +
+        '    color: var(--text);' +
+        '    font-family: \'Plus Jakarta Sans\', sans-serif;' +
+        '    display: flex;' +
+        '    flex-direction: column;' +
+        '    min-height: 100vh;' +
+        '    overflow-x: hidden;' +
+        '    background-image: ' +
+        '      radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),' +
+        '      radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);' +
+        '    background-attachment: fixed;' +
+        '  }' +
+        '  .top-bar {' +
+        '    display: flex;' +
+        '    justify-content: space-between;' +
+        '    align-items: center;' +
+        '    padding: 14px 24px;' +
+        '    background: rgba(13, 7, 30, 0.85);' +
+        '    border-bottom: 1px solid var(--border);' +
+        '    backdrop-filter: blur(12px);' +
+        '    position: sticky;' +
+        '    top: 0;' +
+        '    z-index: 100;' +
+        '  }' +
+        '  .file-info {' +
+        '    display: flex;' +
+        '    flex-direction: column;' +
+        '    max-width: 50%;' +
+        '  }' +
+        '  .file-name {' +
+        '    font-family: \'Space Grotesk\', sans-serif;' +
+        '    font-size: 0.95rem;' +
+        '    font-weight: 700;' +
+        '    color: #fff;' +
+        '    white-space: nowrap;' +
+        '    overflow: hidden;' +
+        '    text-overflow: ellipsis;' +
+        '  }' +
+        '  .file-meta {' +
+        '    font-size: 0.75rem;' +
+        '    color: var(--text-muted);' +
+        '    margin-top: 2px;' +
+        '  }' +
+        '  .controls {' +
+        '    display: flex;' +
+        '    gap: 8px;' +
+        '    align-items: center;' +
+        '  }' +
+        '  .btn {' +
+        '    display: inline-flex;' +
+        '    align-items: center;' +
+        '    justify-content: center;' +
+        '    background: var(--primary);' +
+        '    color: #fff;' +
+        '    text-decoration: none;' +
+        '    font-size: 0.8rem;' +
+        '    font-weight: 700;' +
+        '    padding: 8px 16px;' +
+        '    border-radius: 8px;' +
+        '    transition: all 0.2s ease;' +
+        '    border: 1px solid transparent;' +
+        '    cursor: pointer;' +
+        '    gap: 6px;' +
+        '  }' +
+        '  .btn:hover {' +
+        '    background: var(--primary-hover);' +
+        '    box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);' +
+        '  }' +
+        '  .btn-secondary {' +
+        '    background: rgba(255, 255, 255, 0.05);' +
+        '    border: 1px solid rgba(255, 255, 255, 0.1);' +
+        '  }' +
+        '  .btn-secondary:hover {' +
+        '    background: rgba(255, 255, 255, 0.1);' +
+        '    border-color: rgba(255, 255, 255, 0.2);' +
+        '    box-shadow: none;' +
+        '  }' +
+        '  .btn-icon {' +
+        '    padding: 8px;' +
+        '    border-radius: 8px;' +
+        '    width: 36px;' +
+        '    height: 36px;' +
+        '    box-sizing: border-box;' +
+        '  }' +
+        '  .content-area {' +
+        '    flex: 1;' +
+        '    display: flex;' +
+        '    justify-content: center;' +
+        '    align-items: center;' +
+        '    padding: 24px;' +
+        '    box-sizing: border-box;' +
+        '    position: relative;' +
+        '  }' +
+        '  .viewer-container {' +
+        '    max-width: 100%;' +
+        '    max-height: 80vh;' +
+        '    display: flex;' +
+        '    justify-content: center;' +
+        '    align-items: center;' +
+        '    overflow: auto;' +
+        '    border-radius: 12px;' +
+        '    background: rgba(255, 255, 255, 0.02);' +
+        '    border: 1px solid rgba(255, 255, 255, 0.05);' +
+        '    padding: 10px;' +
+        '  }' +
+        '  img {' +
+        '    max-width: 100%;' +
+        '    max-height: 75vh;' +
+        '    object-fit: contain;' +
+        '    border-radius: 6px;' +
+        '    box-shadow: 0 20px 40px rgba(0,0,0,0.6);' +
+        '    transform-origin: center center;' +
+        '    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);' +
+        '  }' +
+        '  iframe {' +
+        '    width: 90vw;' +
+        '    height: 80vh;' +
+        '    border: none;' +
+        '    border-radius: 12px;' +
+        '    box-shadow: 0 20px 40px rgba(0,0,0,0.6);' +
+        '    background: #fff;' +
+        '  }' +
+        '  .fallback-box {' +
+        '    text-align: center;' +
+        '    max-width: 420px;' +
+        '    padding: 40px 30px;' +
+        '    background: var(--card);' +
+        '    border: 1px solid var(--border);' +
+        '    border-radius: 16px;' +
+        '    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);' +
+        '  }' +
+        '  .fallback-icon {' +
+        '    font-size: 3.5rem;' +
+        '    margin-bottom: 16px;' +
+        '  }' +
         '</style></head><body>' +
         '<div class="top-bar">' +
-        '<span class="title">📎 ' + fileName + '</span>' +
-        '<div class="btn-group">' +
-        '<a class="btn btn-secondary" href="https://drive.google.com/file/d/' + fileId + '/preview" target="_blank">🌐 Open in Drive ↗</a>' +
-        '<a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '">📥 Download</a>' +
+        '  <div class="file-info">' +
+        '    <span class="file-name">📎 ' + fileName + '</span>' +
+        '    <span class="file-meta">' + sizeStr + ' · ' + mime + '</span>' +
+        '  </div>' +
+        '  <div class="controls">' +
+        '    <button class="btn btn-secondary btn-icon img-only" onclick="zoomIn()" title="Zoom In">➕</button>' +
+        '    <button class="btn btn-secondary btn-icon img-only" onclick="zoomOut()" title="Zoom Out">➖</button>' +
+        '    <button class="btn btn-secondary btn-icon img-only" onclick="rotateImage()" title="Rotate 90°">🔄</button>' +
+        '    <a class="btn btn-secondary" href="https://drive.google.com/file/d/' + fileId + '/preview" target="_blank">🌐 View in Drive ↗</a>' +
+        '    <a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '">📥 Download</a>' +
+        '  </div>' +
         '</div>' +
-        '</div>' +
-        '<div class="content-area">';
+        '<div class="content-area">' +
+        '  <div class="viewer-container">';
 
-      if (mime.indexOf('image/') !== -1) {
-        html += '<img src="data:' + mime + ';base64,' + b64 + '" alt="' + fileName + '" />';
+      if (isImg) {
+        html += '    <img id="receipt-img" src="data:' + mime + ';base64,' + b64 + '" alt="' + fileName + '" />';
       } else if (mime.indexOf('pdf') !== -1) {
-        html += '<iframe src="data:' + mime + ';base64,' + b64 + '"></iframe>';
+        html += '    <iframe src="data:' + mime + ';base64,' + b64 + '"></iframe>';
       } else {
-        html += '<div class="fallback-box">' +
-          '<h3 style="margin-bottom:12px;">📄 Non-Previewable File</h3>' +
-          '<p style="font-size:0.85rem; color:#94a3b8; margin-bottom:20px;">This file type (' + mime + ') cannot be viewed directly in the browser.</p>' +
-          '<a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '" style="width:100%; box-sizing:border-box;">Download File</a>' +
-          '</div>';
+        html += '    <div class="fallback-box">' +
+          '      <div class="fallback-icon">📄</div>' +
+          '      <h3 style="margin-bottom:12px; font-family:\'Space Grotesk\', sans-serif;">Non-Previewable File</h3>' +
+          '      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">This file type (' + mime + ') cannot be viewed directly in the browser.</p>' +
+          '      <a class="btn" href="data:' + mime + ';base64,' + b64 + '" download="' + fileName + '" style="width:100%; box-sizing:border-box; justify-content:center;">Download File</a>' +
+          '    </div>';
       }
 
-      html += '</div></body></html>';
+      html += '  </div>' +
+        '</div>' +
+        '<script>' +
+        '  let rotation = 0;' +
+        '  let zoom = 1;' +
+        '  const isImg = ' + isImg + ';' +
+        '  if (!isImg) {' +
+        '    document.querySelectorAll(".img-only").forEach(el => el.style.display = "none");' +
+        '  }' +
+        '  function rotateImage() {' +
+        '    rotation = (rotation + 90) % 360;' +
+        '    applyTransform();' +
+        '  }' +
+        '  function zoomIn() {' +
+        '    zoom += 0.15;' +
+        '    applyTransform();' +
+        '  }' +
+        '  function zoomOut() {' +
+        '    if (zoom > 0.25) {' +
+        '      zoom -= 0.15;' +
+        '      applyTransform();' +
+        '    }' +
+        '  }' +
+        '  function applyTransform() {' +
+        '    const img = document.getElementById("receipt-img");' +
+        '    if (img) {' +
+        '      img.style.transform = `scale(${zoom}) rotate(${rotation}deg)`;' +
+        '      if (rotation === 90 || rotation === 270) {' +
+        '         img.style.maxHeight = "70vw";' +
+        '      } else {' +
+        '         img.style.maxHeight = "75vh";' +
+        '      }' +
+        '    }' +
+        '  }' +
+        '</script>' +
+        '</body></html>';
 
       return HtmlService.createHtmlOutput(html)
         .setTitle("SYNORA '26 · " + fileName)
@@ -1378,6 +1583,76 @@ function doGet(e) {
     } catch (err) {
       return ContentService.createTextOutput("Error retrieving file from Secure Proxy: " + err.toString());
     }
+  }
+
+  // ─── ACTION: GET SPECIFIC TEAM DATA FOR FRONTEND HOLOGRAPHIC PASS ───
+  if (action === 'getTicket' || action === 'getPass') {
+    var queryId = (e.parameter.id || e.parameter.teamId || '').trim();
+
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName("Registrations");
+    if (!sheet && ss.getSheets().length > 0) sheet = ss.getSheets()[0];
+
+    var resData = null;
+    if (sheet) {
+      var rows = sheet.getDataRange().getValues();
+      if (rows.length > 1) {
+        var headerMap = getHeaderMap(rows[0]);
+        var cleanQueryId = queryId.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+        for (var i = 1; i < rows.length; i++) {
+          var rId = (headerMap.teamId !== -1 && rows[i][headerMap.teamId]) ? rows[i][headerMap.teamId].toString().trim() : ("SYN-" + (2600 + i));
+          var cleanRId = rId.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+          if (cleanRId === cleanQueryId) {
+            var regType = (headerMap.regType !== -1 && rows[i][headerMap.regType]) ? rows[i][headerMap.regType].toString().trim() : 'EXTERNAL';
+            var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && rows[i][headerMap.college]) ? rows[i][headerMap.college].toString().trim() : 'External College');
+
+            var membersStr = "";
+            if (headerMap.members !== -1 && rows[i][headerMap.members]) {
+              membersStr = rows[i][headerMap.members].toString().trim();
+            } else {
+              var membersList = [];
+              if (headerMap.m1Name !== -1 && rows[i][headerMap.m1Name]) membersList.push(rows[i][headerMap.m1Name].toString().trim());
+              if (headerMap.m2Name !== -1 && rows[i][headerMap.m2Name]) membersList.push(rows[i][headerMap.m2Name].toString().trim());
+              if (headerMap.m3Name !== -1 && rows[i][headerMap.m3Name]) membersList.push(rows[i][headerMap.m3Name].toString().trim());
+              membersStr = membersList.join(', ');
+            }
+
+            var currentStatus = (headerMap.status !== -1 && rows[i][headerMap.status]) ? rows[i][headerMap.status].toString().trim() : 'Registered';
+            var checkInTime = (headerMap.checkInTime !== -1 && rows[i][headerMap.checkInTime]) ? rows[i][headerMap.checkInTime].toString().trim() : '';
+
+            resData = {
+              teamId: rId,
+              teamName: (headerMap.teamName !== -1 && rows[i][headerMap.teamName]) ? rows[i][headerMap.teamName].toString().trim() : 'Registered Team',
+              college: college,
+              leaderName: (headerMap.leaderName !== -1 && rows[i][headerMap.leaderName]) ? rows[i][headerMap.leaderName].toString().trim() : "Team Leader",
+              leaderEmail: (headerMap.leaderEmail !== -1 && rows[i][headerMap.leaderEmail]) ? rows[i][headerMap.leaderEmail].toString().trim() : "",
+              leaderPhone: (headerMap.leaderPhone !== -1 && rows[i][headerMap.leaderPhone]) ? rows[i][headerMap.leaderPhone].toString().trim() : "N/A",
+              members: membersStr,
+              timestamp: (headerMap.timestamp !== -1 && rows[i][headerMap.timestamp]) ? rows[i][headerMap.timestamp].toString().trim() : "",
+              status: currentStatus,
+              checkInTime: checkInTime
+            };
+            break;
+          }
+        }
+      }
+    }
+
+    var payload = null;
+    if (resData) {
+      payload = JSON.stringify({ status: "success", data: resData });
+    } else {
+      payload = JSON.stringify({ status: "error", message: "Ticket not found." });
+    }
+
+    var callback = e.parameter.callback;
+    if (callback) {
+      return ContentService.createTextOutput(callback + "(" + payload + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(payload).setMimeType(ContentService.MimeType.JSON);
   }
 
   // ─── ACTION: 4-STAGE EVENT STATE MACHINE QR PASS RENDERER ──────────
