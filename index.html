@@ -3021,39 +3021,47 @@
     .faculty-org-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      gap: 18px;
       margin-top: 28px;
     }
     .faculty-org-card {
-      background: rgba(124, 58, 237, 0.06);
-      border: 1px solid rgba(124, 58, 237, 0.2);
-      border-top: 2.5px solid rgba(124, 58, 237, 0.5);
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.35);
       border-radius: var(--r-md);
-      padding: 22px 18px;
+      padding: 26px 18px 22px;
       text-align: center;
+      box-shadow: 0 4px 16px rgba(124, 58, 237, 0.1);
       transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .faculty-org-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(124, 58, 237, 0.45);
-      border-top-color: rgba(124, 58, 237, 0.8);
-      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+      transform: translateY(-5px);
+      border-color: rgba(124, 58, 237, 0.65);
+      box-shadow: 0 12px 32px rgba(124, 58, 237, 0.22);
     }
-    .faculty-org-icon {
-      font-size: 1.4rem;
-      margin-bottom: 10px;
-      opacity: 0.85;
+    .faculty-org-avatar-ring {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(6, 182, 212, 0.2));
+      border: 1.5px solid rgba(124, 58, 237, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin: 0 auto 14px auto;
+      box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
     }
     .faculty-org-name {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #e2e8f0;
-      margin-bottom: 5px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 6px;
     }
     .faculty-org-role {
       font-size: 0.74rem;
-      color: #a78bfa;
-      font-weight: 500;
+      color: #c084fc;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
     @media (max-width: 500px) {
       .faculty-org-grid { grid-template-columns: 1fr 1fr; }
@@ -3939,25 +3947,25 @@
     <div class="faculty-org-grid reveal">
 
       <div class="faculty-org-card">
-        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-avatar-ring">🎓</div>
         <div class="faculty-org-name">Dr. Ieshita Pan</div>
         <div class="faculty-org-role">HOD &amp; Chief Organizer</div>
       </div>
 
       <div class="faculty-org-card">
-        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-avatar-ring">🎓</div>
         <div class="faculty-org-name">Dr. I. Praveen Kumar</div>
         <div class="faculty-org-role">Faculty Organizer</div>
       </div>
 
       <div class="faculty-org-card">
-        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-avatar-ring">🎓</div>
         <div class="faculty-org-name">Dr. Ashley George Thomas</div>
         <div class="faculty-org-role">Faculty Organizer</div>
       </div>
 
       <div class="faculty-org-card">
-        <div class="faculty-org-icon">🎓</div>
+        <div class="faculty-org-avatar-ring">🎓</div>
         <div class="faculty-org-name">Dr. S. Moogambigai</div>
         <div class="faculty-org-role">Faculty Organizer</div>
       </div>
