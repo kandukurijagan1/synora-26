@@ -23,7 +23,7 @@ var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
 var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL = 'https://synora26.netlify.app/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx2q3Uef8ToHWtOPgkUKwe4inf8SaLtQV2m_8Ig1dI4NDOMNzsSd5wum6GDRUJTnG1W/exec';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw4Es4iaHX40kchNgLm6TfIFd19pP6Tm3w095mJ5kotbO41c73fRWf6goiRCOPnivTw/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
@@ -442,17 +442,9 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
       if (file) {
         try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (shErr) { }
         var fileId = file.getId();
-        var proxyUrl = "";
-        try {
-          var webAppUrl = ScriptApp.getService().getUrl();
-          if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
-            proxyUrl = webAppUrl + "?action=getFile&id=" + fileId;
-          }
-        } catch (servErr) { }
-        if (!proxyUrl && typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) {
-          proxyUrl = ACTIVE_WEB_APP_URL + "?action=getFile&id=" + fileId;
-        }
-        return proxyUrl || ("https://drive.google.com/file/d/" + fileId + "/preview");
+        var webAppBase = (typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) ? ACTIVE_WEB_APP_URL.replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/') : '';
+        var proxyUrl = webAppBase ? (webAppBase + "?action=getFile&id=" + fileId) : ("https://drive.google.com/file/d/" + fileId + "/view?usp=sharing");
+        return proxyUrl;
       }
     } catch (driveAppErr) {
       console.warn("DriveApp Strategy 1 error: " + driveAppErr.toString() + ". Attempting Strategy 2 (REST API)...");
@@ -501,17 +493,9 @@ function saveUploadToDrive(rawB64Input, originalName, mimeType, teamName) {
               muteHttpExceptions: true
             });
           } catch (permErr) { }
-          var proxyUrl = "";
-          try {
-            var webAppUrl = ScriptApp.getService().getUrl();
-            if (webAppUrl && webAppUrl.indexOf("/exec") !== -1) {
-              proxyUrl = webAppUrl + "?action=getFile&id=" + fileId;
-            }
-          } catch (servErr) { }
-          if (!proxyUrl && typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) {
-            proxyUrl = ACTIVE_WEB_APP_URL + "?action=getFile&id=" + fileId;
-          }
-          return proxyUrl || ("https://drive.google.com/file/d/" + fileId + "/preview");
+          var webAppBase = (typeof ACTIVE_WEB_APP_URL !== 'undefined' && ACTIVE_WEB_APP_URL) ? ACTIVE_WEB_APP_URL.replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/') : '';
+          var proxyUrl = webAppBase ? (webAppBase + "?action=getFile&id=" + fileId) : ("https://drive.google.com/file/d/" + fileId + "/view?usp=sharing");
+          return proxyUrl;
         }
       }
     } catch (restErr) {
@@ -1083,8 +1067,7 @@ function sendRegistrationConfirmationEmail(details) {
     // Direct Universal Web App Pass URL (Matches the exact pass card layout)
     var webAppUrl = (ACTIVE_WEB_APP_URL || '').replace(/\/macros\/u\/\d+\/s\//g, '/macros/s/');
     var directPassUrl = webAppUrl + "?action=pass&id=" + encodeURIComponent(details.teamId) + (details.leaderEmail ? "&email=" + encodeURIComponent(details.leaderEmail) : "");
-
-    // Primary Pass Link: Direct pass card rendering with Netlify portal fallback
+    // Primary Pass Link: Direct Google Apps Script Web App Pass
     var passUrl = directPassUrl;
 
     // High-Reliability Multi-Provider QR Generator
@@ -1188,6 +1171,20 @@ function sendRegistrationConfirmationEmail(details) {
                   </td>
                 </tr>
 
+                <!-- LAPTOP / DESKTOP ACCESS ADVISORY BANNER -->
+                <tr>
+                  <td style="padding: 0 28px 12px 28px;">
+                    <div style="background-color: #eff6ff; border: 1.5px solid #3b82f6; border-radius: 10px; padding: 12px 16px; text-align: center;">
+                      <div style="font-size: 13px; font-weight: 800; color: #1d4ed8; letter-spacing: 0.5px; margin-bottom: 3px;">
+                        💻 ACCESS ON LAPTOP / DESKTOP RECOMMENDED
+                      </div>
+                      <div style="font-size: 12.5px; line-height: 1.5; color: #1e40af;">
+                        <strong>Please open this entry pass link and QR code on a Laptop or Desktop PC (not on mobile)</strong> to ensure smooth viewing, scanning, and PDF pass downloading.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
                 <!-- QR CODE ENTRY PASS -->
                 <tr>
                   <td align="center" style="padding: 12px 28px;">
@@ -1208,9 +1205,12 @@ function sendRegistrationConfirmationEmail(details) {
                           <div style="font-size: 13px; font-weight: 700; color: #059669; letter-spacing: 0.5px;">
                             ✓ SCAN AT REGISTRATION DESK FOR CHECK-IN
                           </div>
+                          <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">
+                            💻 (Open link & QR on Laptop / Desktop, not in mobile)
+                          </div>
                           <div style="margin-top: 10px;">
                             <a href="${passUrl}" target="_blank" style="display:inline-block; background-color:#0284c7; color:#ffffff; font-size:13px; font-weight:700; text-decoration:none; padding:10px 22px; border-radius:8px; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
-                              ⚡ View & Download Live Entry Pass
+                              ⚡ View & Download Live Entry Pass (Open on Laptop)
                             </a>
                           </div>
                         </td>
@@ -1338,7 +1338,7 @@ function sendRegistrationConfirmationEmail(details) {
       "• 03:00 PM – 03:30 PM: Grand Valedictory Ceremony & Prize Awarding\n" +
       "• Facilities: High-Speed Campus Wi-Fi & Continuous Power Outlets\n\n" +
       "⚠️ REFRESHMENTS NOTICE: Drinking water will be provided at the venue. However, free food/lunch/refreshments will NOT be provided. Participants are requested to carry their own lunch or use the on-campus food courts.\n\n" +
-      "⚠️ MANDATORY: All students must bring their physical college ID cards and laptops.\n\n" +
+      "💻 IMPORTANT: Please open your Live Pass Link and QR code on a Laptop/Desktop PC (not in mobile) for optimal viewing and PDF pass downloading.\n" +
       "Live Pass Link: " + passUrl + "\n\n" +
       "Department of Medical Biotechnology,\nSIMATS Engineering.";
 
@@ -1845,22 +1845,22 @@ function doGet(e) {
           }
 
           if (isMatch) {
-            var regType = (headerMap.regType !== -1 && rows[i][headerMap.regType]) ? rows[i][headerMap.regType].toString().trim() : 'INTERNAL';
-            var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && rows[i][headerMap.college]) ? rows[i][headerMap.college].toString().trim() : 'External College');
+            var regType = (headerMap.regType !== -1 && row[headerMap.regType]) ? row[headerMap.regType].toString().trim() : 'INTERNAL';
+            var college = (regType.toUpperCase() === 'INTERNAL') ? 'SIMATS Engineering' : ((headerMap.college !== -1 && row[headerMap.college]) ? row[headerMap.college].toString().trim() : 'External College');
 
-            var member1 = (headerMap.m1Name !== -1 && rows[i][headerMap.m1Name]) ? rows[i][headerMap.m1Name].toString().trim() : (rows[i][6] || '').toString().trim();
-            var m1Mail = (headerMap.m1Mail !== -1 && rows[i][headerMap.m1Mail]) ? rows[i][headerMap.m1Mail].toString().trim() : (rows[i][7] || '').toString().trim();
-            var m1Phone = (headerMap.m1Phone !== -1 && rows[i][headerMap.m1Phone]) ? rows[i][headerMap.m1Phone].toString().trim() : (rows[i][8] || '').toString().trim();
+            var member1 = (headerMap.m1Name !== -1 && row[headerMap.m1Name]) ? row[headerMap.m1Name].toString().trim() : (row[6] || '').toString().trim();
+            var m1Mail = (headerMap.m1Mail !== -1 && row[headerMap.m1Mail]) ? row[headerMap.m1Mail].toString().trim() : (row[7] || '').toString().trim();
+            var m1Phone = (headerMap.m1Phone !== -1 && row[headerMap.m1Phone]) ? row[headerMap.m1Phone].toString().trim() : (row[8] || '').toString().trim();
 
-            var member2 = (headerMap.m2Name !== -1 && rows[i][headerMap.m2Name]) ? rows[i][headerMap.m2Name].toString().trim() : (rows[i][9] || '').toString().trim();
-            var m2Mail = (headerMap.m2Mail !== -1 && rows[i][headerMap.m2Mail]) ? rows[i][headerMap.m2Mail].toString().trim() : (rows[i][10] || '').toString().trim();
-            var m2Phone = (headerMap.m2Phone !== -1 && rows[i][headerMap.m2Phone]) ? rows[i][headerMap.m2Phone].toString().trim() : (rows[i][11] || '').toString().trim();
+            var member2 = (headerMap.m2Name !== -1 && row[headerMap.m2Name]) ? row[headerMap.m2Name].toString().trim() : (row[9] || '').toString().trim();
+            var m2Mail = (headerMap.m2Mail !== -1 && row[headerMap.m2Mail]) ? row[headerMap.m2Mail].toString().trim() : (row[10] || '').toString().trim();
+            var m2Phone = (headerMap.m2Phone !== -1 && row[headerMap.m2Phone]) ? row[headerMap.m2Phone].toString().trim() : (row[11] || '').toString().trim();
 
-            var member3 = (headerMap.m3Name !== -1 && rows[i][headerMap.m3Name]) ? rows[i][headerMap.m3Name].toString().trim() : (rows[i][12] || '').toString().trim();
-            var m3Mail = (headerMap.m3Mail !== -1 && rows[i][headerMap.m3Mail]) ? rows[i][headerMap.m3Mail].toString().trim() : (rows[i][13] || '').toString().trim();
-            var m3Phone = (headerMap.m3Phone !== -1 && rows[i][headerMap.m3Phone]) ? rows[i][headerMap.m3Phone].toString().trim() : (rows[i][14] || '').toString().trim();
+            var member3 = (headerMap.m3Name !== -1 && row[headerMap.m3Name]) ? row[headerMap.m3Name].toString().trim() : (row[12] || '').toString().trim();
+            var m3Mail = (headerMap.m3Mail !== -1 && row[headerMap.m3Mail]) ? row[headerMap.m3Mail].toString().trim() : (row[13] || '').toString().trim();
+            var m3Phone = (headerMap.m3Phone !== -1 && row[headerMap.m3Phone]) ? row[headerMap.m3Phone].toString().trim() : (row[14] || '').toString().trim();
 
-            var leaderPhone = (headerMap.leaderPhone !== -1 && rows[i][headerMap.leaderPhone]) ? rows[i][headerMap.leaderPhone].toString().trim() : (rows[i][5] || '').toString().trim();
+            var leaderPhone = (headerMap.leaderPhone !== -1 && row[headerMap.leaderPhone]) ? row[headerMap.leaderPhone].toString().trim() : (row[5] || '').toString().trim();
 
             var membersRoster = [];
             if (member1 && member1 !== "None" && !/^\d+$/.test(member1) && member1.indexOf("@") === -1) {
@@ -1874,8 +1874,8 @@ function doGet(e) {
             }
 
             var membersStr = "";
-            if (headerMap.members !== -1 && rows[i][headerMap.members]) {
-              membersStr = rows[i][headerMap.members].toString().trim();
+            if (headerMap.members !== -1 && row[headerMap.members]) {
+              membersStr = row[headerMap.members].toString().trim();
             }
             if (membersRoster.length === 0 && membersStr) {
               var rawList = membersStr.split(/[,;\n]/);
@@ -1887,8 +1887,8 @@ function doGet(e) {
               }
             }
 
-            var currentStatus = (headerMap.status !== -1 && rows[i][headerMap.status]) ? rows[i][headerMap.status].toString().trim() : 'Registered';
-            var checkInTime = (headerMap.checkInTime !== -1 && rows[i][headerMap.checkInTime]) ? rows[i][headerMap.checkInTime].toString().trim() : '';
+            var currentStatus = (headerMap.status !== -1 && row[headerMap.status]) ? row[headerMap.status].toString().trim() : 'Registered';
+            var checkInTime = (headerMap.checkInTime !== -1 && row[headerMap.checkInTime]) ? row[headerMap.checkInTime].toString().trim() : '';
 
             matchedData = {
               teamId: rId,
@@ -1899,7 +1899,7 @@ function doGet(e) {
               leaderPhone: leaderPhone,
               members: membersStr,
               membersList: membersRoster,
-              timestamp: (headerMap.timestamp !== -1 && rows[i][headerMap.timestamp]) ? rows[i][headerMap.timestamp] : formatISTDateTime(new Date()),
+              timestamp: (headerMap.timestamp !== -1 && row[headerMap.timestamp]) ? row[headerMap.timestamp] : formatISTDateTime(new Date()),
               status: currentStatus,
               checkInTime: checkInTime
             };
@@ -1910,54 +1910,7 @@ function doGet(e) {
     }
 
     if (!matchedData) {
-      var notFoundHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>SYNORA '26 · Entry Pass Not Found</title>
-          <style>
-            * { box-sizing: border-box; margin: 0; padding: 0; }
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-              background: #03000a;
-              color: #f8fafc;
-              min-height: 100vh;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 16px;
-            }
-            .card {
-              max-width: 440px;
-              width: 100%;
-              background: #0d071e;
-              border: 1px solid rgba(239, 68, 68, 0.4);
-              border-radius: 20px;
-              padding: 32px 24px;
-              text-align: center;
-              box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(239, 68, 68, 0.15);
-            }
-            .icon { font-size: 44px; margin-bottom: 12px; }
-            .title { font-size: 22px; font-weight: 800; color: #f87171; margin-bottom: 8px; letter-spacing: -0.5px; }
-            .desc { font-size: 13.5px; color: #94a3b8; line-height: 1.6; margin-bottom: 22px; }
-            .btn { display: inline-block; background: #0284c7; color: #fff; padding: 11px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35); }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <div class="icon">🔍</div>
-            <div class="title">Registration Not Found</div>
-            <div class="desc">
-              No registration record was found for <strong>${queryId || 'the requested query'}</strong> in the SYNORA '26 database.<br><br>
-              Please verify your Team ID or check the confirmation email sent to your team leader.
-            </div>
-            <a href="${OFFICIAL_PORTAL_URL}" class="btn">Return to Official Portal</a>
-          </div>
-        </body>
-        </html>
-      `;
+      var notFoundHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SYNORA \'26 · Pass Not Found</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:-apple-system,sans-serif;background:#03000a;color:#f8fafc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}.card{max-width:440px;width:100%;background:#0d071e;border:1px solid rgba(239,68,68,0.4);border-radius:20px;padding:32px 24px;text-align:center;}.icon{font-size:44px;margin-bottom:12px;}.title{font-size:22px;font-weight:800;color:#f87171;margin-bottom:8px;}.desc{font-size:13.5px;color:#94a3b8;line-height:1.6;margin-bottom:22px;}.btn{display:inline-block;background:#0284c7;color:#fff;padding:11px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;}</style></head><body><div class="card"><div class="icon">🔍</div><div class="title">Registration Not Found</div><div class="desc">No record found for <strong>' + (queryId || 'the requested query') + '</strong>.<br><br>Please verify your Team ID or check the confirmation email sent to your team leader.</div><a href="' + OFFICIAL_PORTAL_URL + '" class="btn">Return to Official Portal</a></div></body></html>';
       return HtmlService.createHtmlOutput(notFoundHtml)
         .setTitle("SYNORA '26 · Registration Not Found")
         .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
@@ -2597,6 +2550,11 @@ function renderStateMachinePassHtml(data) {
           <span class="verified-pill">
             ${badgeText}
           </span>
+        </div>
+
+        <!-- LAPTOP ACCESS NOTICE -->
+        <div style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 10px; padding: 10px 14px; margin: 6px 16px 4px; text-align: center; font-size: 12px; color: #93c5fd; line-height: 1.4;">
+          💻 <strong>Notice:</strong> Please open this pass & QR on a <strong>Laptop or Desktop PC</strong> (not on mobile) for best viewing & PDF downloading.
         </div>
 
         <div class="pass-body">
