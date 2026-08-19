@@ -21,8 +21,9 @@ var DEFAULT_ADMIN_PASSCODE = 'SYNORA-ADMIN-2026';
 var DEFAULT_TELEGRAM_BOT_TOKEN = '8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs';
 var DEFAULT_TELEGRAM_CHAT_IDS = '6877857251,8895943211';
 var WHATSAPP_GROUP_LINK = 'https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2';
+var DEFAULT_ORGANIZER_EMAIL = '192472374.simats@saveetha.com';
 var OFFICIAL_PORTAL_URL = 'https://synora26.netlify.app/';
-var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwfzoDrbCSFUvRGApDavr6u0Rnr4bpJe_l78ihbg7Sfns2pvy0Bd-hXIF9xCFcgGniW/exec';
+var ACTIVE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwtzP3UddnUsL_jZPshuSW1lZIBR6SUqwfrs31__IVwEc-WLYbzm-hIocBx46GTqH0I/exec';
 
 // ─── SAFE SPREADSHEET HELPER ──────────────────────────────────────────
 /**
