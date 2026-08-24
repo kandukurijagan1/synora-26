@@ -751,7 +751,7 @@
   <div class="container">
     <div class="stats-bar-grid reveal">
       <div><div class="stat-number">₹3,500</div><div class="stat-label">Prize Pool</div></div>
-      <div><div class="stat-number">5</div><div class="stat-label">Core Tracks</div></div>
+      <div><div class="stat-number">4</div><div class="stat-label">Core Tracks</div></div>
       <div><div class="stat-number">7h</div><div class="stat-label">Sprint Time</div></div>
       <div><div class="stat-number">100+</div><div class="stat-label">Innovators</div></div>
     </div>
@@ -786,7 +786,6 @@
       <button class="track-filter-btn" onclick="filterTrackCategory('biotech', this)">BioTech & Health</button>
       <button class="track-filter-btn" onclick="filterTrackCategory('web', this)">Web & Cloud</button>
       <button class="track-filter-btn" onclick="filterTrackCategory('security', this)">Cybersecurity</button>
-      <button class="track-filter-btn" onclick="filterTrackCategory('iot', this)">IoT & Hardware</button>
     </div>
 
     <div class="tracks-grid reveal" id="tracksCardGrid">
@@ -809,11 +808,6 @@
         <div class="track-icon">🛡️</div>
         <h3 class="track-title">Cybersecurity & Trust</h3>
         <p class="track-desc">Zero-trust security, privacy protocols, cryptographic validation, and fraud defense.</p>
-      </div>
-      <div class="track-item-card" data-category="iot">
-        <div class="track-icon">⚡</div>
-        <h3 class="track-title">IoT & Smart Hardware</h3>
-        <p class="track-desc">Embedded intelligence, smart telemetry, edge processing, and robotics.</p>
       </div>
     </div>
   </div>
@@ -1115,7 +1109,7 @@
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
   // ─── TYPEWRITER HEADLINE ──────────────────────────────────────
-  const words = ["GenAI & Machine Learning", "Medical Biotechnology", "Web & Cloud Systems", "Cybersecurity", "Smart IoT Ecosystems"];
+  const words = ["GenAI & Machine Learning", "Medical Biotechnology", "Web & Cloud Systems", "Cybersecurity & Trust"];
   let wIdx = 0, cIdx = 0, isDel = false;
   const tw = document.getElementById('typewriterText');
   function type() {
