@@ -155,19 +155,19 @@ export const Timeline: React.FC = () => {
     switch (color) {
       case 'cyan':
         return {
-          badge: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
-          dot: 'bg-cyan-400 shadow-[0_0_15px_#06b6d4]',
-          borderHover: 'hover:border-cyan-500/60',
-          activeCard: 'border-cyan-500/80 shadow-[0_0_30px_rgba(6,182,212,0.25)]',
-          iconColor: 'text-cyan-400'
+          badge: 'bg-orange-500/20 text-orange-300 border-orange-500/40',
+          dot: 'bg-orange-400 shadow-[0_0_15px_#f97316]',
+          borderHover: 'hover:border-orange-500/60',
+          activeCard: 'border-orange-500/80 shadow-[0_0_30px_rgba(249,115,22,0.25)]',
+          iconColor: 'text-orange-400'
         };
       case 'emerald':
         return {
-          badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
-          dot: 'bg-emerald-400 shadow-[0_0_15px_#10b981]',
-          borderHover: 'hover:border-emerald-500/60',
-          activeCard: 'border-emerald-500/80 shadow-[0_0_30px_rgba(16,185,129,0.25)]',
-          iconColor: 'text-emerald-400'
+          badge: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+          dot: 'bg-amber-400 shadow-[0_0_15px_#f59e0b]',
+          borderHover: 'hover:border-amber-500/60',
+          activeCard: 'border-amber-500/80 shadow-[0_0_30px_rgba(245,158,11,0.25)]',
+          iconColor: 'text-amber-400'
         };
       case 'amber':
         return {
@@ -179,19 +179,19 @@ export const Timeline: React.FC = () => {
         };
       case 'blue':
         return {
-          badge: 'bg-blue-500/20 text-blue-300 border-blue-500/40',
-          dot: 'bg-blue-400 shadow-[0_0_15px_#3b82f6]',
-          borderHover: 'hover:border-blue-500/60',
-          activeCard: 'border-blue-500/80 shadow-[0_0_30px_rgba(59,130,246,0.25)]',
-          iconColor: 'text-blue-400'
+          badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+          dot: 'bg-rose-400 shadow-[0_0_15px_#3b82f6]',
+          borderHover: 'hover:border-rose-500/60',
+          activeCard: 'border-rose-500/80 shadow-[0_0_30px_rgba(59,130,246,0.25)]',
+          iconColor: 'text-rose-400'
         };
       default:
         return {
-          badge: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
-          dot: 'bg-purple-400 shadow-[0_0_15px_#a855f7]',
-          borderHover: 'hover:border-purple-500/60',
-          activeCard: 'border-purple-500/80 shadow-[0_0_30px_rgba(168,85,247,0.25)]',
-          iconColor: 'text-purple-400'
+          badge: 'bg-red-500/20 text-red-300 border-red-500/40',
+          dot: 'bg-red-400 shadow-[0_0_15px_#ef4444]',
+          borderHover: 'hover:border-red-500/60',
+          activeCard: 'border-red-500/80 shadow-[0_0_30px_rgba(239,68,68,0.25)]',
+          iconColor: 'text-red-400'
         };
     }
   };
@@ -199,23 +199,23 @@ export const Timeline: React.FC = () => {
   return (
     <section id="timeline" className="py-24 relative z-10 overflow-hidden">
       {/* Subtle Background Glows */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-orange-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-red-600/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Simple & Clean Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-4 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
-            <Calendar className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>Saturday, October 3, 2026 · Event Itinerary</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-semibold mb-4 shadow-[0_0_20px_rgba(249,115,22,0.15)]">
+            <Calendar className="w-3.5 h-3.5 text-orange-400 animate-pulse" />
+            <span>Friday, November 20, 2026 · Event Itinerary</span>
           </div>
 
           <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-white tracking-tight mb-3">
-            Workshop <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-emerald-400">Schedule</span>
+            Workshop <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-300 to-amber-400">Schedule</span>
           </h2>
           
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-stone-300">
             1-Day Program at <strong>{EVENT_DETAILS.venue}</strong> · 08:30 AM to 05:00 PM
           </p>
         </div>
@@ -224,7 +224,7 @@ export const Timeline: React.FC = () => {
         <div className="relative">
           
           {/* Continuous Animated Vertical Spine */}
-          <div className="absolute left-4 sm:left-48 top-6 bottom-6 w-0.5 bg-gradient-to-b from-cyan-500 via-purple-500 to-emerald-500 opacity-70 z-0" />
+          <div className="absolute left-4 sm:left-48 top-6 bottom-6 w-0.5 bg-gradient-to-b from-orange-500 via-red-500 to-amber-500 opacity-70 z-0" />
 
           {/* Timeline Items List */}
           <div className="space-y-6 sm:space-y-8 relative z-10">
@@ -244,13 +244,13 @@ export const Timeline: React.FC = () => {
                 >
                   {/* Left Column (Desktop): Time & Session Number */}
                   <div className="hidden sm:flex flex-col items-end w-40 shrink-0 pt-3 text-right">
-                    <span className="font-mono text-sm font-bold text-cyan-300 tracking-tight">
+                    <span className="font-mono text-sm font-bold text-orange-300 tracking-tight">
                       {item.time.split('–')[0]}
                     </span>
-                    <span className="text-[11px] text-slate-400 font-mono">
+                    <span className="text-[11px] text-stone-400 font-mono">
                       {item.time.split('–')[1] ? `to ${item.time.split('–')[1]}` : ''}
                     </span>
-                    <span className="inline-block mt-1 text-[10px] font-semibold text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
+                    <span className="inline-block mt-1 text-[10px] font-semibold text-stone-400 bg-stone-800/80 px-2 py-0.5 rounded border border-stone-700">
                       {item.duration}
                     </span>
                   </div>
@@ -258,8 +258,8 @@ export const Timeline: React.FC = () => {
                   {/* Center Node Beacon */}
                   <div className="absolute left-4 sm:left-48 -translate-x-1/2 top-4 z-20">
                     <div
-                      className={`w-5 h-5 rounded-full border-2 border-slate-900 ${style.dot} transition-all duration-300 group-hover:scale-125 ${
-                        isActive ? 'scale-125 ring-4 ring-cyan-400/30' : ''
+                      className={`w-5 h-5 rounded-full border-2 border-stone-900 ${style.dot} transition-all duration-300 group-hover:scale-125 ${
+                        isActive ? 'scale-125 ring-4 ring-orange-400/30' : ''
                       }`}
                     />
                   </div>
@@ -267,21 +267,21 @@ export const Timeline: React.FC = () => {
                   {/* Right Column: Card Content */}
                   <div className="w-full pl-10 sm:pl-0 flex-1">
                     <div
-                      className={`p-5 sm:p-6 rounded-2xl bg-slate-900/80 backdrop-blur-xl border transition-all duration-300 shadow-xl ${
+                      className={`p-5 sm:p-6 rounded-2xl bg-stone-900/80 backdrop-blur-xl border transition-all duration-300 shadow-xl ${
                         style.borderHover
                       } ${
                         isActive
                           ? `${style.activeCard} -translate-y-1`
-                          : 'border-slate-700/60 hover:-translate-y-1'
+                          : 'border-stone-700/60 hover:-translate-y-1'
                       }`}
                     >
                       {/* Mobile Time Header */}
-                      <div className="flex sm:hidden items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800">
-                        <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-cyan-300">
-                          <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                      <div className="flex sm:hidden items-center justify-between gap-2 mb-2 pb-2 border-b border-stone-800">
+                        <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-orange-300">
+                          <Clock className="w-3.5 h-3.5 text-orange-400" />
                           <span>{item.time}</span>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-mono bg-slate-800 px-2 py-0.5 rounded">
+                        <span className="text-[10px] text-stone-400 font-mono bg-stone-800 px-2 py-0.5 rounded">
                           {item.duration}
                         </span>
                       </div>
@@ -289,7 +289,7 @@ export const Timeline: React.FC = () => {
                       {/* Header Badge & Session Number */}
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700">
+                          <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-stone-800 text-stone-200 border border-stone-700">
                             SESSION {item.sessionNum}
                           </span>
                           <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider border ${style.badge}`}>
@@ -297,30 +297,30 @@ export const Timeline: React.FC = () => {
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-                          <MapPin className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                        <div className="flex items-center gap-1 text-xs text-stone-400 font-medium">
+                          <MapPin className="w-3.5 h-3.5 text-red-400 shrink-0" />
                           <span>{item.venue}</span>
                         </div>
                       </div>
 
                       {/* Session Title */}
-                      <h3 className="font-display font-extrabold text-base sm:text-lg text-white mb-2 flex items-center gap-2 group-hover:text-cyan-200 transition-colors">
+                      <h3 className="font-display font-extrabold text-base sm:text-lg text-white mb-2 flex items-center gap-2 group-hover:text-orange-200 transition-colors">
                         <IconComponent className={`w-4 h-4 shrink-0 ${style.iconColor}`} />
                         <span>{item.title}</span>
                       </h3>
 
                       {/* Description */}
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
+                      <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-3">
                         {item.description}
                       </p>
 
                       {/* Key Topics / Highlights */}
                       {item.topics && item.topics.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-slate-800/80">
+                        <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-stone-800/80">
                           {item.topics.map((t, idx) => (
                             <span
                               key={idx}
-                              className="text-[11px] font-medium text-slate-300 bg-slate-800/60 px-2 py-0.5 rounded border border-slate-700/60"
+                              className="text-[11px] font-medium text-stone-300 bg-stone-800/60 px-2 py-0.5 rounded border border-stone-700/60"
                             >
                               {t}
                             </span>
@@ -336,13 +336,13 @@ export const Timeline: React.FC = () => {
         </div>
 
         {/* Simple Summary Footer */}
-        <div className="mt-14 p-5 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-slate-700/60 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-300">
+        <div className="mt-14 p-5 rounded-2xl bg-stone-900/60 backdrop-blur-md border border-stone-700/60 flex flex-wrap items-center justify-between gap-4 text-xs text-stone-300">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
             <span>Official Certificates sponsored by <strong>IET Chennai Local Network</strong> will be issued at the Valedictory Ceremony.</span>
           </div>
-          <div className="flex items-center gap-1 text-slate-400 font-mono">
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex items-center gap-1 text-stone-400 font-mono">
+            <Layers className="w-3.5 h-3.5 text-orange-400" />
             <span>9 Sessions · Full Day Program</span>
           </div>
         </div>

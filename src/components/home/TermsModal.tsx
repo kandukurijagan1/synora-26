@@ -15,13 +15,13 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-xl max-h-[85vh] rounded-3xl glass-card border border-purple-500/40 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(124,58,237,0.3)] overflow-hidden flex flex-col"
+        className="relative w-full max-w-xl max-h-[85vh] rounded-3xl glass-card border border-red-500/40 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(124,58,237,0.3)] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-6 bg-gradient-to-r from-[#0f0728] to-[#1e1035] border-b border-purple-500/40 flex items-center justify-between">
+        <div className="p-6 bg-gradient-to-r from-[#0f0728] to-[#1e1035] border-b border-red-500/40 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-cyan-300 uppercase tracking-widest">
+            <div className="text-[11px] font-bold text-orange-300 uppercase tracking-widest">
               CRISPR WORKSHOP GUIDELINES
             </div>
             <h3 className="font-display font-extrabold text-xl text-white mt-0.5">
@@ -41,7 +41,7 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
         <div className="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-gray-300 leading-relaxed">
           {/* Term 1 */}
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="font-bold text-cyan-400 mb-1 flex items-center gap-2">
+            <div className="font-bold text-orange-400 mb-1 flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span>1. Delegate Eligibility & Categories</span>
             </div>
@@ -63,7 +63,7 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
 
           {/* Term 3 */}
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="font-bold text-cyan-400 mb-1 flex items-center gap-2">
+            <div className="font-bold text-orange-400 mb-1 flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
               <span>3. In Silico Hands-on Sessions & Laptops</span>
             </div>
@@ -73,19 +73,19 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Term 4 - Mandatory ID */}
-          <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/30">
-            <div className="font-bold text-cyan-300 mb-1 flex items-center gap-2">
-              <IdCard className="w-4 h-4 text-cyan-400" />
+          <div className="p-4 rounded-xl bg-orange-950/20 border border-orange-500/30">
+            <div className="font-bold text-orange-300 mb-1 flex items-center gap-2">
+              <IdCard className="w-4 h-4 text-orange-400" />
               <span>4. Mandatory Physical Institutional ID Cards & Reporting</span>
             </div>
-            <p className="text-cyan-100">
-              <strong className="text-white">All delegates must carry physical institutional ID cards.</strong> Verification and badge collection starts at <strong>08:30 AM on October 3, 2026</strong> at <strong>RB Seminar Hall, SIMATS Engineering</strong>.
+            <p className="text-orange-100">
+              <strong className="text-white">All delegates must carry physical institutional ID cards.</strong> Verification and badge collection starts at <strong>08:30 AM on November 20, 2026</strong> at <strong>RB Seminar Hall, SIMATS Engineering</strong>.
             </p>
           </div>
 
           {/* Term 5 */}
           <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-            <div className="font-bold text-cyan-400 mb-1 flex items-center gap-2">
+            <div className="font-bold text-orange-400 mb-1 flex items-center gap-2">
               <Award className="w-4 h-4" />
               <span>5. Official IET Certification</span>
             </div>
@@ -100,7 +100,7 @@ export const TermsModal: React.FC<TermsModalProps> = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-purple-600 to-cyan-600 text-white hover:from-purple-500 hover:to-cyan-500 transition shadow-[0_0_15px_rgba(6,182,212,0.3)] cursor-pointer"
+            className="w-full py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-red-600 to-orange-600 text-white hover:from-red-500 hover:to-orange-500 transition shadow-[0_0_15px_rgba(249,115,22,0.3)] cursor-pointer"
           >
             I Understand & Agree
           </button>

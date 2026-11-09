@@ -24,6 +24,7 @@ import {
   Palette
 } from 'lucide-react';
 import QRCode from 'qrcode';
+import QRCodeStyling from 'qr-code-styling';
 import { jsPDF } from 'jspdf';
 import confetti from 'canvas-confetti';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -104,17 +105,68 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
   useEffect(() => {
     if (ticket) {
       const payload = generateSelfContainedQrPayload(ticket);
-      QRCode.toDataURL(payload, {
-        width: 350,
-        margin: 1,
-        color: {
-          dark: '#000000',
-          light: '#ffffff'
+
+      // Stylized branded QR Code with neon gradients and rounded corners
+      const qrStyling = new QRCodeStyling({
+        width: 360,
+        height: 360,
+        type: 'canvas',
+        data: payload,
+        image: '/logo.jpg',
+        margin: 8,
+        qrOptions: {
+          typeNumber: 0,
+          mode: 'Byte',
+          errorCorrectionLevel: 'Q'
         },
-        errorCorrectionLevel: 'M'
-      })
-        .then((url) => setPassQrDataUrl(url))
-        .catch(console.error);
+        imageOptions: {
+          hideBackgroundDots: true,
+          imageSize: 0.28,
+          margin: 4
+        },
+        dotsOptions: {
+          type: 'rounded',
+          gradient: {
+            type: 'linear',
+            rotation: 45,
+            colorStops: [
+              { offset: 0, color: '#f97316' }, // Neon Orange
+              { offset: 1, color: '#ef4444' }  // Neon Red
+            ]
+          }
+        },
+        cornersSquareOptions: {
+          type: 'extra-rounded',
+          color: '#f59e0b' // Amber/Gold accent
+        },
+        cornersDotOptions: {
+          type: 'dot',
+          color: '#fbbf24'
+        },
+        backgroundOptions: {
+          color: '#ffffff'
+        }
+      });
+
+      qrStyling.getRawData('png')
+        .then((blob) => {
+          if (blob) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setPassQrDataUrl(reader.result as string);
+            };
+            reader.readAsDataURL(blob as Blob);
+          }
+        })
+        .catch(() => {
+          // Fallback to standard QR if styling canvas fails
+          QRCode.toDataURL(payload, {
+            width: 350,
+            margin: 1,
+            color: { dark: '#000000', light: '#ffffff' },
+            errorCorrectionLevel: 'M'
+          }).then(setPassQrDataUrl).catch(console.error);
+        });
     }
   }, [ticket]);
 
@@ -216,7 +268,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
   // Add to Google Calendar Link
   const getGoogleCalendarUrl = () => {
     const title = encodeURIComponent("CRISPR Gene Editing Technologies Workshop '26");
-    const dates = "20261003T033000Z/20261003T113000Z";
+    const dates = "20261120T033000Z/20261120T113000Z";
     const details = encodeURIComponent(
       `Workshop on CRISPR Gene Editing Technologies\nSponsored by IET (Institute of Engineering and Technology)\nVenue: RB Seminar Hall, SIMATS Engineering, Chennai\nRegistration ID: ${ticket?.teamId || 'SYN26-XXXX'}`
     );
@@ -234,8 +286,8 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
       'BEGIN:VEVENT',
       'UID:' + (ticket?.teamId || 'SYN26') + '@saveetha.ac.in',
       'DTSTAMP:20260929T000000Z',
-      'DTSTART:20261003T033000Z',
-      'DTEND:20261003T113000Z',
+      'DTSTART:20261120T033000Z',
+      'DTEND:20261120T113000Z',
       'SUMMARY:CRISPR Gene Editing Technologies Workshop (Sponsored by IET)',
       'DESCRIPTION:Department of Medical Biotechnology, SIMATS Engineering. Pass ID: ' + (ticket?.teamId || ''),
       'LOCATION:RB Seminar Hall\\, SIMATS Engineering\\, Chennai',
@@ -306,7 +358,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
     ctx.strokeRect(30, 30, 1140, 570);
 
     // Department Header
-    ctx.fillStyle = badgeTheme === 'emerald' ? '#34d399' : '#06b6d4';
+    ctx.fillStyle = badgeTheme === 'emerald' ? '#34d399' : '#f97316';
     ctx.font = 'bold 22px monospace';
     ctx.fillText('DEPARTMENT OF MEDICAL BIOTECHNOLOGY · SIMATS ENGINEERING', 80, 95);
 
@@ -352,13 +404,13 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
     // Venue & Date Info
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 26px sans-serif';
-    ctx.fillText('📅 October 3, 2026 · 09:00 AM', 700, 385);
+    ctx.fillText('📅 November 20, 2026 · 09:00 AM', 700, 385);
 
-    ctx.fillStyle = badgeTheme === 'emerald' ? '#34d399' : '#06b6d4';
+    ctx.fillStyle = badgeTheme === 'emerald' ? '#34d399' : '#f97316';
     ctx.font = 'bold 24px sans-serif';
     ctx.fillText('📍 RB Seminar Hall, SIMATS, Chennai', 700, 430);
 
-    ctx.fillStyle = '#10b981';
+    ctx.fillStyle = '#f59e0b';
     ctx.font = 'bold 22px monospace';
     ctx.fillText('🔒 Dual-Factor Security Shield Verified', 700, 480);
 
@@ -479,7 +531,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
     doc.setTextColor(56, 189, 248);
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'bold');
-    doc.text('DATE & TIME: 03.10.2026 (OCTOBER 3) · 09:00 AM IST', cardX + 15, cardY + 107);
+    doc.text('DATE & TIME: 20.11.2026 (NOVEMBER 20) · 09:00 AM IST', cardX + 15, cardY + 107);
     
     doc.setTextColor(251, 191, 36);
     doc.setFontSize(8);
@@ -605,8 +657,8 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
   return (
     <section className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[750px] bg-purple-600/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[750px] bg-sky-400/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] bg-cyan-400/20 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Navigation Back & Scanner Button */}
@@ -632,17 +684,17 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                 startQrScanner();
               }
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 transition cursor-pointer text-xs font-bold shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-400/40 transition cursor-pointer text-xs font-bold shadow-[0_0_15px_rgba(249,115,22,0.2)]"
           >
-            <Camera className="w-4 h-4 text-cyan-400" />
+            <Camera className="w-4 h-4 text-orange-400" />
             <span>Organizer Attendance Portal & Scanner</span>
           </button>
         </div>
 
         {/* Header Title */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-xs font-bold text-cyan-300 mb-3 backdrop-blur-md">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-xs font-bold text-orange-300 mb-3 backdrop-blur-md">
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
             <span>DUAL-FACTOR VERIFIED QUANTUM PASS</span>
           </div>
           <h1 className="font-display font-black text-3xl sm:text-5xl text-white tracking-tight">
@@ -669,14 +721,14 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   Registration / Delegate ID
                 </label>
                 <div className="relative">
-                  <KeyRound className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <KeyRound className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     value={teamIdInput}
                     onChange={(e) => setTeamIdInput(e.target.value)}
                     placeholder="e.g. SYN26-XC9Y-P362"
                     disabled={lockoutTimer > 0}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 uppercase font-mono"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-400 uppercase font-mono"
                   />
                 </div>
               </div>
@@ -686,14 +738,14 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   Registered Leader Email
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-purple-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-red-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
                     placeholder="e.g. name@college.edu"
                     disabled={lockoutTimer > 0}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-400"
                   />
                 </div>
               </div>
@@ -701,14 +753,14 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <div className="flex items-center gap-2 text-xs text-gray-400">
-                <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
                 <span>Encrypted Fast-Path query (0ms cache resolution)</span>
               </div>
 
               <button
                 type="submit"
                 disabled={loading || lockoutTimer > 0}
-                className="px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-cyan-400/40 transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-[0_0_20px_rgba(124,58,237,0.4)] border border-orange-400/40 transition flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                 <span>{loading ? 'Verifying Credentials...' : 'Lookup Entry Pass'}</span>
@@ -745,7 +797,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                     soundFX.playClick();
                     setIsFlipped((prev) => !prev);
                   }}
-                  className="px-4 py-1.5 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-1.5 rounded-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-400/30 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
                 >
                   <RotateCw className="w-3.5 h-3.5" />
                   <span>{isFlipped ? 'Flip to Front' : 'Flip to Back (Hall Details)'}</span>
@@ -790,13 +842,13 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                 transform: `perspective(1200px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
                 transition: 'transform 0.15s ease-out'
               }}
-              className="relative glass-card rounded-3xl p-6 sm:p-10 border border-cyan-400/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] bg-gradient-to-br from-[#0c0524] via-[#070316] to-[#020b18] overflow-hidden min-h-[380px]"
+              className="relative glass-card rounded-3xl p-6 sm:p-10 border border-orange-400/40 shadow-[0_0_60px_rgba(249,115,22,0.25)] bg-gradient-to-br from-[#0c0524] via-[#070316] to-[#020b18] overflow-hidden min-h-[380px]"
             >
               {/* Dynamic Holographic Glare */}
               <div
                 className="absolute inset-0 pointer-events-none opacity-20"
                 style={{
-                  background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(6,182,212,0.8) 0%, rgba(168,85,247,0.4) 40%, transparent 80%)`
+                  background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(249,115,22,0.8) 0%, rgba(239,68,68,0.4) 40%, transparent 80%)`
                 }}
               />
 
@@ -806,10 +858,10 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   {/* Pass Top Ribbon */}
                   <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10 mb-6">
                     <div>
-                      <div className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider">
+                      <div className="text-[11px] font-mono text-orange-400 uppercase tracking-wider">
                         SIMATS ENGINEERING · CHENNAI
                       </div>
-                      <div className="text-xs font-semibold text-purple-300">
+                      <div className="text-xs font-semibold text-red-300">
                         Department of Medical Biotechnology
                       </div>
                     </div>
@@ -819,7 +871,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                         <Award className="w-3.5 h-3.5 text-amber-400" />
                         <span>Sponsored by IET</span>
                       </div>
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
                     </div>
                   </div>
 
@@ -832,10 +884,10 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                         <button
                           type="button"
                           onClick={copyRegistrationId}
-                          className="px-3.5 py-1.5 rounded-xl bg-purple-600/30 border border-purple-400/50 text-cyan-300 font-mono font-extrabold text-sm sm:text-base flex items-center gap-2 hover:bg-purple-600/40 transition cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-xl bg-red-600/30 border border-red-400/50 text-orange-300 font-mono font-extrabold text-sm sm:text-base flex items-center gap-2 hover:bg-red-600/40 transition cursor-pointer"
                         >
                           <span>{ticket.teamId}</span>
-                          {copiedId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
+                          {copiedId ? <Check className="w-3.5 h-3.5 text-amber-400" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
                         </button>
                       </div>
 
@@ -861,7 +913,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                               soundFX.playClick();
                               setShowMaskedPii((prev) => !prev);
                             }}
-                            className="inline-flex items-center gap-1 text-[11px] text-cyan-400 hover:text-cyan-300 font-medium cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[11px] text-orange-400 hover:text-orange-300 font-medium cursor-pointer"
                           >
                             {showMaskedPii ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             <span>{showMaskedPii ? 'Unmask Details' : 'Mask Details'}</span>
@@ -885,12 +937,12 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
 
                       {/* Event Schedule Info */}
                       <div className="flex flex-wrap gap-4 text-xs">
-                        <div className="flex items-center gap-1.5 text-cyan-300 font-medium">
-                          <Calendar className="w-4 h-4 text-cyan-400" />
-                          <span>October 3, 2026 · 09:00 AM IST</span>
+                        <div className="flex items-center gap-1.5 text-orange-300 font-medium">
+                          <Calendar className="w-4 h-4 text-orange-400" />
+                          <span>November 20, 2026 · 09:00 AM IST</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-purple-300 font-medium">
-                          <MapPin className="w-4 h-4 text-purple-400" />
+                        <div className="flex items-center gap-1.5 text-red-300 font-medium">
+                          <MapPin className="w-4 h-4 text-red-400" />
                           <span>RB Seminar Hall, SIMATS</span>
                         </div>
                       </div>
@@ -910,11 +962,11 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                             Loading QR...
                           </div>
                         )}
-                        <div className="absolute inset-x-0 h-1 bg-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.9)] animate-bounce pointer-events-none" />
+                        <div className="absolute inset-x-0 h-1 bg-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.9)] animate-bounce pointer-events-none" />
                       </div>
 
-                      <div className="text-[10px] font-mono text-emerald-400 font-bold mt-3 flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      <div className="text-[10px] font-mono text-amber-400 font-bold mt-3 flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3 text-amber-400" />
                         <span>2FA SCANNABLE PASS</span>
                       </div>
                       <div className="text-[9px] font-mono text-gray-400 mt-0.5">
@@ -928,22 +980,22 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-white/10">
                     <div className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <Layers className="w-4 h-4 text-purple-400" />
+                      <Layers className="w-4 h-4 text-red-400" />
                       <span>DELEGATE VENUE LOGISTICS & ACCESS PASS</span>
                     </div>
-                    <span className="text-xs font-mono text-cyan-300">ID: {ticket.teamId}</span>
+                    <span className="text-xs font-mono text-orange-300">ID: {ticket.teamId}</span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
                       <div className="text-[10px] text-gray-400 uppercase">Allocated Hall Zone</div>
                       <div className="text-sm font-bold text-white mt-1">RB Seminar Hall</div>
-                      <div className="text-[11px] text-cyan-300 font-medium">Laptop Desk Block</div>
+                      <div className="text-[11px] text-orange-300 font-medium">Laptop Desk Block</div>
                     </div>
 
                     <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
                       <div className="text-[10px] text-gray-400 uppercase">High-Speed Wi-Fi</div>
-                      <div className="text-sm font-bold text-emerald-400 mt-1">SIMATS_GUEST_5G</div>
+                      <div className="text-sm font-bold text-amber-400 mt-1">SIMATS_GUEST_5G</div>
                       <div className="text-[11px] text-gray-400 font-mono">Pass: CRISPR2026</div>
                     </div>
 
@@ -957,10 +1009,10 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2 text-xs text-gray-300">
                     <div className="font-bold text-white">Delegate Emergency & Coordination Contacts:</div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-gray-400">
-                      <div>• Kandukuri Jagan (Lead Head): <span className="text-cyan-300 font-mono">+91 90149 78716</span></div>
-                      <div>• Tharani (Student Coord): <span className="text-cyan-300 font-mono">+91 90149 78716</span></div>
-                      <div>• Yugandhar (Student Coord): <span className="text-cyan-300 font-mono">+91 63023 89449</span></div>
-                      <div>• Hemanth (Student Coord): <span className="text-cyan-300 font-mono">+91 63821 22447</span></div>
+                      <div>• Kandukuri Jagan (Lead Head): <span className="text-orange-300 font-mono">+91 90149 78716</span></div>
+                      <div>• Tharani (Student Coord): <span className="text-orange-300 font-mono">+91 90149 78716</span></div>
+                      <div>• Yugandhar (Student Coord): <span className="text-orange-300 font-mono">+91 63023 89449</span></div>
+                      <div>• Hemanth (Student Coord): <span className="text-orange-300 font-mono">+91 63821 22447</span></div>
                     </div>
                   </div>
 
@@ -976,7 +1028,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   <button
                     type="button"
                     onClick={downloadPDF}
-                    className="px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)] transition flex items-center gap-2 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-black shadow-[0_0_20px_rgba(245,158,11,0.3)] transition flex items-center gap-2 cursor-pointer"
                   >
                     <Download className="w-4 h-4" />
                     <span>Download A6 PDF Badge</span>
@@ -985,9 +1037,9 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                   <button
                     type="button"
                     onClick={downloadSocialCard}
-                    className="px-4 py-2.5 rounded-xl font-bold text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-400/40 transition flex items-center gap-2 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl font-bold text-xs bg-red-600/30 hover:bg-red-600/50 text-red-200 border border-red-400/40 transition flex items-center gap-2 cursor-pointer"
                   >
-                    <Share2 className="w-4 h-4 text-purple-300" />
+                    <Share2 className="w-4 h-4 text-red-300" />
                     <span>Share Attending Card (PNG)</span>
                   </button>
                 </div>
@@ -999,7 +1051,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
                     rel="noreferrer"
                     className="px-3.5 py-2.5 rounded-xl font-semibold text-xs bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10 transition flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                    <Calendar className="w-3.5 h-3.5 text-orange-400" />
                     <span>Google Cal</span>
                   </a>
 
@@ -1020,10 +1072,10 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
       {/* Organizer QR Scanner Modal */}
       {isScannerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-md glass-card rounded-3xl p-6 border border-cyan-500/40 shadow-[0_0_50px_rgba(6,182,212,0.3)] bg-[#09041a]">
+          <div className="w-full max-w-md glass-card rounded-3xl p-6 border border-orange-500/40 shadow-[0_0_50px_rgba(249,115,22,0.3)] bg-[#09041a]">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <Camera className="w-5 h-5 text-cyan-400" />
+                <Camera className="w-5 h-5 text-orange-400" />
                 <span>Scan Delegate Entry QR Code</span>
               </div>
               <button
@@ -1042,7 +1094,7 @@ export const DigitalPassView: React.FC<DigitalPassViewProps> = ({
 
             <div className="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-between text-xs">
               <span className="text-gray-400">Delegates Verified Today:</span>
-              <span className="font-mono font-bold text-emerald-400">{scannerStats.verifiedCount} Attendees</span>
+              <span className="font-mono font-bold text-amber-400">{scannerStats.verifiedCount} Attendees</span>
             </div>
 
             <p className="text-[11px] text-gray-400 text-center mt-3">

@@ -178,7 +178,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
     lastTested: null
   });
   const [isTestingPing, setIsTestingPing] = useState(false);
-  const [autoSyncInterval, setAutoSyncInterval] = useState<'off' | '30s' | '60s'>('off');
+  const [autoSyncInterval, setAutoSyncInterval] = useState<'off' | '1s' | '5s' | '15s' | '30s' | '60s'>('off');
   const [isKioskMode, setIsKioskMode] = useState(true); // Continuous rapid scanner mode enabled by default
   const [sessionScanHistory, setSessionScanHistory] = useState<Array<{ teamId: string; teamName: string; time: string; timestamp: number }>>([]);
   const [collegeFilter, setCollegeFilter] = useState<'all' | 'internal' | 'external'>('all');
@@ -1336,7 +1336,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
     });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1329] via-[#0f172a] to-[#070e1c] text-slate-100 pt-16 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-[#2c0606] via-[#450a0a] to-[#1a0303] text-stone-100 pt-16 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-7xl mx-auto">
         
         {/* ==================== LOGIN SCREEN (IF NOT LOGGED IN) ==================== */}
@@ -1346,28 +1346,28 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               <button
                 type="button"
                 onClick={onBackToHome}
-                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-cyan-300 mb-4 transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-orange-300 mb-4 transition cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Return to Event Website</span>
               </button>
 
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-600/30 via-purple-600/30 to-emerald-600/30 border border-cyan-500/40 flex items-center justify-center mx-auto mb-3 shadow-[0_0_35px_rgba(6,182,212,0.3)]">
-                <ShieldCheck className="w-8 h-8 text-cyan-300" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-600/30 via-red-600/30 to-amber-600/30 border border-orange-500/40 flex items-center justify-center mx-auto mb-3 shadow-[0_0_35px_rgba(249,115,22,0.3)]">
+                <ShieldCheck className="w-8 h-8 text-orange-300" />
               </div>
               <h2 className="font-display font-extrabold text-2xl text-white tracking-tight">
-                Organizer <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-emerald-400">Portal Login</span>
+                Organizer <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-300 to-amber-400">Portal Login</span>
               </h2>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-stone-400 mt-1">
                 SIMATS Engineering · CRISPR '26 Workshop Management
               </p>
             </div>
 
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-emerald-500" />
+            <div className="p-6 sm:p-8 rounded-3xl bg-stone-900/80 backdrop-blur-xl border border-stone-700/60 shadow-[0_25px_60px_rgba(0,0,0,0.6)] relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-amber-500" />
 
               {/* Login Method Selector Tabs (Google OAuth vs Gmail Code) */}
-              <div className="flex rounded-2xl bg-slate-950/60 p-1 border border-slate-700/70 mb-6">
+              <div className="flex rounded-2xl bg-stone-950/60 p-1 border border-stone-700/70 mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -1377,8 +1377,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   }}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
                     loginMode === 'google'
-                      ? 'bg-gradient-to-r from-cyan-600 to-purple-600 text-white shadow-lg shadow-cyan-500/20'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg shadow-orange-500/20'
+                      : 'text-stone-400 hover:text-white'
                   }`}
                 >
                   <GoogleIcon className="w-4 h-4" />
@@ -1394,8 +1394,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   }}
                   className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
                     loginMode === 'otp'
-                      ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-500/20'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/20'
+                      : 'text-stone-400 hover:text-white'
                   }`}
                 >
                   <Mail className="w-4 h-4" />
@@ -1407,7 +1407,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               {loginMode === 'google' && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <div className="text-center space-y-3">
-                    <p className="text-xs text-slate-300">
+                    <p className="text-xs text-stone-300">
                       Sign in with your approved organizer Google account.
                     </p>
 
@@ -1421,11 +1421,11 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       type="button"
                       onClick={handleGoogleOAuthPopup}
                       disabled={lockoutTimer > 0 || isAuthenticating}
-                      className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm bg-white hover:bg-slate-100 text-slate-900 shadow-[0_4px_25px_rgba(255,255,255,0.15)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-3 border border-white/80 active:scale-[0.99]"
+                      className="w-full py-3.5 px-4 rounded-2xl font-bold text-sm bg-white hover:bg-stone-100 text-stone-900 shadow-[0_4px_25px_rgba(255,255,255,0.15)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-3 border border-white/80 active:scale-[0.99]"
                     >
                       {isAuthenticating ? (
                         <>
-                          <RefreshCw className="w-5 h-5 animate-spin text-cyan-600" />
+                          <RefreshCw className="w-5 h-5 animate-spin text-orange-600" />
                           <span>Connecting to Google...</span>
                         </>
                       ) : (
@@ -1437,13 +1437,13 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     </button>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-xs text-slate-300 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-cyan-300 font-semibold">
-                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <div className="p-3.5 rounded-2xl bg-orange-950/40 border border-orange-500/30 text-xs text-stone-300 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-orange-300 font-semibold">
+                      <ShieldCheck className="w-4 h-4 text-amber-400" />
                       <span>Approved Organizers Only</span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Only authorized coordinators (<code className="text-cyan-300">kandukurijagan99@gmail.com</code>, <code className="text-purple-300">ieshitapan@gmail.com</code>, etc.) will be granted access.
+                    <p className="text-[11px] text-stone-400 leading-relaxed">
+                      Only authorized coordinators (<code className="text-orange-300">kandukurijagan99@gmail.com</code>, <code className="text-red-300">ieshitapan@gmail.com</code>, etc.) will be granted access.
                     </p>
                   </div>
 
@@ -1452,15 +1452,15 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     <button
                       type="button"
                       onClick={() => setIsGoogleConfigOpen(!isGoogleConfigOpen)}
-                      className="text-[11px] text-slate-400 hover:text-cyan-400 transition cursor-pointer flex items-center justify-center gap-1 mx-auto"
+                      className="text-[11px] text-stone-400 hover:text-orange-400 transition cursor-pointer flex items-center justify-center gap-1 mx-auto"
                     >
                       <Settings className="w-3 h-3" />
                       <span>Google OAuth Settings</span>
                     </button>
 
                     {isGoogleConfigOpen && (
-                      <form onSubmit={handleSaveGoogleClientId} className="mt-2 p-3 rounded-xl bg-slate-950/60 border border-slate-700/60 space-y-2 text-left">
-                        <label className="text-[10px] uppercase font-mono text-slate-400 block">
+                      <form onSubmit={handleSaveGoogleClientId} className="mt-2 p-3 rounded-xl bg-stone-950/60 border border-stone-700/60 space-y-2 text-left">
+                        <label className="text-[10px] uppercase font-mono text-stone-400 block">
                           Google Cloud OAuth Client ID:
                         </label>
                         <input
@@ -1468,11 +1468,11 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                           value={googleConfigInput}
                           onChange={(e) => setGoogleConfigInput(e.target.value)}
                           placeholder="xxxx.apps.googleusercontent.com"
-                          className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-cyan-400"
+                          className="w-full px-3 py-1.5 rounded-lg bg-stone-900 border border-stone-700 text-white font-mono text-xs focus:outline-none focus:border-orange-400"
                         />
                         <button
                           type="submit"
-                          className="w-full py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs transition"
+                          className="w-full py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs transition"
                         >
                           Save Client ID
                         </button>
@@ -1487,12 +1487,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <form onSubmit={otpFeedback ? handleVerifyOtp : handleSendOtp} className="space-y-4">
                     <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center justify-between">
+                      <label className="text-xs font-semibold text-stone-300 block mb-1.5 flex items-center justify-between">
                         <span>Authorized Organizer Email *</span>
-                        <span className="text-[10px] text-cyan-400 font-mono">Gmail Inbox</span>
+                        <span className="text-[10px] text-orange-400 font-mono">Gmail Inbox</span>
                       </label>
                       <div className="relative">
-                        <AtSign className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                        <AtSign className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                         <input
                           type="email"
                           value={emailInput}
@@ -1501,15 +1501,15 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             setAuthError(null);
                           }}
                           placeholder="e.g. kandukurijagan99@gmail.com"
-                          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-sm focus:outline-none focus:border-cyan-400 transition"
+                          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-sm focus:outline-none focus:border-orange-400 transition"
                           required
                         />
                       </div>
                     </div>
 
                     {detectedOrganizer && (
-                      <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-2">
+                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
                         <span>
                           Authorized: <strong>{detectedOrganizer.name}</strong> ({detectedOrganizer.roleTitle})
                         </span>
@@ -1518,25 +1518,25 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
                     {otpFeedback ? (
                       <div className="space-y-3 pt-1">
-                        <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2">
-                          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-2">
+                          <Check className="w-4 h-4 text-amber-400 shrink-0" />
                           <span>{otpFeedback}</span>
                         </div>
 
                         <div>
-                          <label className="text-xs font-semibold text-slate-300 block mb-1 flex items-center justify-between">
+                          <label className="text-xs font-semibold text-stone-300 block mb-1 flex items-center justify-between">
                             <span>Enter 6-Digit Code from your Gmail *</span>
-                            <span className="text-[10px] text-purple-400 font-mono">Valid for 5 mins</span>
+                            <span className="text-[10px] text-red-400 font-mono">Valid for 5 mins</span>
                           </label>
                           <div className="relative">
-                            <Key className="w-4 h-4 text-purple-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                            <Key className="w-4 h-4 text-red-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                             <input
                               type="text"
                               maxLength={6}
                               value={otpInput}
                               onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ''))}
                               placeholder="e.g. 482910"
-                              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-base tracking-widest font-mono text-center focus:outline-none focus:border-cyan-400 transition"
+                              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-base tracking-widest font-mono text-center focus:outline-none focus:border-orange-400 transition"
                               autoFocus
                               required
                             />
@@ -1546,7 +1546,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         <button
                           type="submit"
                           disabled={lockoutTimer > 0 || isAuthenticating}
-                          className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-emerald-600 via-cyan-600 to-purple-600 hover:from-emerald-500 hover:to-purple-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2"
+                          className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white shadow-[0_0_20px_rgba(245,158,11,0.4)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2"
                         >
                           {isAuthenticating ? (
                             <>
@@ -1566,7 +1566,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             type="button"
                             onClick={handleSendOtp}
                             disabled={isSendingOtp}
-                            className="text-xs text-cyan-400 hover:text-cyan-300 underline cursor-pointer"
+                            className="text-xs text-orange-400 hover:text-orange-300 underline cursor-pointer"
                           >
                             Resend Code
                           </button>
@@ -1576,7 +1576,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                               setOtpFeedback(null);
                               setOtpInput('');
                             }}
-                            className="text-xs text-slate-400 hover:text-white cursor-pointer"
+                            className="text-xs text-stone-400 hover:text-white cursor-pointer"
                           >
                             Use different email
                           </button>
@@ -1585,22 +1585,22 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     ) : (
                       <div className="space-y-3">
                         {humanChallenge && (
-                          <div className="p-3 rounded-2xl bg-slate-950/80 border border-cyan-500/30 space-y-2">
+                          <div className="p-3 rounded-2xl bg-stone-950/80 border border-orange-500/30 space-y-2">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="text-cyan-300 font-semibold flex items-center gap-1.5">
-                                <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                              <span className="text-orange-300 font-semibold flex items-center gap-1.5">
+                                <ShieldCheck className="w-3.5 h-3.5 text-orange-400" />
                                 <span>Anti-Agent Human Check</span>
                               </span>
                               <button
                                 type="button"
                                 onClick={() => void refreshHumanChallenge()}
-                                className="text-[10px] text-slate-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer"
+                                className="text-[10px] text-stone-400 hover:text-orange-300 flex items-center gap-1 cursor-pointer"
                               >
                                 <RotateCcw className="w-2.5 h-2.5" />
                                 <span>New Check</span>
                               </button>
                             </div>
-                            <p className="text-xs text-slate-300 font-mono">
+                            <p className="text-xs text-stone-300 font-mono">
                               {humanChallenge.question}
                             </p>
                             <input
@@ -1608,7 +1608,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                               value={challengeAnswer}
                               onChange={(e) => setChallengeAnswer(e.target.value)}
                               placeholder="Type calculation answer..."
-                              className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white font-mono text-xs focus:outline-none focus:border-cyan-400 transition"
+                              className="w-full px-3 py-2 rounded-xl bg-stone-900 border border-stone-700 text-white font-mono text-xs focus:outline-none focus:border-orange-400 transition"
                             />
                           </div>
                         )}
@@ -1617,7 +1617,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                           type="button"
                           onClick={handleSendOtp}
                           disabled={lockoutTimer > 0 || isSendingOtp}
-                          className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-purple-600 via-cyan-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2"
+                          className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-red-600 via-orange-600 to-red-600 hover:from-red-500 hover:to-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2"
                         >
                           {isSendingOtp ? (
                             <>
@@ -1626,7 +1626,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             </>
                           ) : (
                             <>
-                              <Send className="w-4 h-4 text-cyan-300" />
+                              <Send className="w-4 h-4 text-orange-300" />
                               <span>Send 6-Digit Login Code</span>
                             </>
                           )}
@@ -1646,13 +1646,13 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               )}
 
               {/* Security Info Footer */}
-              <div className="mt-6 pt-4 border-t border-slate-700/60 space-y-1.5 text-[11px] text-slate-400">
+              <div className="mt-6 pt-4 border-t border-stone-700/60 space-y-1.5 text-[11px] text-stone-400">
                 <div className="flex items-center gap-2">
-                  <Fingerprint className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <Fingerprint className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                   <span>Verified Organizer Access Only</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <span>Protected Access &amp; Activity Log</span>
                 </div>
               </div>
@@ -1663,36 +1663,36 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
           <div className="space-y-6 animate-in fade-in duration-300">
             
             {/* Top Navigation & Status Bar */}
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 shadow-2xl">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-stone-900/80 backdrop-blur-xl border border-stone-700/60 shadow-2xl">
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={onBackToHome}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 transition cursor-pointer"
                   title="Return to Main Website"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
                     <h1 className="font-display font-extrabold text-xl text-white flex items-center gap-2">
                       <span>CRISPR '26 Organizer &amp; Attendance Desk</span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/40 font-mono">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-300 border border-orange-500/40 font-mono">
                         Live Desk
                       </span>
                     </h1>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-red-500/20 text-red-300 border border-red-500/40">
                       {session?.roleTitle || 'Organizer'}
                     </span>
                   </div>
-                  <div className="text-xs text-slate-400 mt-0.5 flex flex-wrap items-center gap-2">
-                    <span>Active: <strong className="text-cyan-300">{organizerName}</strong></span>
+                  <div className="text-xs text-stone-400 mt-0.5 flex flex-wrap items-center gap-2">
+                    <span>Active: <strong className="text-orange-300">{organizerName}</strong></span>
                     <span>·</span>
                     <span>Venue: RB Seminar Hall</span>
                     <span>·</span>
-                    <span className="inline-flex items-center gap-1 text-[11px] text-slate-300 font-mono bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700">
-                      <Clock className="w-3 h-3 text-cyan-400" />
+                    <span className="inline-flex items-center gap-1 text-[11px] text-stone-300 font-mono bg-stone-800/80 px-2 py-0.5 rounded-md border border-stone-700">
+                      <Clock className="w-3 h-3 text-orange-400" />
                       <span>{sessionTimeRemaining}</span>
                     </span>
                     <span>·</span>
@@ -1701,7 +1701,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       type="button"
                       onClick={handleTestPing}
                       disabled={isTestingPing}
-                      className="inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-900/60 transition cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-orange-950/60 border border-orange-500/40 text-orange-300 hover:bg-orange-900/60 transition cursor-pointer"
                       title="Check Google Sheet connection status"
                     >
                       <Zap className={`w-3 h-3 text-yellow-400 ${isTestingPing ? 'animate-spin' : ''}`} />
@@ -1722,7 +1722,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => void startCameraScanner()}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)] flex items-center gap-1.5 transition cursor-pointer"
                   title="Scan Participant QR Pass [Ctrl+Q]"
                 >
                   <Camera className="w-4 h-4" />
@@ -1737,12 +1737,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   type="button"
                   onClick={() => handleSyncSheet(true)}
                   disabled={isSyncing}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-200 border border-cyan-500/40 flex items-center gap-1.5 transition cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.2)] disabled:opacity-50"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-orange-600/20 hover:bg-orange-600/30 text-orange-200 border border-orange-500/40 flex items-center gap-1.5 transition cursor-pointer shadow-[0_0_15px_rgba(249,115,22,0.2)] disabled:opacity-50"
                   title="Sync with Google Sheets [Ctrl+S]"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 text-cyan-400 ${isSyncing ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 text-orange-400 ${isSyncing ? 'animate-spin' : ''}`} />
                   <span>{isSyncing ? 'Syncing...' : 'Sync Live'}</span>
-                  <kbd className="hidden sm:inline-block px-1.5 py-0.2 rounded bg-white/10 text-[10px] font-mono text-cyan-300">
+                  <kbd className="hidden sm:inline-block px-1.5 py-0.2 rounded bg-white/10 text-[10px] font-mono text-orange-300">
                     Ctrl+S
                   </kbd>
                 </button>
@@ -1755,12 +1755,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       setAutoSyncInterval(e.target.value as any);
                       soundFX.playClick();
                     }}
-                    className="px-2.5 py-2 rounded-xl text-[11px] font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 focus:outline-none focus:border-cyan-400 transition cursor-pointer"
+                    className="px-2.5 py-2 rounded-xl text-[11px] font-mono font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 focus:outline-none focus:border-orange-400 transition cursor-pointer"
                     title="Automatic background sheet sync interval"
                   >
-                    <option value="off" className="bg-slate-900 text-slate-300">Auto: Off</option>
-                    <option value="30s" className="bg-slate-900 text-emerald-300">Auto: 30s</option>
-                    <option value="60s" className="bg-slate-900 text-cyan-300">Auto: 60s</option>
+                    <option value="off" className="bg-stone-900 text-stone-300">Auto: Off</option>
+                    <option value="30s" className="bg-stone-900 text-amber-300">Auto: 30s</option>
+                    <option value="60s" className="bg-stone-900 text-orange-300">Auto: 60s</option>
                   </select>
                 </div>
 
@@ -1771,10 +1771,10 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     logAuditEvent('EXPORT_CSV', `Exported attendance sheet CSV (${teams.length} teams)`, 'SUCCESS', session?.name || organizerName, session?.roleTitle || 'Organizer');
                     handleExportCsv();
                   }}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 flex items-center gap-1.5 transition cursor-pointer"
                   title="Export Attendance Sheet to CSV [Ctrl+E]"
                 >
-                  <Download className="w-3.5 h-3.5 text-cyan-400" />
+                  <Download className="w-3.5 h-3.5 text-orange-400" />
                   <span>CSV</span>
                 </button>
 
@@ -1785,17 +1785,17 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     logAuditEvent('COPY_EMAILS', `Copied ${presentTeamsList.length} present delegate email addresses`, 'SUCCESS', session?.name || organizerName, session?.roleTitle || 'Organizer');
                     handleCopyCertificateEmails();
                   }}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition cursor-pointer"
+                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 flex items-center gap-1.5 transition cursor-pointer"
                   title="Copy Present Participant Emails for Certificate Dispatch [Ctrl+M]"
                 >
                   {copiedMails ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400 font-bold">Copied!</span>
+                      <Check className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="text-amber-400 font-bold">Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 text-purple-400" />
+                      <Copy className="w-3.5 h-3.5 text-red-400" />
                       <span>Cert Mails</span>
                     </>
                   )}
@@ -1808,7 +1808,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   className={`p-2 rounded-xl border transition cursor-pointer ${
                     isMuted
                       ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
-                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                      : 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
                   }`}
                   title={isMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
                 >
@@ -1819,7 +1819,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsShortcutsModalOpen(true)}
-                  className="p-2 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition cursor-pointer"
                   title="Keyboard Shortcuts [?]"
                 >
                   <HelpCircle className="w-4 h-4" />
@@ -1833,7 +1833,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       logAuditEvent('VIEW_APPS_SCRIPT', 'Opened Google Apps Script integration code', 'SUCCESS', session?.name || organizerName, session?.roleTitle || 'Organizer');
                       setIsAppsScriptModalOpen(true);
                     }}
-                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-purple-300 border border-slate-700 transition cursor-pointer"
+                    className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-red-300 border border-stone-700 transition cursor-pointer"
                     title="View Google Sheets Sync Script Code (SuperAdmin)"
                   >
                     <Code2 className="w-4 h-4" />
@@ -1848,7 +1848,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       refreshOrganizersList();
                       setIsOrganizersModalOpen(true);
                     }}
-                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 transition cursor-pointer"
+                    className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-amber-300 border border-stone-700 transition cursor-pointer"
                     title="Manage Approved Organizer Accounts (SuperAdmin)"
                   >
                     <UserCheck className="w-4 h-4" />
@@ -1862,7 +1862,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     setApiConfigUrl(SynoraApi.getScriptUrl());
                     setIsApiConfigOpen(true);
                   }}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 transition cursor-pointer"
                   title="Configure Google Apps Script URL"
                 >
                   <Settings className="w-4 h-4" />
@@ -1872,7 +1872,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={handleOpenAuditLogs}
-                  className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-orange-300 border border-stone-700 transition cursor-pointer"
                   title="View Recent Activity Log"
                 >
                   <History className="w-4 h-4" />
@@ -1902,15 +1902,15 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
             {/* Live Sync Toast */}
             {syncFeedback && (
-              <div className="p-3.5 rounded-2xl bg-cyan-950/70 border border-cyan-500/50 text-cyan-200 text-xs flex items-center justify-between shadow-[0_0_20px_rgba(6,182,212,0.2)] animate-in fade-in duration-200">
+              <div className="p-3.5 rounded-2xl bg-orange-950/70 border border-orange-500/50 text-orange-200 text-xs flex items-center justify-between shadow-[0_0_20px_rgba(249,115,22,0.2)] animate-in fade-in duration-200">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <Sparkles className="w-4 h-4 text-orange-400 shrink-0" />
                   <span className="font-semibold">{syncFeedback}</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSyncFeedback(null)}
-                  className="text-slate-400 hover:text-white transition cursor-pointer"
+                  className="text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1919,26 +1919,26 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
             {/* KPI Summary Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-lg">
-                <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+              <div className="p-4 rounded-2xl bg-stone-900/80 backdrop-blur-md border border-stone-700/60 shadow-lg">
+                <div className="flex items-center justify-between text-xs text-stone-400 mb-1">
                   <span>Registered Teams</span>
-                  <Users className="w-4 h-4 text-cyan-400" />
+                  <Users className="w-4 h-4 text-orange-400" />
                 </div>
                 <div className="font-display font-extrabold text-2xl text-white">
                   {totalRegisteredTeams}
                 </div>
-                <div className="text-[11px] text-slate-400 mt-0.5">Total registered teams</div>
+                <div className="text-[11px] text-stone-400 mt-0.5">Total registered teams</div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 shadow-lg">
-                <div className="flex items-center justify-between text-xs text-emerald-300 mb-1">
+              <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 shadow-lg">
+                <div className="flex items-center justify-between text-xs text-amber-300 mb-1">
                   <span>Present Teams</span>
-                  <UserCheck className="w-4 h-4 text-emerald-400" />
+                  <UserCheck className="w-4 h-4 text-amber-400" />
                 </div>
-                <div className="font-display font-extrabold text-2xl text-emerald-400">
-                  {presentTeamsCount} <span className="text-xs font-normal text-emerald-300/80">({checkinPercentage}%)</span>
+                <div className="font-display font-extrabold text-2xl text-amber-400">
+                  {presentTeamsCount} <span className="text-xs font-normal text-amber-300/80">({checkinPercentage}%)</span>
                 </div>
-                <div className="text-[11px] text-emerald-400/80 mt-0.5">Checked in at RB Hall</div>
+                <div className="text-[11px] text-amber-400/80 mt-0.5">Checked in at RB Hall</div>
               </div>
 
               <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-500/30 shadow-lg">
@@ -1952,26 +1952,26 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <div className="text-[11px] text-amber-400/80 mt-0.5">Pending check-in</div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/30 shadow-lg">
-                <div className="flex items-center justify-between text-xs text-purple-300 mb-1">
+              <div className="p-4 rounded-2xl bg-red-950/30 border border-red-500/30 shadow-lg">
+                <div className="flex items-center justify-between text-xs text-red-300 mb-1">
                   <span>Certificate Eligible</span>
-                  <Award className="w-4 h-4 text-purple-400" />
+                  <Award className="w-4 h-4 text-red-400" />
                 </div>
-                <div className="font-display font-extrabold text-2xl text-purple-300">
-                  {totalPresentDelegates} <span className="text-xs font-normal text-purple-300/80">Delegates</span>
+                <div className="font-display font-extrabold text-2xl text-red-300">
+                  {totalPresentDelegates} <span className="text-xs font-normal text-red-300/80">Delegates</span>
                 </div>
-                <div className="text-[11px] text-purple-300/80 mt-0.5">Verified attendees</div>
+                <div className="text-[11px] text-red-300/80 mt-0.5">Verified attendees</div>
               </div>
             </div>
 
             {/* Quick Search & Filter Controls */}
-            <div className="p-4 rounded-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 space-y-3 shadow-lg">
+            <div className="p-4 rounded-2xl bg-stone-900/80 backdrop-blur-xl border border-stone-700/60 space-y-3 shadow-lg">
               <div className="flex flex-col md:flex-row items-center justify-between gap-3">
                 
                 {/* Search Bar */}
                 <div className="relative w-full md:w-[440px] flex items-center gap-2">
                   <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       ref={searchInputRef}
                       type="text"
@@ -1983,19 +1983,19 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         }
                       }}
                       placeholder="Search Pass ID, Name, Phone, Email... [/]"
-                      className="w-full pl-10 pr-16 py-2 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 transition"
+                      className="w-full pl-10 pr-16 py-2 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-xs focus:outline-none focus:border-orange-400 transition"
                     />
                     <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
                       {searchQuery ? (
                         <button
                           type="button"
                           onClick={() => setSearchQuery('')}
-                          className="text-slate-400 hover:text-white text-xs px-1"
+                          className="text-stone-400 hover:text-white text-xs px-1"
                         >
                           ✕
                         </button>
                       ) : (
-                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono text-slate-400 bg-slate-800 rounded border border-slate-700">
+                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono text-stone-400 bg-stone-800 rounded border border-stone-700">
                           /
                         </kbd>
                       )}
@@ -2006,7 +2006,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       type="button"
                       onClick={() => handleQuickLookup(searchQuery)}
                       disabled={isSearchingLive}
-                      className="px-3 py-2 rounded-xl text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white border border-cyan-400/40 shrink-0 transition flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-2 rounded-xl text-xs font-bold bg-orange-600 hover:bg-orange-500 text-white border border-orange-400/40 shrink-0 transition flex items-center gap-1 cursor-pointer"
                       title="Verify and Mark Attendance"
                     >
                       {isSearchingLive ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <CheckCheck className="w-3.5 h-3.5" />}
@@ -2022,8 +2022,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setActiveTab('all'); soundFX.playClick(); }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'all'
-                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700'
+                        ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                        : 'bg-stone-800/80 text-stone-400 hover:text-white border border-stone-700'
                     }`}
                   >
                     All ({totalRegisteredTeams})
@@ -2034,8 +2034,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setActiveTab('present'); soundFX.playClick(); }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'present'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'bg-stone-800/80 text-stone-400 hover:text-white border border-stone-700'
                     }`}
                   >
                     Present ({presentTeamsCount})
@@ -2047,7 +2047,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'pending'
                         ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700'
+                        : 'bg-stone-800/80 text-stone-400 hover:text-white border border-stone-700'
                     }`}
                   >
                     Pending ({pendingTeamsCount})
@@ -2058,8 +2058,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setActiveTab('student'); soundFX.playClick(); }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'student'
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700'
+                        ? 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
+                        : 'bg-stone-800/80 text-stone-400 hover:text-white border border-stone-700'
                     }`}
                   >
                     Students
@@ -2070,8 +2070,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setActiveTab('faculty'); soundFX.playClick(); }}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                       activeTab === 'faculty'
-                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                        : 'bg-slate-800/80 text-slate-400 hover:text-white border border-slate-700'
+                        ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                        : 'bg-stone-800/80 text-stone-400 hover:text-white border border-stone-700'
                     }`}
                   >
                     Faculty
@@ -2080,17 +2080,17 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               </div>
 
               {/* Secondary Filter & Sorter Toolbar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-700/60 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-700/60 text-xs">
                 {/* College Filter */}
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">College:</span>
+                  <span className="text-[11px] text-stone-400 font-semibold uppercase tracking-wider">College:</span>
                   <button
                     type="button"
                     onClick={() => { setCollegeFilter('all'); soundFX.playClick(); }}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
                       collegeFilter === 'all'
-                        ? 'bg-slate-700 text-white font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-stone-700 text-white font-bold'
+                        : 'text-stone-400 hover:text-white'
                     }`}
                   >
                     All Colleges
@@ -2100,8 +2100,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setCollegeFilter('internal'); soundFX.playClick(); }}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
                       collegeFilter === 'internal'
-                        ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-orange-500/20 text-orange-300 font-bold border border-orange-500/30'
+                        : 'text-stone-400 hover:text-white'
                     }`}
                   >
                     SIMATS Internal
@@ -2111,8 +2111,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={() => { setCollegeFilter('external'); soundFX.playClick(); }}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
                       collegeFilter === 'external'
-                        ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-red-500/20 text-red-300 font-bold border border-red-500/30'
+                        : 'text-stone-400 hover:text-white'
                     }`}
                   >
                     External Universities
@@ -2122,14 +2122,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 {/* Sorter & Density View */}
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-slate-400">Sort:</span>
+                    <span className="text-[11px] text-stone-400">Sort:</span>
                     <select
                       value={sortBy}
                       onChange={(e) => {
                         setSortBy(e.target.value as any);
                         soundFX.playClick();
                       }}
-                      className="px-2 py-1 rounded-md bg-slate-950 text-[11px] text-slate-200 border border-slate-700 focus:outline-none focus:border-cyan-400 transition"
+                      className="px-2 py-1 rounded-md bg-stone-950 text-[11px] text-stone-200 border border-stone-700 focus:outline-none focus:border-orange-400 transition"
                     >
                       <option value="registeredAt">Registration Date</option>
                       <option value="teamName">Team / Delegate Name</option>
@@ -2143,7 +2143,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
                         soundFX.playClick();
                       }}
-                      className="p-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-mono"
+                      className="p-1 rounded-md bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 text-[11px] font-mono"
                       title={sortOrder === 'asc' ? 'Ascending Order' : 'Descending Order'}
                     >
                       {sortOrder === 'asc' ? '▲' : '▼'}
@@ -2156,8 +2156,8 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     onClick={handleToggleDenseView}
                     className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border transition cursor-pointer flex items-center gap-1 ${
                       isDenseView
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                        ? 'bg-orange-500/20 text-orange-300 border-orange-500/40'
+                        : 'bg-stone-800 text-stone-400 border-stone-700 hover:text-white'
                     }`}
                     title="Toggle High Density Table View"
                   >
@@ -2169,17 +2169,17 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
             </div>
 
             {/* Attendance Roster Table */}
-            <div className="rounded-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 overflow-hidden shadow-2xl relative">
-              <div className="p-4 bg-slate-950/40 border-b border-slate-700/60 flex flex-wrap items-center justify-between gap-2">
+            <div className="rounded-2xl bg-stone-900/80 backdrop-blur-xl border border-stone-700/60 overflow-hidden shadow-2xl relative">
+              <div className="p-4 bg-stone-950/40 border-b border-stone-700/60 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <FileSpreadsheet className="w-4 h-4 text-cyan-400" />
+                  <FileSpreadsheet className="w-4 h-4 text-orange-400" />
                   <span className="font-bold text-xs uppercase tracking-wider text-white">
                     Attendance Register &amp; Certificate Dispatch
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
+                <div className="flex items-center gap-3 text-xs text-stone-400 font-mono">
                   {selectedTeamIds.length > 0 && (
-                    <span className="text-cyan-300 font-bold bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-500/40">
+                    <span className="text-orange-300 font-bold bg-orange-950/80 px-2 py-0.5 rounded border border-orange-500/40">
                       {selectedTeamIds.length} Selected
                     </span>
                   )}
@@ -2191,14 +2191,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950 text-slate-400 border-b border-slate-700/80 uppercase text-[10px] tracking-wider">
+                  <thead className="bg-stone-950 text-stone-400 border-b border-stone-700/80 uppercase text-[10px] tracking-wider">
                     <tr>
                       <th className="py-2.5 px-3 w-8 text-center">
                         <input
                           type="checkbox"
                           checked={selectedTeamIds.length === filteredTeams.length && filteredTeams.length > 0}
                           onChange={handleToggleSelectAll}
-                          className="rounded bg-slate-950 border-slate-700 text-cyan-500 focus:ring-cyan-400 cursor-pointer"
+                          className="rounded bg-stone-950 border-stone-700 text-orange-500 focus:ring-orange-400 cursor-pointer"
                           title="Select All Visible Teams"
                         />
                       </th>
@@ -2219,11 +2219,11 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         return (
                           <tr
                             key={team.teamId}
-                            className={`hover:bg-slate-800/50 transition ${
+                            className={`hover:bg-stone-800/50 transition ${
                               isSelected
-                                ? 'bg-cyan-950/40'
+                                ? 'bg-orange-950/40'
                                 : team.checkedIn
-                                ? 'bg-emerald-950/20'
+                                ? 'bg-amber-950/20'
                                 : ''
                             }`}
                           >
@@ -2233,12 +2233,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                                 type="checkbox"
                                 checked={isSelected}
                                 onChange={() => handleToggleSelectRow(team.teamId)}
-                                className="rounded bg-slate-950 border-slate-700 text-cyan-500 focus:ring-cyan-400 cursor-pointer"
+                                className="rounded bg-stone-950 border-stone-700 text-orange-500 focus:ring-orange-400 cursor-pointer"
                               />
                             </td>
 
                             {/* Pass ID */}
-                            <td className={`${cellPadding} font-mono font-bold text-cyan-300`}>
+                            <td className={`${cellPadding} font-mono font-bold text-orange-300`}>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2254,19 +2254,19 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             {/* Team & College */}
                             <td className={cellPadding}>
                               <div className="font-bold text-white">{team.teamName}</div>
-                              <div className="text-[11px] text-slate-400 flex items-center gap-1">
-                                <Building className="w-3 h-3 text-purple-400 shrink-0" />
+                              <div className="text-[11px] text-stone-400 flex items-center gap-1">
+                                <Building className="w-3 h-3 text-red-400 shrink-0" />
                                 <span className="truncate max-w-[180px]">{team.college}</span>
                               </div>
                             </td>
 
                             {/* Team Leader */}
                             <td className={cellPadding}>
-                              <div className="font-semibold text-slate-200">{team.leaderName}</div>
-                              <div className="text-[11px] text-slate-400 font-mono">
+                              <div className="font-semibold text-stone-200">{team.leaderName}</div>
+                              <div className="text-[11px] text-stone-400 font-mono">
                                 📞 {team.leaderPhone || 'N/A'}
                               </div>
-                              <div className="text-[10px] text-slate-400 truncate max-w-[160px]">
+                              <div className="text-[10px] text-stone-400 truncate max-w-[160px]">
                                 ✉️ {team.leaderEmail}
                               </div>
                             </td>
@@ -2276,21 +2276,21 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                               {Array.isArray(team.memberDetails) && team.memberDetails.length > 0 ? (
                                 <div className="space-y-0.5">
                                   {team.memberDetails.map((m, idx) => (
-                                    <div key={idx} className="text-[11px] text-slate-300 flex items-center gap-1">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                                    <div key={idx} className="text-[11px] text-stone-300 flex items-center gap-1">
+                                      <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
                                       <span className="truncate max-w-[140px]">{m.name}</span>
                                       {m.phone && (
-                                        <span className="text-[10px] text-slate-400 font-mono">({m.phone})</span>
+                                        <span className="text-[10px] text-stone-400 font-mono">({m.phone})</span>
                                       )}
                                     </div>
                                   ))}
                                 </div>
                               ) : Array.isArray(team.members) && team.members.length > 0 ? (
-                                <div className="text-[11px] text-slate-300 truncate max-w-[160px]">
+                                <div className="text-[11px] text-stone-300 truncate max-w-[160px]">
                                   {team.members.join(', ')}
                                 </div>
                               ) : (
-                                <span className="text-[11px] text-slate-400">Solo / No members</span>
+                                <span className="text-[11px] text-stone-400">Solo / No members</span>
                               )}
                             </td>
 
@@ -2299,13 +2299,13 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                               <span
                                 className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase ${
                                   team.participantCategory === 'faculty'
-                                    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                                    : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                    ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                                    : 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
                                 }`}
                               >
                                 {team.participantCategory || 'student'}
                               </span>
-                              <div className="font-mono text-emerald-400 font-bold mt-0.5">
+                              <div className="font-mono text-amber-400 font-bold mt-0.5">
                                 ₹{team.totalFee || (team.participantCategory === 'faculty' ? 1000 : 400)}
                               </div>
                             </td>
@@ -2314,11 +2314,11 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             <td className={cellPadding}>
                               {team.checkedIn ? (
                                 <div>
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
                                     <CheckCheck className="w-3 h-3" />
                                     <span>PRESENT</span>
                                   </span>
-                                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                                  <div className="text-[10px] text-stone-400 font-mono mt-0.5">
                                     {team.checkinTime || 'Verified'}
                                   </div>
                                 </div>
@@ -2338,7 +2338,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                                   className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                                     team.checkedIn
                                       ? 'bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30'
-                                      : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40'
+                                      : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40'
                                   }`}
                                 >
                                   {team.checkedIn ? 'Undo' : 'Check-in'}
@@ -2350,7 +2350,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                                     setSelectedTeam(team);
                                     setIsDetailModalOpen(true);
                                   }}
-                                  className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer"
+                                  className="px-2 py-1 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 transition cursor-pointer"
                                   title="View Details"
                                 >
                                   Details
@@ -2362,7 +2362,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       })
                     ) : (
                       <tr>
-                        <td colSpan={8} className="py-8 text-center text-slate-400">
+                        <td colSpan={8} className="py-8 text-center text-stone-400">
                           No teams found matching the selected filter or search query.
                         </td>
                       </tr>
@@ -2375,9 +2375,9 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
             {/* Floating Bulk Action Bar (Docked at bottom when rows are selected) */}
             {selectedTeamIds.length > 0 && (
               <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-5 duration-300">
-                <div className="bg-slate-900/95 backdrop-blur-xl border border-cyan-500/50 rounded-2xl px-5 py-3 shadow-[0_15px_50px_rgba(6,182,212,0.3)] flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-2 border-r border-slate-700 pr-3 text-xs">
-                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                <div className="bg-stone-900/95 backdrop-blur-xl border border-orange-500/50 rounded-2xl px-5 py-3 shadow-[0_15px_50px_rgba(249,115,22,0.3)] flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2 border-r border-stone-700 pr-3 text-xs">
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse" />
                     <span className="font-bold text-white">{selectedTeamIds.length} Teams Selected</span>
                   </div>
 
@@ -2385,7 +2385,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     <button
                       type="button"
                       onClick={handleBulkMarkPresent}
-                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-stone-950 transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
                       title="Mark Present [Ctrl+B]"
                     >
                       <CheckCheck className="w-3.5 h-3.5" />
@@ -2404,25 +2404,25 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     <button
                       type="button"
                       onClick={handleBulkCopyEmails}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer flex items-center gap-1.5"
                     >
-                      <Copy className="w-3.5 h-3.5 text-purple-400" />
+                      <Copy className="w-3.5 h-3.5 text-red-400" />
                       <span>Copy Emails</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={handleBulkExportCsv}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer flex items-center gap-1.5"
                     >
-                      <Download className="w-3.5 h-3.5 text-cyan-400" />
+                      <Download className="w-3.5 h-3.5 text-orange-400" />
                       <span>Export CSV</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setSelectedTeamIds([])}
-                      className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer ml-1"
+                      className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer ml-1"
                       title="Clear Selection"
                     >
                       <X className="w-4 h-4" />
@@ -2437,20 +2437,20 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== CAMERA QR SCANNER MODAL ==================== */}
         {isScannerOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-xl animate-in fade-in duration-200">
-            <div className="bg-slate-900/95 border border-cyan-500/40 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-[0_20px_70px_rgba(6,182,212,0.25)] space-y-4 max-h-[95vh] overflow-y-auto">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4 bg-stone-950/85 backdrop-blur-xl animate-in fade-in duration-200">
+            <div className="bg-stone-900/95 border border-orange-500/40 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-[0_20px_70px_rgba(249,115,22,0.25)] space-y-4 max-h-[95vh] overflow-y-auto">
               
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center justify-between border-b border-stone-800 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                  <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-400">
                     <Camera className="w-4 h-4" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white tracking-wide">Live Pass Scanner</h3>
                     <div className="flex items-center gap-1.5 text-[11px]">
-                      <span className={`w-2 h-2 rounded-full ${isCameraActive ? 'bg-emerald-400 animate-pulse' : cameraError ? 'bg-amber-400' : 'bg-cyan-400 animate-ping'}`} />
-                      <span className="text-slate-400 font-mono">
+                      <span className={`w-2 h-2 rounded-full ${isCameraActive ? 'bg-amber-400 animate-pulse' : cameraError ? 'bg-amber-400' : 'bg-orange-400 animate-ping'}`} />
+                      <span className="text-stone-400 font-mono">
                         {isCameraActive ? 'Camera Active' : cameraError ? 'Camera Paused' : 'Connecting Stream...'}
                       </span>
                     </div>
@@ -2459,7 +2459,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={stopCameraScanner}
-                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                   title="Close Scanner"
                 >
                   <X className="w-5 h-5" />
@@ -2477,12 +2477,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   }}
                   className={`p-2 rounded-xl border flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
                     isKioskMode
-                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                      : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:text-white'
                   }`}
                   title="Fast Scan keeps scanner open after every successful scan"
                 >
-                  <Zap className={`w-3.5 h-3.5 ${isKioskMode ? 'text-emerald-400 fill-emerald-400/30' : ''}`} />
+                  <Zap className={`w-3.5 h-3.5 ${isKioskMode ? 'text-amber-400 fill-amber-400/30' : ''}`} />
                   <span className="text-[10px] font-bold">{isKioskMode ? 'Fast Scan ON' : 'Fast Scan OFF'}</span>
                 </button>
 
@@ -2490,10 +2490,10 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={handleToggleCameraFacing}
-                  className="p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300 hover:text-cyan-300 hover:border-cyan-500/30 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-stone-950/60 border border-stone-800 text-stone-300 hover:text-orange-300 hover:border-orange-500/30 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
                   title="Switch between rear and front camera"
                 >
-                  <FlipHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                  <FlipHorizontal className="w-3.5 h-3.5 text-orange-400" />
                   <span className="text-[10px] font-bold">{cameraFacingMode === 'environment' ? 'Rear Cam' : 'Front Cam'}</span>
                 </button>
 
@@ -2501,10 +2501,10 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-300 hover:text-purple-300 hover:border-purple-500/30 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
+                  className="p-2 rounded-xl bg-stone-950/60 border border-stone-800 text-stone-300 hover:text-red-300 hover:border-red-500/30 flex flex-col items-center justify-center gap-1 transition cursor-pointer"
                   title="Upload QR screenshot image"
                 >
-                  <Upload className="w-3.5 h-3.5 text-purple-400" />
+                  <Upload className="w-3.5 h-3.5 text-red-400" />
                   <span className="text-[10px] font-bold">Upload Image</span>
                 </button>
                 <input
@@ -2517,17 +2517,17 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               </div>
 
               {/* Viewfinder Viewport Container */}
-              <div className="relative w-full aspect-square max-w-[320px] mx-auto rounded-3xl overflow-hidden bg-slate-950 border border-cyan-500/30 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center">
+              <div className="relative w-full aspect-square max-w-[320px] mx-auto rounded-3xl overflow-hidden bg-stone-950 border border-orange-500/30 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center">
                 
                 {/* Futuristic HUD Corner Brackets */}
-                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-cyan-400 rounded-tl-lg pointer-events-none z-10 shadow-[0_0_8px_#06b6d4]" />
-                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-cyan-400 rounded-tr-lg pointer-events-none z-10 shadow-[0_0_8px_#06b6d4]" />
-                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-cyan-400 rounded-bl-lg pointer-events-none z-10 shadow-[0_0_8px_#06b6d4]" />
-                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-cyan-400 rounded-br-lg pointer-events-none z-10 shadow-[0_0_8px_#06b6d4]" />
+                <div className="absolute top-3 left-3 w-5 h-5 border-t-2 border-l-2 border-orange-400 rounded-tl-lg pointer-events-none z-10 shadow-[0_0_8px_#f97316]" />
+                <div className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-orange-400 rounded-tr-lg pointer-events-none z-10 shadow-[0_0_8px_#f97316]" />
+                <div className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-orange-400 rounded-bl-lg pointer-events-none z-10 shadow-[0_0_8px_#f97316]" />
+                <div className="absolute bottom-3 right-3 w-5 h-5 border-b-2 border-r-2 border-orange-400 rounded-br-lg pointer-events-none z-10 shadow-[0_0_8px_#f97316]" />
 
                 {/* Laser Scanning Line */}
                 {isCameraActive && (
-                  <div className="absolute inset-x-6 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_#06b6d4] animate-scanner-laser pointer-events-none z-20" />
+                  <div className="absolute inset-x-6 h-[2px] bg-gradient-to-r from-transparent via-orange-400 to-transparent shadow-[0_0_12px_#f97316] animate-scanner-laser pointer-events-none z-20" />
                 )}
 
                 {/* Live Camera Stream Mount Node */}
@@ -2535,23 +2535,23 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
                 {/* Camera Error / Permission Fallback */}
                 {cameraError && (
-                  <div className="absolute inset-0 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center space-y-3 z-30">
+                  <div className="absolute inset-0 bg-stone-950/95 flex flex-col items-center justify-center p-6 text-center space-y-3 z-30">
                     <ShieldAlert className="w-10 h-10 text-amber-400 animate-pulse" />
-                    <p className="text-xs text-slate-300 leading-relaxed font-medium">
+                    <p className="text-xs text-stone-300 leading-relaxed font-medium">
                       {cameraError}
                     </p>
                     <div className="flex items-center gap-2 pt-1">
                       <button
                         type="button"
                         onClick={() => startCameraScanner()}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-orange-500 hover:bg-orange-400 text-stone-950 transition cursor-pointer"
                       >
                         Retry Camera
                       </button>
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                       >
                         Pick QR Image
                       </button>
@@ -2574,7 +2574,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       }
                     }}
                     placeholder="Or enter Pass ID, Email, Phone..."
-                    className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition pr-20"
+                    className="w-full bg-stone-950/70 border border-stone-700/80 rounded-xl px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition pr-20"
                   />
                   <button
                     type="button"
@@ -2585,7 +2585,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         setModalManualQuery('');
                       }
                     }}
-                    className="absolute right-1 top-1 bottom-1 px-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 disabled:hover:bg-cyan-500 text-slate-950 font-bold text-[11px] transition cursor-pointer flex items-center gap-1"
+                    className="absolute right-1 top-1 bottom-1 px-2.5 rounded-lg bg-orange-500 hover:bg-orange-400 disabled:opacity-40 disabled:hover:bg-orange-500 text-stone-950 font-bold text-[11px] transition cursor-pointer flex items-center gap-1"
                   >
                     <span>Check In</span>
                   </button>
@@ -2594,7 +2594,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
               {/* Scan Feedback Banner */}
               {scanFeedback && (
-                <div className="p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-200 text-xs text-center font-semibold animate-in fade-in">
+                <div className="p-2.5 rounded-xl bg-orange-950/60 border border-orange-500/40 text-orange-200 text-xs text-center font-semibold animate-in fade-in">
                   {scanFeedback}
                 </div>
               )}
@@ -2602,12 +2602,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               {/* Session Scan History */}
               {sessionScanHistory.length > 0 && (
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                  <div className="flex items-center justify-between text-[11px] text-stone-400 font-mono">
                     <span>Scanned in this session ({sessionScanHistory.length}):</span>
                     <button
                       type="button"
                       onClick={() => setSessionScanHistory([])}
-                      className="text-[10px] text-slate-400 hover:text-white"
+                      className="text-[10px] text-stone-400 hover:text-white"
                     >
                       Clear Log
                     </button>
@@ -2616,14 +2616,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     {sessionScanHistory.map((item, idx) => (
                       <div
                         key={`${item.teamId}-${idx}`}
-                        className="p-2 rounded-lg bg-slate-950/60 border border-slate-800 text-xs flex items-center justify-between"
+                        className="p-2 rounded-lg bg-stone-950/60 border border-stone-800 text-xs flex items-center justify-between"
                       >
                         <div className="truncate mr-2">
                           <span className="font-bold text-white">{item.teamName}</span>{' '}
-                          <span className="text-[10px] font-mono text-cyan-300">({item.teamId})</span>
+                          <span className="text-[10px] font-mono text-orange-300">({item.teamId})</span>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="text-[10px] text-slate-400 font-mono">{item.time}</span>
+                          <span className="text-[10px] text-stone-400 font-mono">{item.time}</span>
                           <button
                             type="button"
                             onClick={async () => {
@@ -2644,14 +2644,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               )}
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-1 border-t border-slate-800/80">
-                <span className="text-[10px] font-mono text-slate-400">
+              <div className="flex items-center justify-between pt-1 border-t border-stone-800/80">
+                <span className="text-[10px] font-mono text-stone-400">
                   CRISPR '26 Fast Desk
                 </span>
                 <button
                   type="button"
                   onClick={stopCameraScanner}
-                  className="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                  className="px-4 py-1.5 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                 >
                   Done Scanning
                 </button>
@@ -2662,21 +2662,21 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== TEAM FULL DETAILS MODAL ==================== */}
         {isDetailModalOpen && selectedTeam && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(168,85,247,0.3)] space-y-5 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-red-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(239,68,68,0.3)] space-y-5 max-h-[90vh] overflow-y-auto">
               
               {/* Header */}
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-mono font-bold text-xs bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full">
+                    <span className="font-mono font-bold text-xs bg-orange-500/20 text-orange-300 border border-orange-500/30 px-2.5 py-0.5 rounded-full">
                       {selectedTeam.teamId}
                     </span>
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase ${
                         selectedTeam.participantCategory === 'faculty'
-                          ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                       }`}
                     >
                       {selectedTeam.participantCategory || 'Student'} Tier
@@ -2685,7 +2685,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   <h3 className="font-display font-extrabold text-2xl text-white">
                     {selectedTeam.teamName}
                   </h3>
-                  <div className="text-xs text-slate-400 mt-0.5">
+                  <div className="text-xs text-stone-400 mt-0.5">
                     {selectedTeam.college} ({selectedTeam.collegeType === 'internal' ? 'SIMATS Internal' : 'External University'})
                   </div>
                 </div>
@@ -2693,7 +2693,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsDetailModalOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -2703,17 +2703,17 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               <div
                 className={`p-4 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 ${
                   selectedTeam.checkedIn
-                    ? 'bg-emerald-950/40 border-emerald-500/40'
+                    ? 'bg-amber-950/40 border-amber-500/40'
                     : 'bg-amber-950/30 border-amber-500/30'
                 }`}
               >
                 <div>
-                  <div className="text-xs font-semibold text-slate-300">Attendance Status:</div>
+                  <div className="text-xs font-semibold text-stone-300">Attendance Status:</div>
                   <div className="font-bold text-base mt-0.5 flex items-center gap-2">
                     {selectedTeam.checkedIn ? (
                       <>
-                        <CheckCheck className="w-5 h-5 text-emerald-400" />
-                        <span className="text-emerald-300">PRESENT · Eligible for Certificate</span>
+                        <CheckCheck className="w-5 h-5 text-amber-400" />
+                        <span className="text-amber-300">PRESENT · Eligible for Certificate</span>
                       </>
                     ) : (
                       <>
@@ -2723,7 +2723,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     )}
                   </div>
                   {selectedTeam.checkinTime && (
-                    <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                    <div className="text-[11px] text-stone-400 font-mono mt-0.5">
                       Checked in at: {selectedTeam.checkinTime} (by {selectedTeam.verifiedBy || 'Organizer'})
                     </div>
                   )}
@@ -2735,7 +2735,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer shadow ${
                     selectedTeam.checkedIn
                       ? 'bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40'
-                      : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                      : 'bg-amber-500 hover:bg-amber-400 text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
                   }`}
                 >
                   {selectedTeam.checkedIn ? 'Undo Check-in' : '✅ Mark Present & Confirm'}
@@ -2743,34 +2743,34 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               </div>
 
               {/* Primary Leader Details */}
-              <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-2">
-                <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs uppercase tracking-wider">
+              <div className="p-4 rounded-2xl bg-orange-950/30 border border-orange-500/30 space-y-2">
+                <div className="flex items-center gap-2 text-orange-300 font-bold text-xs uppercase tracking-wider">
                   <GraduationCap className="w-4 h-4" />
                   <span>Team Leader (Member 1)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-slate-400">Full Name:</span>{' '}
+                    <span className="text-stone-400">Full Name:</span>{' '}
                     <strong className="text-white">{selectedTeam.leaderName}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400">WhatsApp / Mobile:</span>{' '}
-                    <strong className="text-emerald-400 font-mono">{selectedTeam.leaderPhone || 'N/A'}</strong>
+                    <span className="text-stone-400">WhatsApp / Mobile:</span>{' '}
+                    <strong className="text-amber-400 font-mono">{selectedTeam.leaderPhone || 'N/A'}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400">Email Address:</span>{' '}
-                    <strong className="text-slate-200">{selectedTeam.leaderEmail}</strong>
+                    <span className="text-stone-400">Email Address:</span>{' '}
+                    <strong className="text-stone-200">{selectedTeam.leaderEmail}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-400">Designation / Year:</span>{' '}
-                    <strong className="text-purple-300">{selectedTeam.leaderDesignation || 'N/A'}</strong>
+                    <span className="text-stone-400">Designation / Year:</span>{' '}
+                    <strong className="text-red-300">{selectedTeam.leaderDesignation || 'N/A'}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Co-Delegates Breakdown */}
               <div className="space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+                <div className="text-xs font-bold uppercase tracking-wider text-red-300 flex items-center gap-1.5">
                   <Users className="w-4 h-4" />
                   <span>Accompanying Team Members</span>
                 </div>
@@ -2780,63 +2780,63 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     {selectedTeam.memberDetails.map((m, idx) => (
                       <div
                         key={idx}
-                        className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                        className="p-3.5 rounded-xl bg-stone-950/60 border border-stone-700 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                       >
                         <div>
                           <div className="font-bold text-white flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-purple-600/40 border border-purple-400/50 text-purple-300 flex items-center justify-center text-[10px]">
+                            <span className="w-5 h-5 rounded-full bg-red-600/40 border border-red-400/50 text-red-300 flex items-center justify-center text-[10px]">
                               {idx + 2}
                             </span>
                             <span>{m.name}</span>
-                            <span className="text-[10px] text-slate-400 font-mono">({m.role || `Member ${idx + 2}`})</span>
+                            <span className="text-[10px] text-stone-400 font-mono">({m.role || `Member ${idx + 2}`})</span>
                           </div>
-                          <div className="text-[11px] text-slate-400 mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                          <div className="text-[11px] text-stone-400 mt-1 flex flex-wrap gap-x-3 gap-y-1">
                             {m.phone && <span>📞 {m.phone}</span>}
                             {m.email && <span>✉️ {m.email}</span>}
-                            {m.designation && <span className="text-purple-300">🎓 {m.designation}</span>}
+                            {m.designation && <span className="text-red-300">🎓 {m.designation}</span>}
                           </div>
                         </div>
-                        <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 self-start sm:self-auto">
+                        <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 self-start sm:self-auto">
                           Certificate Eligible
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : Array.isArray(selectedTeam.members) && selectedTeam.members.length > 0 ? (
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-700 text-xs">
+                  <div className="p-3 rounded-xl bg-stone-950/60 border border-stone-700 text-xs">
                     {selectedTeam.members.map((m, idx) => (
-                      <div key={idx} className="py-1 text-slate-200">
+                      <div key={idx} className="py-1 text-stone-200">
                         👤 Member {idx + 2}: <strong>{m}</strong>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-400 italic p-3">No co-delegates listed.</div>
+                  <div className="text-xs text-stone-400 italic p-3">No co-delegates listed.</div>
                 )}
               </div>
 
               {/* Payment Details */}
-              <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-700 text-xs grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-700 text-xs grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <span className="text-slate-400">Total Registration Fee:</span>
-                  <div className="font-mono font-bold text-base text-emerald-400">
+                  <span className="text-stone-400">Total Registration Fee:</span>
+                  <div className="font-mono font-bold text-base text-amber-400">
                     ₹{selectedTeam.totalFee || (selectedTeam.participantCategory === 'faculty' ? 1000 : 400)}
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-400">UPI Ref / UTR ID:</span>
-                  <div className="font-mono font-bold text-cyan-300">
+                  <span className="text-stone-400">UPI Ref / UTR ID:</span>
+                  <div className="font-mono font-bold text-orange-300">
                     {selectedTeam.txnId || 'Verified via UPI'}
                   </div>
                 </div>
 
                 {selectedTeam.paymentScreenshotBase64 && (
-                  <div className="sm:col-span-2 pt-2 border-t border-slate-800">
+                  <div className="sm:col-span-2 pt-2 border-t border-stone-800">
                     <button
                       type="button"
                       onClick={() => setIsReceiptModalOpen(true)}
-                      className="text-xs font-bold text-cyan-400 hover:text-cyan-300 underline flex items-center gap-1 cursor-pointer"
+                      className="text-xs font-bold text-orange-400 hover:text-orange-300 underline flex items-center gap-1 cursor-pointer"
                     >
                       <CreditCard className="w-3.5 h-3.5" />
                       <span>View Uploaded Payment Receipt</span>
@@ -2846,7 +2846,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               </div>
 
               {/* Actions Footer */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-700">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-700">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -2855,19 +2855,19 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       setCopiedTeamId(true);
                       setTimeout(() => setCopiedTeamId(false), 2000);
                     }}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 transition cursor-pointer flex items-center gap-1.5"
                   >
-                    {copiedTeamId ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedTeamId ? <Check className="w-3.5 h-3.5 text-amber-400" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedTeamId ? 'Copied ID!' : 'Copy ID'}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handlePrintBadge(selectedTeam)}
-                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-200 border border-cyan-500/40 transition cursor-pointer flex items-center gap-1.5"
+                    className="px-3 py-2 rounded-xl text-xs font-semibold bg-orange-600/20 hover:bg-orange-600/30 text-orange-200 border border-orange-500/40 transition cursor-pointer flex items-center gap-1.5"
                     title="Print Entry Pass Badge"
                   >
-                    <Printer className="w-3.5 h-3.5 text-cyan-400" />
+                    <Printer className="w-3.5 h-3.5 text-orange-400" />
                     <span>Print Badge</span>
                   </button>
                 </div>
@@ -2880,7 +2880,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                         setIsDetailModalOpen(false);
                         onOpenPass(selectedTeam.teamId);
                       }}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600/30 hover:bg-purple-600/40 text-purple-200 border border-purple-400/40 transition cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-red-600/30 hover:bg-red-600/40 text-red-200 border border-red-400/40 transition cursor-pointer flex items-center gap-1.5"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>Open Digital Pass</span>
@@ -2890,7 +2890,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsDetailModalOpen(false)}
-                    className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                    className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                   >
                     Close
                   </button>
@@ -2902,18 +2902,18 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== KEYBOARD SHORTCUTS HUD MODAL ==================== */}
         {isShortcutsModalOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(6,182,212,0.3)] space-y-5">
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-orange-500/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(249,115,22,0.3)] space-y-5">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                  <div className="w-10 h-10 rounded-2xl bg-orange-600/20 border border-orange-500/40 flex items-center justify-center text-orange-300">
                     <Zap className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-display font-extrabold text-lg text-white">
                       Keyboard Shortcuts
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-stone-400">
                       Quick hotkeys for faster desk check-in operations
                     </p>
                   </div>
@@ -2921,7 +2921,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsShortcutsModalOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -2941,14 +2941,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 ].map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-700/60 flex items-center justify-between"
+                    className="p-2.5 rounded-xl bg-stone-950/60 border border-stone-700/60 flex items-center justify-between"
                   >
-                    <span className="text-slate-300">{item.desc}</span>
+                    <span className="text-stone-300">{item.desc}</span>
                     <div className="flex items-center gap-1 font-mono">
                       {item.keys.map((k, kIdx) => (
                         <kbd
                           key={kIdx}
-                          className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-cyan-300 font-bold text-[11px]"
+                          className="px-2 py-0.5 rounded bg-stone-800 border border-stone-700 text-orange-300 font-bold text-[11px]"
                         >
                           {k}
                         </kbd>
@@ -2958,12 +2958,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 ))}
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-700">
-                <span className="text-[11px] text-slate-400 font-mono">CRISPR '26 Desk</span>
+              <div className="flex items-center justify-between pt-3 border-t border-stone-700">
+                <span className="text-[11px] text-stone-400 font-mono">CRISPR '26 Desk</span>
                 <button
                   type="button"
                   onClick={() => setIsShortcutsModalOpen(false)}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                 >
                   Got It
                 </button>
@@ -2974,20 +2974,20 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== RECEIPT VIEWER MODAL ==================== */}
         {isReceiptModalOpen && selectedTeam?.paymentScreenshotBase64 && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-md w-full p-5 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-700 pb-2">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-stone-950/90 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-orange-500/40 rounded-3xl max-w-md w-full p-5 space-y-3">
+              <div className="flex items-center justify-between border-b border-stone-700 pb-2">
                 <span className="font-bold text-xs text-white">UPI Payment Receipt</span>
                 <button
                   type="button"
                   onClick={() => setIsReceiptModalOpen(false)}
-                  className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white"
+                  className="p-1 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="rounded-xl overflow-hidden border border-slate-700 max-h-96 flex items-center justify-center bg-black">
+              <div className="rounded-xl overflow-hidden border border-stone-700 max-h-96 flex items-center justify-center bg-black">
                 <img
                   src={selectedTeam.paymentScreenshotBase64}
                   alt="Payment Receipt"
@@ -2999,7 +2999,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsReceiptModalOpen(false)}
-                  className="px-4 py-1.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white"
+                  className="px-4 py-1.5 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white"
                 >
                   Close Receipt
                 </button>
@@ -3010,21 +3010,21 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== GOOGLE APPS SCRIPT BACKEND SETUP MODAL ==================== */}
         {isAppsScriptModalOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(168,85,247,0.3)] space-y-6 max-h-[92vh] overflow-y-auto">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-red-500/40 rounded-3xl max-w-4xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(239,68,68,0.3)] space-y-6 max-h-[92vh] overflow-y-auto">
               
               {/* Header */}
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-purple-300">
+                  <div className="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-300">
                     <Database className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
                         Google Sheets Live Sync
                       </span>
-                      <span className="text-xs text-purple-300 font-semibold">Google Sheets &amp; Apps Script</span>
+                      <span className="text-xs text-red-300 font-semibold">Google Sheets &amp; Apps Script</span>
                     </div>
                     <h3 className="font-display font-extrabold text-2xl text-white mt-0.5">
                       Spreadsheet Integration Code
@@ -3035,7 +3035,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAppsScriptModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-2 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -3043,48 +3043,48 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
               {/* Dual Sheet Overview */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-purple-950/20 border border-purple-500/30 space-y-1.5">
-                  <div className="flex items-center gap-2 text-purple-300 font-bold text-xs uppercase tracking-wider">
-                    <FileSpreadsheet className="w-4 h-4 text-purple-400" />
+                <div className="p-4 rounded-2xl bg-red-950/20 border border-red-500/30 space-y-1.5">
+                  <div className="flex items-center gap-2 text-red-300 font-bold text-xs uppercase tracking-wider">
+                    <FileSpreadsheet className="w-4 h-4 text-red-400" />
                     <span>Sheet 1: "Registrations" (Master List)</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-stone-300 leading-relaxed">
                     Stores all registered participants, leader details, co-delegate lists, college, and payment status.
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 space-y-1.5">
-                  <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs uppercase tracking-wider">
-                    <CheckCheck className="w-4 h-4 text-emerald-400" />
+                <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-1.5">
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider">
+                    <CheckCheck className="w-4 h-4 text-amber-400" />
                     <span>Sheet 2: "Attendance" (Present Teams)</span>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-stone-300 leading-relaxed">
                     Auto-updated when a pass is scanned. Stores arrival time and certificate eligibility.
                   </p>
                 </div>
               </div>
 
               {/* Step-by-Step Instructions */}
-              <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-700 space-y-3">
+              <div className="p-5 rounded-2xl bg-stone-950/60 border border-stone-700 space-y-3">
                 <div className="font-bold text-sm text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-cyan-400" />
+                  <Sparkles className="w-4 h-4 text-orange-400" />
                   <span>3-Minute Google Sheets Setup Guide</span>
                 </div>
-                <ol className="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed">
+                <ol className="text-xs text-stone-300 space-y-2 list-decimal list-inside leading-relaxed">
                   <li>
-                    Open <a href="https://sheets.google.com" target="_blank" rel="noreferrer" className="text-cyan-300 underline font-semibold">Google Sheets</a> and create a new spreadsheet.
+                    Open <a href="https://sheets.google.com" target="_blank" rel="noreferrer" className="text-orange-300 underline font-semibold">Google Sheets</a> and create a new spreadsheet.
                   </li>
                   <li>
                     Click <strong className="text-white">Extensions &gt; Apps Script</strong> in the top menu.
                   </li>
                   <li>
-                    Replace the code in <code className="text-purple-300 bg-slate-800 px-1 py-0.5 rounded">Code.gs</code> with the code below.
+                    Replace the code in <code className="text-red-300 bg-stone-800 px-1 py-0.5 rounded">Code.gs</code> with the code below.
                   </li>
                   <li>
                     Click <strong className="text-white">Deploy &gt; New deployment</strong>.
                   </li>
                   <li>
-                    Select <strong className="text-cyan-300">Web app</strong>, set access to <strong className="text-emerald-300">Anyone</strong>, and deploy.
+                    Select <strong className="text-orange-300">Web app</strong>, set access to <strong className="text-amber-300">Anyone</strong>, and deploy.
                   </li>
                   <li>
                     Copy the Web app URL and paste it into Organizer Settings.
@@ -3095,7 +3095,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               {/* Script Action Box */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-400">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-400">
                     <FileCode className="w-4 h-4" />
                     <span>Google Apps Script Code (Code.gs)</span>
                   </div>
@@ -3108,12 +3108,12 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       soundFX.playSuccess();
                       setTimeout(() => setCopiedScript(false), 3000);
                     }}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white flex items-center gap-1.5 transition cursor-pointer shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white flex items-center gap-1.5 transition cursor-pointer shadow-[0_0_15px_rgba(249,115,22,0.3)]"
                   >
                     {copiedScript ? (
                       <>
-                        <Check className="w-4 h-4 text-emerald-300" />
-                        <span className="text-emerald-300">Copied to Clipboard!</span>
+                        <Check className="w-4 h-4 text-amber-300" />
+                        <span className="text-amber-300">Copied to Clipboard!</span>
                       </>
                     ) : (
                       <>
@@ -3125,20 +3125,20 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 </div>
 
                 {/* Code Preview */}
-                <div className="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 max-h-80 overflow-y-auto font-mono text-[11px] p-4 text-slate-300 leading-relaxed">
+                <div className="relative rounded-2xl overflow-hidden border border-stone-700 bg-stone-950 max-h-80 overflow-y-auto font-mono text-[11px] p-4 text-stone-300 leading-relaxed">
                   <pre className="whitespace-pre-wrap">{GOOGLE_APPS_SCRIPT_SOURCE}</pre>
                 </div>
               </div>
 
               {/* Close Button */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-700">
-                <span className="text-xs text-slate-400">
-                  📁 File is also saved in repository at <code className="text-cyan-300 font-mono">google-apps-script/Code.gs</code>
+              <div className="flex items-center justify-between pt-2 border-t border-stone-700">
+                <span className="text-xs text-stone-400">
+                  📁 File is also saved in repository at <code className="text-orange-300 font-mono">google-apps-script/Code.gs</code>
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsAppsScriptModalOpen(false)}
-                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                 >
                   Done
                 </button>
@@ -3150,21 +3150,21 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== ACTIVITY & AUDIT LOG MODAL ==================== */}
         {isAuditLogModalOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(6,182,212,0.3)] space-y-5 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-orange-500/40 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(249,115,22,0.3)] space-y-5 max-h-[90vh] overflow-y-auto">
               
               {/* Header */}
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-600/20 border border-orange-500/40 flex items-center justify-center text-orange-300">
                     <History className="w-6 h-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-orange-500/20 text-orange-300 border border-orange-500/40">
                         Activity History
                       </span>
-                      <span className="text-xs text-slate-400 font-semibold">Live Event Log</span>
+                      <span className="text-xs text-stone-400 font-semibold">Live Event Log</span>
                     </div>
                     <h3 className="font-display font-extrabold text-2xl text-white mt-0.5">
                       Recent Activity &amp; Check-in Log
@@ -3175,13 +3175,13 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAuditLogModalOpen(false)}
-                  className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-2 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-stone-400">
                 Live chronological record of logins, check-ins, scans, and sheet synchronizations.
               </p>
 
@@ -3199,7 +3199,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             ? 'bg-red-950/30 border-red-500/40 text-red-200'
                             : isWarn
                             ? 'bg-amber-950/30 border-amber-500/40 text-amber-200'
-                            : 'bg-slate-950/60 border-slate-700 text-slate-200'
+                            : 'bg-stone-950/60 border-stone-700 text-stone-200'
                         }`}
                       >
                         <div className="space-y-1">
@@ -3210,40 +3210,40 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                                   ? 'bg-red-500/20 text-red-300 border border-red-500/30'
                                   : isWarn
                                   ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                                  : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                  : 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
                               }`}
                             >
                               {log.action}
                             </span>
                             <span className="font-semibold text-white">{log.details}</span>
                           </div>
-                          <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                            <span>Organizer: <strong className="text-slate-300">{log.operator}</strong> ({log.role})</span>
+                          <div className="text-[11px] text-stone-400 flex items-center gap-2">
+                            <span>Organizer: <strong className="text-stone-300">{log.operator}</strong> ({log.role})</span>
                           </div>
                         </div>
 
-                        <div className="text-[10px] font-mono text-slate-400 self-start sm:self-auto shrink-0">
+                        <div className="text-[10px] font-mono text-stone-400 self-start sm:self-auto shrink-0">
                           ⏱️ {log.timestamp}
                         </div>
                       </div>
                     );
                   })
                 ) : (
-                  <div className="p-8 text-center text-slate-400 text-xs">
+                  <div className="p-8 text-center text-stone-400 text-xs">
                     No activity events logged yet in this session.
                   </div>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-700">
-                <span className="text-[11px] text-slate-400 font-mono">
+              <div className="flex items-center justify-between pt-3 border-t border-stone-700">
+                <span className="text-[11px] text-stone-400 font-mono">
                   {auditLogs.length} Events Recorded
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsAuditLogModalOpen(false)}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                 >
                   Close Activity Log
                 </button>
@@ -3255,18 +3255,18 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== GOOGLE APPS SCRIPT API CONFIG MODAL ==================== */}
         {isApiConfigOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-cyan-500/40 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(6,182,212,0.3)] space-y-5">
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-orange-500/40 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(249,115,22,0.3)] space-y-5">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-cyan-600/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300">
+                  <div className="w-10 h-10 rounded-2xl bg-orange-600/20 border border-orange-500/40 flex items-center justify-center text-orange-300">
                     <Settings className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-display font-extrabold text-lg text-white">
                       Google Sheets Web App URL
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-stone-400">
                       Connection endpoint for live registration and attendance sync
                     </p>
                   </div>
@@ -3274,7 +3274,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsApiConfigOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -3282,26 +3282,26 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
               <form onSubmit={handleSaveApiConfig} className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center justify-between">
+                  <label className="text-xs font-semibold text-stone-300 block mb-1.5 flex items-center justify-between">
                     <span>Deployed Web App URL</span>
-                    <span className="text-[10px] text-cyan-400 font-mono">/exec URL</span>
+                    <span className="text-[10px] text-orange-400 font-mono">/exec URL</span>
                   </label>
                   <div className="relative">
-                    <Link2 className="w-4 h-4 text-cyan-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Link2 className="w-4 h-4 text-orange-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="url"
                       value={apiConfigUrl}
                       onChange={(e) => setApiConfigUrl(e.target.value)}
                       placeholder="https://script.google.com/macros/s/.../exec"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-cyan-400 transition"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-xs font-mono focus:outline-none focus:border-orange-400 transition"
                       required
                     />
                   </div>
                 </div>
 
                 {apiConfigSaved && (
-                  <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2 animate-in fade-in duration-200">
-                    <Check className="w-4 h-4 text-emerald-400" />
+                  <div className="p-3 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+                    <Check className="w-4 h-4 text-amber-400" />
                     <span>Configuration updated and synchronized!</span>
                   </div>
                 )}
@@ -3310,7 +3310,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                   <button
                     type="button"
                     onClick={handleResetApiUrl}
-                    className="text-xs text-slate-400 hover:text-cyan-300 underline cursor-pointer"
+                    className="text-xs text-stone-400 hover:text-orange-300 underline cursor-pointer"
                   >
                     Reset to Default URL
                   </button>
@@ -3319,14 +3319,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     <button
                       type="button"
                       onClick={() => setIsApiConfigOpen(false)}
-                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSyncing}
-                      className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+                      className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
                     >
                       {isSyncing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                       <span>Save &amp; Test Sync</span>
@@ -3340,20 +3340,20 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
         {/* ==================== AUTHORIZED ORGANIZERS MODAL ==================== */}
         {isOrganizersModalOpen && (
-          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-emerald-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(16,185,129,0.3)] space-y-6 max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-stone-900 border border-amber-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(245,158,11,0.3)] space-y-6 max-h-[90vh] flex flex-col">
               
               {/* Header */}
-              <div className="flex items-start justify-between border-b border-slate-700 pb-4 shrink-0">
+              <div className="flex items-start justify-between border-b border-stone-700 pb-4 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-display font-extrabold text-lg text-white">
                       Approved Organizers Directory
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-stone-400">
                       Coordinators permitted to log in via Google or Email Code
                     </p>
                   </div>
@@ -3361,7 +3361,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsOrganizersModalOpen(false)}
-                  className="p-1.5 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-full hover:bg-stone-800 text-stone-400 hover:text-white transition cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -3369,7 +3369,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
 
               {/* Organizers List */}
               <div className="space-y-3 overflow-y-auto pr-1 flex-1">
-                <span className="text-xs font-semibold text-slate-300 block">
+                <span className="text-xs font-semibold text-stone-300 block">
                   Approved Coordinator Emails ({authorizedOrganizersList.length}):
                 </span>
                 
@@ -3378,26 +3378,26 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                     return (
                       <div
                         key={org.email}
-                        className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-700 flex items-center justify-between gap-3 hover:border-emerald-500/30 transition"
+                        className="p-3.5 rounded-2xl bg-stone-950/60 border border-stone-700 flex items-center justify-between gap-3 hover:border-amber-500/30 transition"
                       >
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-white">{org.name}</span>
                             <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
                               org.role === 'superadmin'
-                                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30'
                                 : org.role === 'coordinator'
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                : 'bg-red-500/20 text-red-300 border border-red-500/30'
                             }`}>
                               {org.roleTitle}
                             </span>
                           </div>
-                          <div className="text-xs text-slate-400 flex items-center gap-2 font-mono">
-                            <Mail className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                          <div className="text-xs text-stone-400 flex items-center gap-2 font-mono">
+                            <Mail className="w-3.5 h-3.5 text-orange-400 shrink-0" />
                             <span>{org.email}</span>
                             <span>·</span>
-                            <span className="text-slate-400">{org.department || 'SIMATS Engineering'}</span>
+                            <span className="text-stone-400">{org.department || 'SIMATS Engineering'}</span>
                           </div>
                         </div>
 
@@ -3418,10 +3418,10 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                 </div>
 
                 {/* Add New Authorized Organizer Section (Restricted to kandukurijagan99@gmail.com) */}
-                <div className="pt-4 border-t border-slate-700">
+                <div className="pt-4 border-t border-stone-700">
                   {isChiefAdmin ? (
                     <>
-                      <span className="text-xs font-semibold text-emerald-300 block mb-3 flex items-center gap-1.5">
+                      <span className="text-xs font-semibold text-amber-300 block mb-3 flex items-center gap-1.5">
                         <UserPlus className="w-4 h-4" />
                         <span>Add New Organizer / Coordinator:</span>
                       </span>
@@ -3433,7 +3433,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             value={newOrgEmail}
                             onChange={(e) => setNewOrgEmail(e.target.value)}
                             placeholder="Coordinator Email (e.g. name@saveetha.com)"
-                            className="w-full px-3.5 py-2 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400 transition"
+                            className="w-full px-3.5 py-2 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-xs focus:outline-none focus:border-amber-400 transition"
                             required
                           />
                         </div>
@@ -3444,7 +3444,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             value={newOrgName}
                             onChange={(e) => setNewOrgName(e.target.value)}
                             placeholder="Full Name (e.g. John Doe)"
-                            className="w-full px-3.5 py-2 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400 transition"
+                            className="w-full px-3.5 py-2 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-xs focus:outline-none focus:border-amber-400 transition"
                             required
                           />
                         </div>
@@ -3453,7 +3453,7 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                           <select
                             value={newOrgRole}
                             onChange={(e) => setNewOrgRole(e.target.value as any)}
-                            className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400 transition"
+                            className="w-full px-3.5 py-2 rounded-xl bg-stone-950 border border-stone-700 text-white text-xs focus:outline-none focus:border-amber-400 transition"
                           >
                             <option value="coordinator">Student Event Coordinator</option>
                             <option value="reception">Reception &amp; QR Desk</option>
@@ -3468,14 +3468,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                             value={newOrgDept}
                             onChange={(e) => setNewOrgDept(e.target.value)}
                             placeholder="Department / Institution"
-                            className="w-full px-3.5 py-2 rounded-xl bg-slate-950/60 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-400 transition"
+                            className="w-full px-3.5 py-2 rounded-xl bg-stone-950/60 border border-stone-700 text-white text-xs focus:outline-none focus:border-amber-400 transition"
                           />
                         </div>
 
                         <div className="sm:col-span-2 flex justify-end pt-1">
                           <button
                             type="submit"
-                            className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                            className="px-5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white transition cursor-pointer flex items-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)]"
                           >
                             <UserPlus className="w-3.5 h-3.5" />
                             <span>Add Organizer</span>
@@ -3484,10 +3484,10 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
                       </form>
                     </>
                   ) : (
-                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-700/80 text-xs text-slate-400 flex items-start gap-2.5">
+                    <div className="p-3.5 rounded-2xl bg-stone-950/70 border border-stone-700/80 text-xs text-stone-400 flex items-start gap-2.5">
                       <Lock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                       <div>
-                        <span className="font-semibold text-slate-200 block mb-0.5">Management Restricted</span>
+                        <span className="font-semibold text-stone-200 block mb-0.5">Management Restricted</span>
                         <span>Adding and removing authorized organizer accounts is strictly restricted to Chief Organizer (<code>kandukurijagan99@gmail.com</code>).</span>
                       </div>
                     </div>
@@ -3496,14 +3496,14 @@ export const OrganizerPortal: React.FC<OrganizerPortalProps> = ({
               </div>
 
               {/* Modal Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-700 shrink-0">
-                <span className="text-[11px] text-slate-400 font-mono">
+              <div className="flex items-center justify-between pt-3 border-t border-stone-700 shrink-0">
+                <span className="text-[11px] text-stone-400 font-mono">
                   Saved locally and active for this device
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsOrganizersModalOpen(false)}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition cursor-pointer"
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-stone-800 hover:bg-stone-700 text-white transition cursor-pointer"
                 >
                   Done
                 </button>

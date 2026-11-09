@@ -17,11 +17,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTerms, onOpenPass, onOpenO
           <img
             src="./logo.jpg"
             alt="CRISPR '26"
-            className="w-8 h-8 rounded-full border border-cyan-400/80 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+            className="w-8 h-8 rounded-full border border-orange-400/80 shadow-[0_0_10px_rgba(249,115,22,0.4)]"
             onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
           />
           <h2 className="font-display font-extrabold text-2xl text-white tracking-tight">
-            CRISPR <span className="text-cyan-400">'26</span>
+            CRISPR <span className="text-orange-400">'26</span>
           </h2>
         </div>
 
@@ -44,7 +44,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTerms, onOpenPass, onOpenO
               const el = document.getElementById('register');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="flex items-center gap-1.5 text-gray-300 hover:text-cyan-400 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-gray-300 hover:text-orange-400 transition-colors cursor-pointer"
           >
             <span>Workshop Registration ✍️</span>
           </a>
@@ -54,9 +54,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTerms, onOpenPass, onOpenO
           <button
             type="button"
             onClick={onOpenTerms}
-            className="flex items-center gap-1.5 hover:text-cyan-400 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 hover:text-orange-400 transition-colors cursor-pointer"
           >
-            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+            <FileText className="w-3.5 h-3.5 text-orange-400" />
             <span>Terms & Guidelines</span>
           </button>
 
@@ -65,9 +65,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTerms, onOpenPass, onOpenO
           <button
             type="button"
             onClick={onOpenPass}
-            className="flex items-center gap-1.5 hover:text-cyan-400 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 hover:text-orange-400 transition-colors cursor-pointer"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-red-400" />
             <span>Digital Pass Verification</span>
           </button>
 
@@ -77,9 +77,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTerms, onOpenPass, onOpenO
               <button
                 type="button"
                 onClick={onOpenOrganizer}
-                className="flex items-center gap-1.5 text-purple-300 hover:text-purple-200 transition-colors cursor-pointer font-semibold"
+                className="flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors cursor-pointer font-semibold"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-red-400" />
                 <span>Organizer Desk & Attendance Scanner</span>
               </button>
             </>

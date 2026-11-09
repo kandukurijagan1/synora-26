@@ -10,15 +10,15 @@ export const EVENT_DETAILS = {
   sponsor: "IET (Institute of Engineering and Technology)",
   sponsorFull: "Sponsored by IET - Institute of Engineering and Technology",
   venue: "RB Seminar Hall, SIMATS Engineering, Chennai",
-  eventDate: "2026-10-03T09:00:00+05:30",
-  dateFormatted: "October 3, 2026 · 09:00 AM IST",
+  eventDate: "2026-11-20T09:00:00+05:30",
+  dateFormatted: "November 20, 2026 · 09:00 AM IST",
   duration: "1-Day Intensive Workshop",
   studentFee: 200,
   facultyFee: 500,
-  registrationClosedDate: "October 1, 2026 · 10:00 PM IST",
+  registrationClosedDate: "November 18, 2026 · 10:00 PM IST",
   whatsappGroupUrl: "https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2",
-  scriptUrl: "https://script.google.com/macros/s/AKfycbzp3Wx0qCvLKkjJPravTiLt-Gb5stHPfGxrDZQQ1CVK8n1GbGNdU2lkH1ckn595ZcHQkg/exec",
-  adminScriptUrl: "https://script.google.com/macros/s/AKfycbzp3Wx0qCvLKkjJPravTiLt-Gb5stHPfGxrDZQQ1CVK8n1GbGNdU2lkH1ckn595ZcHQkg/exec",
+  scriptUrl: "https://script.google.com/macros/s/AKfycbyrGZ7XmO-Oj2i0vo7S357KtJQULUR4i6eHYmilVKsuqYDs1_sRi-tDmR-J4bLmhm4fLg/exec",
+  adminScriptUrl: "https://script.google.com/macros/s/AKfycbyrGZ7XmO-Oj2i0vo7S357KtJQULUR4i6eHYmilVKsuqYDs1_sRi-tDmR-J4bLmhm4fLg/exec",
   googleClientId: "902168382803-6gof845v72ku6k4lp4mecsgr3l1uc3s0.apps.googleusercontent.com"
 };
 
@@ -68,55 +68,55 @@ export const TRACKS: Track[] = [
 export const TIMELINE: TimelineEvent[] = [
   {
     id: "t1",
-    time: "October 3, 2026 · 08:30 AM - 09:00 AM",
+    time: "November 20, 2026 · 08:30 AM - 09:00 AM",
     title: "📋 Registration Desk & Delegate Check-In",
     description: "Physical verification, kit collection, and badge issuance at the RB Seminar Hall reception."
   },
   {
     id: "t2",
-    time: "October 3, 2026 · 09:00 AM - 09:30 AM",
+    time: "November 20, 2026 · 09:00 AM - 09:30 AM",
     title: "✨ Inauguration & IET Sponsor Felicitation",
     description: "Lamp lighting, opening remarks by HOD Dr. Ieshita Pan, and introduction by IET representatives."
   },
   {
     id: "t3",
-    time: "October 3, 2026 · 09:30 AM - 11:00 AM",
+    time: "November 20, 2026 · 09:30 AM - 11:00 AM",
     title: "🧬 Technical Session 1: Molecular Mechanisms of CRISPR-Cas9",
     description: "Comprehensive keynote on Cas nuclease biology, PAM motifs, cellular repair pathways (NHEJ/HDR), and modern genetic engineering."
   },
   {
     id: "t4",
-    time: "October 3, 2026 · 11:00 AM - 11:15 AM",
+    time: "November 20, 2026 · 11:00 AM - 11:15 AM",
     title: "☕ High Tea & Delegate Networking Break",
     description: "Connect with biotechnology faculty, research scholars, and fellow participants."
   },
   {
     id: "t5",
-    time: "October 3, 2026 · 11:15 AM - 01:00 PM",
+    time: "November 20, 2026 · 11:15 AM - 01:00 PM",
     title: "💻 Hands-on In Silico Session: gRNA Design & Computational Modeling",
     description: "Interactive laboratory session on bioinformatics tools, sgRNA design workflows, and off-target prediction software."
   },
   {
     id: "t6",
-    time: "October 3, 2026 · 01:00 PM - 02:00 PM",
+    time: "November 20, 2026 · 01:00 PM - 02:00 PM",
     title: "🍽️ Lunch Break",
     description: "Campus dining and refreshment break at SIMATS Engineering food courts."
   },
   {
     id: "t7",
-    time: "October 3, 2026 · 02:00 PM - 03:30 PM",
+    time: "November 20, 2026 · 02:00 PM - 03:30 PM",
     title: "🔬 Technical Session 2: Prime Editing, Base Editing & Medical Therapeutics",
     description: "Exploring next-generation genome editing without double-strand breaks, CAR-T immunotherapy, and clinical trials."
   },
   {
     id: "t8",
-    time: "October 3, 2026 · 03:30 PM - 04:30 PM",
+    time: "November 20, 2026 · 03:30 PM - 04:30 PM",
     title: "💡 Interactive Case Studies & Q&A Panel",
     description: "Real-world medical case discussions, protocol troubleshooting, and expert-led Q&A."
   },
   {
     id: "t9",
-    time: "October 3, 2026 · 04:30 PM - 05:00 PM",
+    time: "November 20, 2026 · 04:30 PM - 05:00 PM",
     title: "🎓 Valedictory Ceremony & Certificate Distribution",
     description: "Awarding official IET-sponsored certificates of participation and concluding remarks."
   }
@@ -136,7 +136,7 @@ export const FAQS: FaqItem[] = [
   {
     id: "faq-3",
     question: "What is the venue and reporting time?",
-    answer: "The workshop is held at RB Seminar Hall, SIMATS Engineering, Chennai on October 3, 2026 (03.10.26). Delegates should report by 08:30 AM for registration verification and badge pickup."
+    answer: "The workshop is held at RB Seminar Hall, SIMATS Engineering, Chennai on November 20, 2026 (20.11.26). Delegates should report by 08:30 AM for registration verification and badge pickup."
   },
   {
     id: "faq-4",

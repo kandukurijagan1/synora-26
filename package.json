@@ -15,6 +15,7 @@
     "jspdf": "^2.5.2",
     "jsqr": "^1.4.0",
     "lucide-react": "^1.16.0",
+    "qr-code-styling": "^1.9.2",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

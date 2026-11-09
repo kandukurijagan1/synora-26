@@ -433,17 +433,15 @@ export class SynoraApi {
    */
   public static async syncWithGoogleSheet(): Promise<{ success: boolean; count: number; teams: TeamTicket[]; message: string }> {
     const params = new URLSearchParams({
-      action: 'adminteams',
+      action: 'getallteams',
       adminKey: getOrganizerSessionSync()?.token || ''
     });
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      const res = await fetch(this.getScriptUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString(),
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const res = await fetch(`${this.getScriptUrl()}?${params.toString()}`, {
+        method: 'GET',
         signal: controller.signal
       });
       clearTimeout(timeoutId);
@@ -539,6 +537,7 @@ export class SynoraApi {
 
   /**
    * Mark Team Present (Organizer QR Scan or Manual Check-In)
+   * Uses Optimistic UI: instant local update, background database sync
    */
   public static async markAttendance(
     teamId: string,
@@ -552,6 +551,8 @@ export class SynoraApi {
         t.leaderEmail.toLowerCase() === cleanId.toLowerCase() ||
         (t.leaderPhone && t.leaderPhone.replace(/\D/g, '') === cleanId.replace(/\D/g, ''))
     );
+
+    const now = new Date().toLocaleString();
 
     if (targetIdx < 0) {
       // 1. Check local cache
@@ -568,23 +569,18 @@ export class SynoraApi {
       }
 
       if (foundTicket) {
-        // Attempt authoritative backend check-in first
-        const syncRes = await this.syncCheckInToAppsScript(foundTicket, organizerName);
-        if (!syncRes.success) {
-          return {
-            success: false,
-            ticket: foundTicket,
-            message: syncRes.message || 'Check-in failed on the backend.'
-          };
-        }
-
-        const now = new Date().toLocaleString();
+        // OPTIMISTIC: Update local state instantly
         foundTicket.checkedIn = true;
         foundTicket.checkinTime = now;
         foundTicket.verifiedBy = organizerName;
         foundTicket.certificateStatus = 'eligible';
         this.saveToAttendanceRoster(foundTicket);
         this.saveTicketToCache(foundTicket);
+
+        // BACKGROUND: Fire backend sync without blocking UI
+        this.syncCheckInToAppsScript(foundTicket, organizerName).catch((err) =>
+          console.warn('Background check-in sync failed (will reconcile on next Sync Live):', err)
+        );
 
         return {
           success: true,
@@ -600,16 +596,7 @@ export class SynoraApi {
       };
     }
 
-    const syncRes = await this.syncCheckInToAppsScript(teams[targetIdx], organizerName);
-    if (!syncRes.success) {
-      return {
-        success: false,
-        ticket: teams[targetIdx],
-        message: syncRes.message || 'Check-in failed on the backend.'
-      };
-    }
-
-    const now = new Date().toLocaleString();
+    // OPTIMISTIC: Update local state instantly
     teams[targetIdx].checkedIn = true;
     teams[targetIdx].checkinTime = now;
     teams[targetIdx].verifiedBy = organizerName;
@@ -618,6 +605,11 @@ export class SynoraApi {
     const updated = teams[targetIdx];
     localStorage.setItem(ATTENDANCE_TEAMS_KEY, encryptPayload(teams));
     this.saveTicketToCache(updated);
+
+    // BACKGROUND: Fire backend sync without blocking UI
+    this.syncCheckInToAppsScript(updated, organizerName).catch((err) =>
+      console.warn('Background check-in sync failed (will reconcile on next Sync Live):', err)
+    );
 
     return {
       success: true,
@@ -639,35 +631,7 @@ export class SynoraApi {
     if (targetIdx >= 0) {
       const updated = teams[targetIdx];
       
-      // Sync uncheck to Apps Script
-      let backendSuccess = false;
-      try {
-        const params = new URLSearchParams({
-          action: 'uncheck',
-          teamId: updated.teamId,
-          adminKey: getOrganizerSessionSync()?.token || ''
-        });
-        const res = await fetch(this.getScriptUrl(), { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: params.toString()
-        });
-        const data = await res.json();
-        if (data && data.status === 'success') {
-          backendSuccess = true;
-        }
-      } catch (err) {
-        console.error('Uncheck sync error:', err);
-      }
-
-      if (!backendSuccess) {
-        return {
-          success: false,
-          ticket: updated,
-          message: 'Failed to remove check-in on the backend.'
-        };
-      }
-
+      // OPTIMISTIC: Update local state instantly
       teams[targetIdx].checkedIn = false;
       teams[targetIdx].checkinTime = undefined;
       teams[targetIdx].certificateStatus = 'pending';
@@ -675,6 +639,20 @@ export class SynoraApi {
 
       localStorage.setItem(ATTENDANCE_TEAMS_KEY, encryptPayload(teams));
       this.saveTicketToCache(teams[targetIdx]);
+
+      // BACKGROUND: Fire backend uncheck without blocking UI
+      const params = new URLSearchParams({
+        action: 'uncheck',
+        teamId: updated.teamId,
+        adminKey: getOrganizerSessionSync()?.token || ''
+      });
+      fetch(this.getScriptUrl(), { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      }).catch((err) =>
+        console.warn('Background uncheck sync failed (will reconcile on next Sync Live):', err)
+      );
 
       return {
         success: true,
@@ -1307,13 +1285,11 @@ export class SynoraApi {
     if (!adminKey) return null;
     try {
       const params = new URLSearchParams({
-        action: 'stats',
+        action: 'getstats',
         adminKey: adminKey
       });
-      const res = await fetch(this.getScriptUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString()
+      const res = await fetch(`${this.getScriptUrl()}?${params.toString()}`, {
+        method: 'GET'
       });
       const data = await res.json();
       if (data && data.status === 'success') {
@@ -1434,7 +1410,7 @@ export class SynoraApi {
     try {
       const clean = target.trim();
       const params = new URLSearchParams({
-        action: 'sendTeamEmail',
+        action: 'sendemail',
         teamId: clean,
         email: clean,
         adminKey: adminKey

@@ -78,7 +78,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-transparent text-white selection:bg-cyan-500 selection:text-black">
+    <div className="relative min-h-screen bg-transparent text-white selection:bg-orange-500 selection:text-black">
       {/* 3D Particle Constellation Canvas */}
       <CanvasBackground />
 
@@ -160,9 +160,9 @@ export const App: React.FC = () => {
           <button
             type="button"
             onClick={() => navigateToView('pass')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-xs bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-[0_4px_20px_rgba(6,182,212,0.4)] border border-cyan-400/50 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-xs bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-[0_4px_20px_rgba(249,115,22,0.4)] border border-orange-400/50 cursor-pointer"
           >
-            <Ticket className="w-4 h-4 text-cyan-300" />
+            <Ticket className="w-4 h-4 text-orange-300" />
             <span>Digital Pass</span>
           </button>
         </div>

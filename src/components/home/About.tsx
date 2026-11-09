@@ -16,14 +16,14 @@ export const About: React.FC = () => {
     {
       num: '1',
       title: 'Target & Bind',
-      color: 'text-cyan-400',
+      color: 'text-orange-400',
       icon: Dna,
       desc: 'Understand molecular recognition mechanisms, PAM motifs, and Cas endonuclease DNA binding architecture.'
     },
     {
       num: '2',
       title: 'Cut & Edit',
-      color: 'text-purple-400',
+      color: 'text-red-400',
       icon: Microscope,
       desc: 'Master targeted double-strand break induction, Non-Homologous End Joining (NHEJ), and Homology-Directed Repair (HDR).'
     },
@@ -37,7 +37,7 @@ export const About: React.FC = () => {
     {
       num: '4',
       title: 'Clinical Impact',
-      color: 'text-emerald-400',
+      color: 'text-amber-400',
       icon: Award,
       desc: 'Explore therapeutic frontiers in oncology, sickle cell anemia, CAR-T cell immunotherapy, and agricultural biotechnology.'
     }
@@ -49,7 +49,7 @@ export const About: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
           {/* Left Text */}
           <div className="lg:col-span-7">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-semibold mb-4">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>{EVENT_DETAILS.sponsorFull}</span>
             </div>
@@ -71,8 +71,8 @@ export const About: React.FC = () => {
             </p>
 
             {/* Complete Innovation Lifecycle */}
-            <div className="p-5 rounded-2xl glass-card border border-purple-500/20">
-              <div className="text-xs uppercase tracking-wider text-cyan-400 font-bold mb-4 flex items-center gap-2">
+            <div className="p-5 rounded-2xl glass-card border border-red-500/20">
+              <div className="text-xs uppercase tracking-wider text-orange-400 font-bold mb-4 flex items-center gap-2">
                 <span>⚡ CRISPR Experimental & Computational Pipeline</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -81,7 +81,7 @@ export const About: React.FC = () => {
                     key={item.num}
                     className="flex items-center gap-2 p-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-xs text-gray-200 font-medium"
                   >
-                    <span className="font-mono text-[10px] text-purple-400 font-bold bg-purple-500/10 px-1.5 py-0.5 rounded">
+                    <span className="font-mono text-[10px] text-red-400 font-bold bg-red-500/10 px-1.5 py-0.5 rounded">
                       {item.num}
                     </span>
                     <span>{item.icon} {item.title}</span>
@@ -93,19 +93,19 @@ export const About: React.FC = () => {
 
           {/* Right Metrics Grid */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div className="p-6 rounded-2xl glass-card border border-emerald-500/30 text-center hover:border-emerald-400 transition">
-              <div className="font-display font-extrabold text-3xl text-emerald-400 mb-1">₹200</div>
-              <div className="text-xs text-emerald-300 uppercase font-semibold tracking-wider">Student Delegate</div>
+            <div className="p-6 rounded-2xl glass-card border border-amber-500/30 text-center hover:border-amber-400 transition">
+              <div className="font-display font-extrabold text-3xl text-amber-400 mb-1">₹200</div>
+              <div className="text-xs text-amber-300 uppercase font-semibold tracking-wider">Student Delegate</div>
             </div>
 
-            <div className="p-6 rounded-2xl glass-card border border-purple-500/30 text-center hover:border-purple-400 transition">
-              <div className="font-display font-extrabold text-3xl text-purple-300 mb-1">₹500</div>
-              <div className="text-xs text-purple-300 uppercase font-semibold tracking-wider">Faculty Delegate</div>
+            <div className="p-6 rounded-2xl glass-card border border-red-500/30 text-center hover:border-red-400 transition">
+              <div className="font-display font-extrabold text-3xl text-red-300 mb-1">₹500</div>
+              <div className="text-xs text-red-300 uppercase font-semibold tracking-wider">Faculty Delegate</div>
             </div>
 
-            <div className="p-6 rounded-2xl glass-card border border-cyan-500/30 text-center hover:border-cyan-400 transition">
-              <div className="font-display font-extrabold text-3xl text-cyan-400 mb-1">IET</div>
-              <div className="text-xs text-cyan-300 uppercase font-semibold tracking-wider">Sponsored Event</div>
+            <div className="p-6 rounded-2xl glass-card border border-orange-500/30 text-center hover:border-orange-400 transition">
+              <div className="font-display font-extrabold text-3xl text-orange-400 mb-1">IET</div>
+              <div className="text-xs text-orange-300 uppercase font-semibold tracking-wider">Sponsored Event</div>
             </div>
 
             <div className="p-6 rounded-2xl glass-card border border-pink-500/30 text-center hover:border-pink-400 transition">
@@ -116,16 +116,16 @@ export const About: React.FC = () => {
         </div>
 
         {/* Core Pillars Feature Card */}
-        <div className="p-6 sm:p-8 rounded-3xl glass-card border border-cyan-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
+        <div className="p-6 sm:p-8 rounded-3xl glass-card border border-orange-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold uppercase tracking-wider">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs font-bold uppercase tracking-wider">
               🧬 Precision Genome Engineering Core
             </div>
             <div className="font-display font-extrabold text-lg sm:text-xl text-white tracking-wide space-x-2">
-              <span className="text-cyan-400">Target.</span>
-              <span className="text-purple-400">Design.</span>
+              <span className="text-orange-400">Target.</span>
+              <span className="text-red-400">Design.</span>
               <span className="text-pink-400">Edit.</span>
-              <span className="text-emerald-400">Translate.</span>
+              <span className="text-amber-400">Translate.</span>
             </div>
           </div>
 
@@ -148,7 +148,7 @@ export const About: React.FC = () => {
             })}
           </div>
 
-          <div className="p-4 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-xs sm:text-sm text-gray-300">
+          <div className="p-4 rounded-xl bg-orange-950/20 border border-orange-500/20 text-xs sm:text-sm text-gray-300">
             <strong className="text-white font-semibold">Certification & Hands-on Materials:</strong> All registered participants will receive hands-on in silico training material, practical guide protocols, and an official Certificate of Participation certified by IET and SIMATS Engineering.
           </div>
         </div>

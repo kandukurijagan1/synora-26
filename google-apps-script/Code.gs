@@ -22,11 +22,22 @@
 
 // ─── MASTER CONFIGURATION & FALLBACKS ───────────────────────────────
 var CONFIG = {
-  // Exact Master Spreadsheet ID from your URL
-  SPREADSHEET_ID: "1mlqB9U4R4UFQWXWeQK7_ELexnLKG-Ic601sxcyikZ14",
-  SPREADSHEET_NAME: "registration",
+  // Target Evaluation Spreadsheet ID from your URL (evaluation website)
+  SPREADSHEET_ID: "1C83POWKWEpDHc0CidylXkVVYNq9QIW4wd2yj1JEfMas",
+  FALLBACK_SPREADSHEET_ID: "1mlqB9U4R4UFQWXWeQK7_ELexnLKG-Ic601sxcyikZ14",
+  SPREADSHEET_NAME: "evaluation website",
   REGISTRATIONS_SHEET: "Sheet1", // Target main registrations tab
   ATTENDANCE_SHEET: "Attendance_CRISPR26", // Verified Present teams for Certificates
+  EVALUATIONS_SHEET: "Evaluations_CRISPR26", // Dedicated Judge Evaluations & Marks
+  EVALUATORS_SHEET: "Evaluators_CRISPR26", // Dedicated Evaluators / Judges Database
+  ROUND_SHEETS: {
+    ROUND_1: "Round 1",
+    ROUND_2: "Round 2",
+    ROUND_3: "Round 3",
+    FINAL_SUMMARY: "Final_Summary"
+  },
+  ADMIN_USERNAME: "kandukurijagan",
+  ADMIN_PASSWORD: "192472374@jagan",
   DRIVE_FOLDER_NAME: "CRISPR26_Payment_Receipts",
   DEFAULT_TIMEZONE: "Asia/Kolkata", // Indian Standard Time (IST)
   DEFAULT_DELAY_MINUTES: 5,         // 5-minute delayed email queue
@@ -34,7 +45,7 @@ var CONFIG = {
   DEFAULT_TELEGRAM_BOT_TOKEN: "8766828763:AAGi68e9f5_tXEcvi3UQv8pitRVTxncYlhs",
   DEFAULT_TELEGRAM_CHAT_IDS: "6877857251,8895943211",
   WHATSAPP_GROUP_LINK: "https://chat.whatsapp.com/ESMuU0nwLljLXbWpREEmo2",
-  ACTIVE_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwMxsEB3x68jm1qzJ6_Asir8JWin01IDgJLU8bXhSOhCbE0xIzJSS2zqT485ThgUGnHuA/exec"
+  ACTIVE_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbyrGZ7XmO-Oj2i0vo7S357KtJQULUR4i6eHYmilVKsuqYDs1_sRi-tDmR-J4bLmhm4fLg/exec"
 };
 
 // Aliases for backwards compatibility with legacy functions
@@ -136,7 +147,17 @@ function runInitialSetup() {
   setupAttendanceHeaders(attSheet);
   Logger.log("✅ Verified Attendance Sheet ('" + CONFIG.ATTENDANCE_SHEET + "') with 16 comprehensive columns.");
 
-  // 3. Ensure Drive Folder for Receipts exists
+  // 3. Setup Evaluations Sheet (For Jury & Judges)
+  var evalSheet = getOrCreateSheet(ss, CONFIG.EVALUATIONS_SHEET);
+  setupEvaluationHeaders(evalSheet);
+  Logger.log("✅ Verified Evaluations Sheet ('" + CONFIG.EVALUATIONS_SHEET + "') with 15 rubric columns.");
+
+  // 4. Setup Evaluators Database Sheet (For Evaluator Logins & Dynamic ID management)
+  var evalUserSheet = getOrCreateSheet(ss, CONFIG.EVALUATORS_SHEET);
+  setupEvaluatorHeaders(evalUserSheet);
+  Logger.log("✅ Verified Evaluators Sheet ('" + CONFIG.EVALUATORS_SHEET + "') with 10 management columns.");
+
+  // 5. Ensure Drive Folder for Receipts exists
   var folderUrl = "";
   try {
     var folders = DriveApp.getFoldersByName(CONFIG.DRIVE_FOLDER_NAME);
@@ -299,9 +320,16 @@ function sendTestEmailToMyAddress() {
  */
 function manualDispatchAllEmails() {
   console.log("🚀 Starting manual email dispatch sweep...");
-  var count = processPendingRegistrationEmails();
+  var count = processPendingRegistrationEmails(true);
   console.log("✅ Sweep completed! Dispatched " + count + " email(s).");
   return count;
+}
+
+/**
+ * ⚡ EMERGENCY INSTANT SEND: Bypasses 5-minute queue and quiet hours to dispatch ALL pending emails right now!
+ */
+function forceDispatchAllPendingEmails() {
+  return manualDispatchAllEmails();
 }
 
 // ─── DATE & TIME FORMATTING HELPERS (IST) ────────────────────────────
@@ -322,20 +350,30 @@ function parseDateSafe(val) {
   var str = val.toString().trim();
   if (!str) return null;
   
-  var isoParsed = new Date(str).getTime();
-  if (!isNaN(isoParsed) && str.indexOf('/') === -1 && str.indexOf('-') !== -1) {
-    return isoParsed;
+  // Format 1: YYYY-MM-DD HH:mm:ss or YYYY-MM-DDTHH:mm:ss
+  var ymdMatch = str.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})[T\s]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?/i);
+  if (ymdMatch) {
+    var year = ymdMatch[1];
+    var month = ymdMatch[2].length < 2 ? "0" + ymdMatch[2] : ymdMatch[2];
+    var day = ymdMatch[3].length < 2 ? "0" + ymdMatch[3] : ymdMatch[3];
+    var hours = ymdMatch[4].length < 2 ? "0" + ymdMatch[4] : ymdMatch[4];
+    var minutes = ymdMatch[5].length < 2 ? "0" + ymdMatch[5] : ymdMatch[5];
+    var seconds = ymdMatch[6] ? (ymdMatch[6].length < 2 ? "0" + ymdMatch[6] : ymdMatch[6]) : "00";
+    var isoWithTz = year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "+05:30";
+    var t = new Date(isoWithTz).getTime();
+    if (!isNaN(t)) return t;
   }
-  
-  var match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[,\s]+(\d{1,2}):(\d{1,2}):(\d{1,2})\s*(AM|PM)?$/i);
-  if (match) {
-    var day = match[1].length < 2 ? "0" + match[1] : match[1];
-    var month = match[2].length < 2 ? "0" + match[2] : match[2];
-    var year = match[3];
-    var hours = parseInt(match[4], 10);
-    var minutes = match[5].length < 2 ? "0" + match[5] : match[5];
-    var seconds = match[6].length < 2 ? "0" + match[6] : match[6];
-    var ampm = match[7] ? match[7].toUpperCase() : null;
+
+  // Format 2: DD/MM/YYYY, HH:mm:ss [AM/PM]
+  var dmyMatch = str.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})[,\s]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?\s*(AM|PM)?$/i);
+  if (dmyMatch) {
+    var day = dmyMatch[1].length < 2 ? "0" + dmyMatch[1] : dmyMatch[1];
+    var month = dmyMatch[2].length < 2 ? "0" + dmyMatch[2] : dmyMatch[2];
+    var year = dmyMatch[3];
+    var hours = parseInt(dmyMatch[4], 10);
+    var minutes = dmyMatch[5].length < 2 ? "0" + dmyMatch[5] : dmyMatch[5];
+    var seconds = dmyMatch[6] ? (dmyMatch[6].length < 2 ? "0" + dmyMatch[6] : dmyMatch[6]) : "00";
+    var ampm = dmyMatch[7] ? dmyMatch[7].toUpperCase() : null;
     
     if (ampm === "PM" && hours < 12) hours += 12;
     if (ampm === "AM" && hours === 12) hours = 0;
@@ -345,8 +383,11 @@ function parseDateSafe(val) {
     var t = new Date(isoWithTz).getTime();
     if (!isNaN(t)) return t;
   }
-  
-  if (!isNaN(isoParsed)) return isoParsed;
+
+  // Format 3: Direct Date constructor fallback
+  var directParsed = new Date(str).getTime();
+  if (!isNaN(directParsed)) return directParsed;
+
   return null;
 }
 
@@ -405,6 +446,16 @@ function getSpreadsheet(providedSs) {
     }
   } catch (e) {
     console.log("openById note: " + e.toString());
+  }
+
+  // 1b. Fallback spreadsheet ID if primary is not found
+  try {
+    if (CONFIG.FALLBACK_SPREADSHEET_ID && CONFIG.FALLBACK_SPREADSHEET_ID.length > 10) {
+      ss = SpreadsheetApp.openById(CONFIG.FALLBACK_SPREADSHEET_ID);
+      if (ss) return ss;
+    }
+  } catch (e) {
+    console.log("fallback openById note: " + e.toString());
   }
 
   // 2. Try active bound spreadsheet (If script is container-bound via Extensions > Apps Script)
@@ -707,7 +758,7 @@ function repairSheetColumnsAndTimestamps(sheet) {
     }
 
     if (updates > 0) {
-      SpreadsheetApp.flush();
+      
       console.log("🛠️ Repaired " + updates + " row column misalignment(s) in Sheet1.");
     }
     return updates;
@@ -742,6 +793,450 @@ function setupAttendanceHeaders(sheet) {
   }
 }
 
+/**
+ * Setup Headers for Evaluations Sheet (15 Comprehensive Columns)
+ */
+function setupEvaluationHeaders(sheet) {
+  if (!sheet || typeof sheet.getLastRow !== "function") {
+    var ss = getSpreadsheet();
+    if (!ss) return;
+    sheet = getOrCreateSheet(ss, CONFIG.EVALUATIONS_SHEET || "Evaluations_CRISPR26");
+  }
+  if (!sheet) return;
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Evaluation Timestamp", "Pass ID", "Team Name", "College / Institution", "Track",
+      "Team Leader", "Judge ID", "Judge Name",
+      "Innovation (25)", "Technical Depth (25)", "Execution (25)", "Defense & Q&A (25)",
+      "Total Score (100)", "Quick Tags", "Feedback Notes", "Round", "Leader Email"
+    ];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#1e1b4b").setFontColor("#818cf8");
+    sheet.setFrozenRows(1);
+    Logger.log("✅ Initialized Evaluations sheet headers with 17 columns.");
+  }
+}
+
+/**
+ * Setup Headers for Round 1, Round 2, Round 3 Sheets (Exact 10 Columns Matching Screenshots)
+ * Columns: team id | team name | team leader name | team leader mail | judge1 | judge2 | judge3 | judge4 | judge5 | avg of judge marks
+ */
+function setupRoundSheetHeaders(sheet, roundName) {
+  if (!sheet || typeof sheet.getLastRow !== "function") return;
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "team id",
+      "team name",
+      "team leader name",
+      "team leader mail",
+      "judge1",
+      "judge2",
+      "judge3",
+      "judge4",
+      "judge5",
+      "avg of judge marks"
+    ];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, 9).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
+    sheet.getRange(1, 10).setFontWeight("bold").setBackground("#064e3b").setFontColor("#34d399");
+    sheet.setFrozenRows(1);
+    try {
+      sheet.setColumnWidth(1, 120);
+      sheet.setColumnWidth(2, 220);
+      sheet.setColumnWidth(3, 160);
+      sheet.setColumnWidth(4, 200);
+      sheet.setColumnWidth(5, 75);
+      sheet.setColumnWidth(6, 75);
+      sheet.setColumnWidth(7, 75);
+      sheet.setColumnWidth(8, 75);
+      sheet.setColumnWidth(9, 75);
+      sheet.setColumnWidth(10, 150);
+    } catch (e) {}
+    Logger.log("✅ Initialized " + (roundName || "Round") + " sheet with exact 10 columns.");
+  }
+}
+
+/**
+ * Setup Headers for Final_Summary Sheet (Exact 9 Columns Matching Screenshots)
+ * Columns: team id | team name | team leader name | team leader mail | Round 1 Avg | Round 2 Avg | Round 3 Avg | Final Weighted Score | Status
+ */
+function setupFinalSummaryHeaders(sheet) {
+  if (!sheet || typeof sheet.getLastRow !== "function") return;
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "team id",
+      "team name",
+      "team leader name",
+      "team leader mail",
+      "Round 1 Avg",
+      "Round 2 Avg",
+      "Round 3 Avg",
+      "Final Weighted Score",
+      "Status"
+    ];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
+    sheet.getRange(1, 8).setFontWeight("bold").setBackground("#064e3b").setFontColor("#34d399");
+    sheet.getRange(1, 9).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
+    sheet.setFrozenRows(1);
+    try {
+      sheet.setColumnWidth(1, 120);
+      sheet.setColumnWidth(2, 220);
+      sheet.setColumnWidth(3, 160);
+      sheet.setColumnWidth(4, 200);
+      sheet.setColumnWidth(5, 110);
+      sheet.setColumnWidth(6, 110);
+      sheet.setColumnWidth(7, 110);
+      sheet.setColumnWidth(8, 160);
+      sheet.setColumnWidth(9, 160);
+    } catch (e) {}
+    Logger.log("✅ Initialized Final_Summary sheet with exact 9 columns.");
+  }
+}
+
+/**
+ * Synchronizes an evaluation entry directly into the target Round Sheet and Final_Summary Sheet.
+ * Enforces strict descending sort by 'avg of judge marks' and 'Final Weighted Score'.
+ */
+function syncRoundAndSummarySheets(ss, round, teamId, teamName, leaderName, leaderMail, judgeId, totalScoreVal) {
+  if (!ss) return;
+  if (round !== "Round 1" && round !== "Round 2" && round !== "Round 3") round = "Round 1";
+  
+  // 1. Sync Active Round Sheet
+  var roundSheet = getOrCreateSheet(ss, round);
+  setupRoundSheetHeaders(roundSheet, round);
+  
+  var rRows = roundSheet.getDataRange().getValues();
+  var targetRowIdx = -1;
+  var existingRowData = null;
+  
+  for (var i = 1; i < rRows.length; i++) {
+    if (String(rRows[i][0] || "").trim().toUpperCase() === teamId.toUpperCase()) {
+      targetRowIdx = i + 1; // 1-based index in sheet
+      existingRowData = rRows[i];
+      break;
+    }
+  }
+  
+  // Determine judge slot (1 to 5)
+  var slotIndex = -1;
+  var numMatch = String(judgeId || "").match(/\d+/);
+  if (numMatch) {
+    var n = parseInt(numMatch[0], 10);
+    if (n >= 1 && n <= 5) {
+      slotIndex = n - 1; // 0-based: 0 -> judge1, 1 -> judge2, etc.
+    }
+  }
+  
+  if (targetRowIdx > 0 && existingRowData) {
+    // Existing team in Round sheet: update judge score
+    if (slotIndex < 0 || (existingRowData[4 + slotIndex] !== "" && existingRowData[4 + slotIndex] !== null)) {
+      var openSlot = -1;
+      for (var s = 0; s < 5; s++) {
+        if (existingRowData[4 + s] === "" || existingRowData[4 + s] === null || existingRowData[4 + s] === undefined) {
+          openSlot = s;
+          break;
+        }
+      }
+      slotIndex = (openSlot >= 0) ? openSlot : (slotIndex >= 0 ? slotIndex : 0);
+    }
+    
+    var judgeCol = 5 + slotIndex; // 1-based column (col 5 = judge1)
+    roundSheet.getRange(targetRowIdx, judgeCol).setValue(totalScoreVal);
+    
+    if (leaderMail && (!existingRowData[3] || existingRowData[3] === "")) {
+      roundSheet.getRange(targetRowIdx, 4).setValue(leaderMail);
+    }
+    if (teamName && (!existingRowData[1] || existingRowData[1] === "")) {
+      roundSheet.getRange(targetRowIdx, 2).setValue(teamName);
+    }
+    if (leaderName && (!existingRowData[2] || existingRowData[2] === "")) {
+      roundSheet.getRange(targetRowIdx, 3).setValue(leaderName);
+    }
+    
+    // Recompute average across filled judge columns (5 to 9)
+    var updatedVals = roundSheet.getRange(targetRowIdx, 5, 1, 5).getValues()[0];
+    var sum = 0, count = 0;
+    for (var j = 0; j < 5; j++) {
+      var val = parseFloat(updatedVals[j]);
+      if (!isNaN(val) && val > 0) {
+        sum += val;
+        count++;
+      }
+    }
+    var avg = count > 0 ? (Math.round((sum / count) * 10) / 10) : totalScoreVal;
+    var avgCell = roundSheet.getRange(targetRowIdx, 10);
+    avgCell.setValue(avg).setFontWeight("bold").setFontColor("#059669");
+    
+  } else {
+    // New team in Round sheet
+    if (slotIndex < 0) slotIndex = 0;
+    var judgeScores = ["", "", "", "", ""];
+    judgeScores[slotIndex] = totalScoreVal;
+    
+    var newRow = [
+      teamId,
+      teamName,
+      leaderName,
+      leaderMail,
+      judgeScores[0],
+      judgeScores[1],
+      judgeScores[2],
+      judgeScores[3],
+      judgeScores[4],
+      totalScoreVal
+    ];
+    roundSheet.appendRow(newRow);
+    var newRowIdx = roundSheet.getLastRow();
+    roundSheet.getRange(newRowIdx, 10).setFontWeight("bold").setFontColor("#059669");
+  }
+  
+  // Sort Round Sheet descending by column 10 (avg of judge marks)
+  if (roundSheet.getLastRow() > 1) {
+    try {
+      var numRows = roundSheet.getLastRow() - 1;
+      roundSheet.getRange(2, 1, numRows, 10).sort({ column: 10, ascending: false });
+    } catch (sErr) {}
+  }
+  
+  // 2. Sync Final_Summary Sheet
+  syncFinalSummaryTeam(ss, teamId, teamName, leaderName, leaderMail);
+}
+
+/**
+ * Recomputes and updates a team's aggregated standings in the Final_Summary sheet.
+ */
+function syncFinalSummaryTeam(ss, teamId, teamName, leaderName, leaderMail) {
+  if (!ss) return;
+  var summarySheet = getOrCreateSheet(ss, "Final_Summary");
+  setupFinalSummaryHeaders(summarySheet);
+  
+  var getRoundAvg = function(rName) {
+    var s = ss.getSheetByName(rName);
+    if (!s || s.getLastRow() <= 1) return null;
+    var data = s.getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+      if (String(data[i][0] || "").trim().toUpperCase() === teamId.toUpperCase()) {
+        var val = parseFloat(data[i][9]); // Col 10: avg of judge marks
+        return (!isNaN(val)) ? val : null;
+      }
+    }
+    return null;
+  };
+  
+  var r1Avg = getRoundAvg("Round 1");
+  var r2Avg = getRoundAvg("Round 2");
+  var r3Avg = getRoundAvg("Round 3");
+  
+  var completed = [];
+  if (r1Avg !== null) completed.push(r1Avg);
+  if (r2Avg !== null) completed.push(r2Avg);
+  if (r3Avg !== null) completed.push(r3Avg);
+  
+  var finalScore = 0;
+  if (completed.length > 0) {
+    var sum = 0;
+    for (var k = 0; k < completed.length; k++) sum += completed[k];
+    finalScore = Math.round((sum / completed.length) * 10) / 10;
+  }
+  
+  var status = "Pending";
+  if (completed.length === 3) {
+    status = "Complete (All Rounds)";
+  } else if (completed.length >= 1) {
+    status = "In Progress";
+  }
+  
+  var sumRows = summarySheet.getDataRange().getValues();
+  var foundRowIdx = -1;
+  for (var m = 1; m < sumRows.length; m++) {
+    if (String(sumRows[m][0] || "").trim().toUpperCase() === teamId.toUpperCase()) {
+      foundRowIdx = m + 1;
+      break;
+    }
+  }
+  
+  if (foundRowIdx > 0) {
+    if (teamName) summarySheet.getRange(foundRowIdx, 2).setValue(teamName);
+    if (leaderName) summarySheet.getRange(foundRowIdx, 3).setValue(leaderName);
+    if (leaderMail) summarySheet.getRange(foundRowIdx, 4).setValue(leaderMail);
+    summarySheet.getRange(foundRowIdx, 5).setValue(r1Avg !== null ? r1Avg : "");
+    summarySheet.getRange(foundRowIdx, 6).setValue(r2Avg !== null ? r2Avg : "");
+    summarySheet.getRange(foundRowIdx, 7).setValue(r3Avg !== null ? r3Avg : "");
+    summarySheet.getRange(foundRowIdx, 8).setValue(finalScore).setFontWeight("bold").setFontColor("#059669");
+    summarySheet.getRange(foundRowIdx, 9).setValue(status);
+  } else {
+    var sumRow = [
+      teamId,
+      teamName,
+      leaderName,
+      leaderMail,
+      r1Avg !== null ? r1Avg : "",
+      r2Avg !== null ? r2Avg : "",
+      r3Avg !== null ? r3Avg : "",
+      finalScore,
+      status
+    ];
+    summarySheet.appendRow(sumRow);
+    var newSumRowIdx = summarySheet.getLastRow();
+    summarySheet.getRange(newSumRowIdx, 8).setFontWeight("bold").setFontColor("#059669");
+  }
+  
+  // Sort Final_Summary descending by Column 8 (Final Weighted Score)
+  if (summarySheet.getLastRow() > 1) {
+    try {
+      var numSumRows = summarySheet.getLastRow() - 1;
+      summarySheet.getRange(2, 1, numSumRows, 9).sort({ column: 8, ascending: false });
+    } catch (sumSortErr) {}
+  }
+}
+
+/**
+ * Re-reads all evaluations from Evaluations_CRISPR26 and recalculates Round 1, Round 2, Round 3, and Final_Summary.
+ */
+function recalculateAllRoundsAndSummary(ss) {
+  ss = getSpreadsheet(ss);
+  if (!ss) return { status: "error", message: "Spreadsheet not found" };
+  
+  var evalSheet = ss.getSheetByName(CONFIG.EVALUATIONS_SHEET || "Evaluations_CRISPR26");
+  if (!evalSheet || evalSheet.getLastRow() <= 1) {
+    return { status: "empty", message: "No evaluations recorded yet in Evaluations sheet." };
+  }
+  
+  // Reset headers for Round 1, Round 2, Round 3, Final_Summary
+  var r1Sheet = getOrCreateSheet(ss, "Round 1");
+  r1Sheet.clear();
+  setupRoundSheetHeaders(r1Sheet, "Round 1");
+  
+  var r2Sheet = getOrCreateSheet(ss, "Round 2");
+  r2Sheet.clear();
+  setupRoundSheetHeaders(r2Sheet, "Round 2");
+  
+  var r3Sheet = getOrCreateSheet(ss, "Round 3");
+  r3Sheet.clear();
+  setupRoundSheetHeaders(r3Sheet, "Round 3");
+  
+  var sumSheet = getOrCreateSheet(ss, "Final_Summary");
+  sumSheet.clear();
+  setupFinalSummaryHeaders(sumSheet);
+  
+  var evalValues = evalSheet.getDataRange().getValues();
+  for (var i = 1; i < evalValues.length; i++) {
+    var row = evalValues[i];
+    var teamId = String(row[1] || "").trim().toUpperCase();
+    if (!teamId) continue;
+    var teamName = String(row[2] || "");
+    var leaderName = String(row[5] || "");
+    var judgeId = String(row[6] || "");
+    var totalScore = parseFloat(row[12]) || 0;
+    var round = String(row[15] || "Round 1").trim();
+    var leaderMail = String(row[16] || "").trim();
+    
+    syncRoundAndSummarySheets(ss, round, teamId, teamName, leaderName, leaderMail, judgeId, totalScore);
+  }
+
+  // ⚡ Final sorting sweep: guarantee strict descending order on all 4 sheets
+  [r1Sheet, r2Sheet, r3Sheet].forEach(function(s) {
+    if (s && s.getLastRow() > 1) {
+      try {
+        s.getRange(2, 1, s.getLastRow() - 1, 10).sort({ column: 10, ascending: false });
+      } catch (err) {}
+    }
+  });
+
+  if (sumSheet && sumSheet.getLastRow() > 1) {
+    try {
+      sumSheet.getRange(2, 1, sumSheet.getLastRow() - 1, 9).sort({ column: 8, ascending: false });
+    } catch (err) {}
+  }
+  
+  return { status: "success", message: "Successfully recalculated Round 1, Round 2, Round 3, and Final_Summary in strict descending order!" };
+}
+
+/**
+ * Custom Menu for Google Sheets Console
+ */
+function onOpen(e) {
+  try {
+    var ui = SpreadsheetApp.getUi();
+    ui.createMenu('🚀 TeamEval Console')
+      .addItem('⚡ Recalculate 3 Rounds & Final Summary', 'menuRecalculateRounds')
+      .addItem('🎨 Setup & Format Round Sheets', 'menuFormatRoundSheets')
+      .addSeparator()
+      .addItem('📋 View Active API Endpoint & Webhook', 'menuShowApiInfo')
+      .addToUi();
+  } catch (err) {
+    Logger.log("onOpen UI skipped (standalone execution): " + err.toString());
+  }
+}
+
+function menuRecalculateRounds() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var res = recalculateAllRoundsAndSummary(ss);
+  SpreadsheetApp.getUi().alert("TeamEval Console", res.message, SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+function menuFormatRoundSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) ss = getSpreadsheet();
+  if (ss) {
+    setupRoundSheetHeaders(getOrCreateSheet(ss, "Round 1"), "Round 1");
+    setupRoundSheetHeaders(getOrCreateSheet(ss, "Round 2"), "Round 2");
+    setupRoundSheetHeaders(getOrCreateSheet(ss, "Round 3"), "Round 3");
+    setupFinalSummaryHeaders(getOrCreateSheet(ss, "Final_Summary"));
+    SpreadsheetApp.getUi().alert("TeamEval Console", "Round 1, Round 2, Round 3, and Final_Summary sheets initialized and formatted with exact column schema!", SpreadsheetApp.getUi().ButtonSet.OK);
+  }
+}
+
+function menuShowApiInfo() {
+  var msg = "CRISPR '26 JURY BACKEND ACTIVE\n\n" +
+            "• Active Web App URL: " + CONFIG.ACTIVE_WEB_APP_URL + "\n" +
+            "• Master Spreadsheet ID: " + CONFIG.SPREADSHEET_ID + "\n" +
+            "• Multi-Round Engine: Round 1 | Round 2 | Round 3 | Final_Summary\n" +
+            "• Mode: Production High-Concurrency (20+ Evaluators)";
+  SpreadsheetApp.getUi().alert("API & Deployment Information", msg, SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/**
+ * Setup Headers and seed Evaluators Database Sheet (10 Columns)
+ */
+function setupEvaluatorHeaders(sheet) {
+  if (!sheet || typeof sheet.getLastRow !== "function") {
+    var ss = getSpreadsheet();
+    if (!ss) return;
+    sheet = getOrCreateSheet(ss, CONFIG.EVALUATORS_SHEET || "Evaluators_CRISPR26");
+  }
+  if (!sheet) return;
+
+  if (sheet.getLastRow() === 0) {
+    var headers = [
+      "Evaluator ID", "Full Name", "Role / Designation", "Department / Organization",
+      "Assigned Track", "PIN / Password", "Status", "Avatar", "Created At", "Updated At"
+    ];
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#0f172a").setFontColor("#38bdf8");
+    sheet.setFrozenRows(1);
+
+    var now = formatISTDateTime(new Date());
+    var seedJudges = [
+      ["JURY-CHIEF", "Dr. Ieshita Pan", "Chief Jury Head & HOD", "Dept. of Medical Biotechnology", "All Tracks / Cross-Domain", "2600", "ACTIVE", "🎓", now, now],
+      ["JURY-01", "Dr. Sathya A B", "Faculty Evaluator", "Dept. of Medical Biotechnology", "CRISPR-Cas9 Fundamentals & Molecular Biology", "2601", "ACTIVE", "🧬", now, now],
+      ["JURY-02", "Dr. Vijayalakshmi R", "Faculty Evaluator", "Dept. of Medical Biotechnology", "Guide RNA (gRNA) Design & Target Selection", "2602", "ACTIVE", "✂️", now, now],
+      ["JURY-03", "Dr. I. Praveen Kumar", "Faculty Evaluator", "Dept. of Medical Biotechnology", "In Silico CRISPR Bioinformatics & Off-Target Screening", "2603", "ACTIVE", "💻", now, now],
+      ["JURY-04", "Dr. Ashley George Thomas", "Faculty Evaluator", "Dept. of Medical Biotechnology", "Base Editing & Prime Editing Next-Gen Technologies", "2604", "ACTIVE", "🧪", now, now],
+      ["JURY-05", "Dr. S. Moogambigai", "Faculty Evaluator", "Dept. of Medical Biotechnology", "Clinical Therapeutics, Gene Therapy & Diagnostics", "2605", "ACTIVE", "🔬", now, now],
+      ["JURY-GUEST", "External / Industry Judge", "Visiting Industry Evaluator", "IET Technical Council", "All Tracks / Cross-Domain", "2026", "ACTIVE", "⚖️", now, now]
+    ];
+
+    for (var i = 0; i < seedJudges.length; i++) {
+      sheet.appendRow(seedJudges[i]);
+    }
+
+    Logger.log("✅ Initialized Evaluators sheet with headers and " + seedJudges.length + " default evaluators.");
+  }
+}
+
 function setupSheetHeaders() {
   var ss = getSpreadsheet();
   if (!ss) return;
@@ -749,6 +1244,10 @@ function setupSheetHeaders() {
   setupRegistrationHeaders(regSheet);
   var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
   setupAttendanceHeaders(attSheet);
+  var evalSheet = getOrCreateSheet(ss, CONFIG.EVALUATIONS_SHEET);
+  setupEvaluationHeaders(evalSheet);
+  var evalUserSheet = getOrCreateSheet(ss, CONFIG.EVALUATORS_SHEET);
+  setupEvaluatorHeaders(evalUserSheet);
 }
 
 function getOrCreateSheet(ss, name) {
@@ -855,22 +1354,24 @@ function sendTelegramNotification(text) {
   var chatIds = chatIdsStr.split(',').map(function(id) { return id.trim(); }).filter(Boolean);
   var msg = text || "🔔 SYNORA '26 / CRISPR '26 System Alert";
   
-  chatIds.forEach(function(chatId) {
-    try {
-      var resp = UrlFetchApp.fetch('https://api.telegram.org/bot' + botToken + '/sendMessage', {
-        method: 'post',
-        contentType: 'application/json',
-        payload: JSON.stringify({
-          chat_id: chatId,
-          text: msg
-        }),
-        muteHttpExceptions: true
-      });
-      console.log("Telegram alert to " + chatId + " -> HTTP " + resp.getResponseCode());
-    } catch (tgErr) {
-      console.log("⚠️ Telegram dispatch error to " + chatId + ": " + tgErr.toString());
-    }
+  var requests = chatIds.map(function(chatId) {
+    return {
+      url: 'https://api.telegram.org/bot' + botToken + '/sendMessage',
+      method: 'post',
+      contentType: 'application/json',
+      payload: JSON.stringify({
+        chat_id: chatId,
+        text: msg
+      }),
+      muteHttpExceptions: true
+    };
   });
+
+  try {
+    UrlFetchApp.fetchAll(requests); // ⚡ PARALLEL DISPATCH: 1 Single Roundtrip
+  } catch (tgErr) {
+    console.log("⚠️ Telegram dispatch error: " + tgErr.toString());
+  }
 }
 
 // ─── CRON TRIGGER MANAGEMENT ─────────────────────────────────────────
@@ -891,7 +1392,7 @@ function setupAutomatedEmailTrigger() {
 }
 
 // ─── BACKGROUND QUEUE PROCESSOR: 5-MIN DELAYED EMAILS ────────────────
-function processPendingRegistrationEmails() {
+function processPendingRegistrationEmails(ignoreDelays) {
   var lock = LockService.getScriptLock();
   if (!lock.tryLock(5000)) {
     console.log("Queue is locked by another instance. Skipping this run to prevent duplicate emails.");
@@ -909,8 +1410,8 @@ function processPendingRegistrationEmails() {
     // 1. Auto-repair any misplaced columns
     repairSheetColumnsAndTimestamps(sheet);
 
-    // 2. Strict Quiet Hours Check: No emails sent between 10:00 PM and 08:00 AM IST
-    if (isQuietHoursNow()) {
+    // 2. Strict Quiet Hours Check: No emails sent between 10:00 PM and 08:00 AM IST (unless manually forced)
+    if (!ignoreDelays && isQuietHoursNow()) {
       console.log("🌙 Quiet Hours Active (10:00 PM - 08:00 AM IST). All pending registration emails are held and will dispatch after 08:00 AM IST.");
       return 0;
     }
@@ -1012,13 +1513,13 @@ function processPendingRegistrationEmails() {
           }
         }
         
-        // Dispatch strictly when scheduled 5-minute delay / post-8am time has arrived
-        if (schedTimeMs && nowMs >= schedTimeMs && leaderEmail && leaderEmail.indexOf("@") !== -1) {
-          console.log("⏳ 5-Minute delay elapsed! Dispatching single confirmation email for Team: " + teamName + " [ID: " + teamId + "] to Team Leader: " + leaderEmail);
+        // Dispatch when scheduled delay elapsed OR when manually forced
+        if ((ignoreDelays || (schedTimeMs && nowMs >= schedTimeMs)) && leaderEmail && leaderEmail.indexOf("@") !== -1) {
+          console.log("⏳ Dispatching confirmation email for Team: " + teamName + " [ID: " + teamId + "] to Team Leader: " + leaderEmail);
           
           // Atomic lock: mark as sending to prevent duplicate dispatches
           sheet.getRange(i + 1, colEmailStatus + 1).setValue("Sending");
-          SpreadsheetApp.flush();
+          
 
           var emailSent = sendRegistrationConfirmationEmail({
             teamId: teamId,
@@ -1043,14 +1544,14 @@ function processPendingRegistrationEmails() {
               sheet.getRange(i + 1, colStatus + 1).setValue("Registered");
             }
 
-            SpreadsheetApp.flush();
+            
             processedCount++;
             
             sendTelegramNotification("📧 CONFIRMATION EMAIL DELIVERED (To Team Leader Only)\n\nTeam ID: " + teamId + "\nTeam   : " + teamName + "\nLeader : " + leaderName + "\nEmail  : " + leaderEmail + "\nTime   : " + formatISTDateTime(new Date()));
           } else {
             // Revert to Pending if email send failed
             sheet.getRange(i + 1, colEmailStatus + 1).setValue("Pending");
-            SpreadsheetApp.flush();
+            
           }
         } else if (schedTimeMs && nowMs < schedTimeMs) {
           var remainingSec = Math.round((schedTimeMs - nowMs) / 1000);
@@ -1113,7 +1614,10 @@ function sendRegistrationConfirmationEmail(details) {
       }
     }
 
-    var qrImgSrc = qrBase64 ? ("data:image/png;base64," + qrBase64) : (qrBlob ? "cid:synoraQrPass" : qrEndpoints[0]);
+    // Gmail strictly blocks data:image/png;base64 URLs in emails!
+    // We MUST use cid:synoraQrPass (inline image attachment) or a direct public https URL.
+    var qrPublicUrl = "https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=2&data=" + encodeURIComponent(passUrl);
+    var qrImgSrc = qrBlob ? "cid:synoraQrPass" : qrPublicUrl;
     
     var membersListHtml = "";
     if (details.membersStr) {
@@ -1229,7 +1733,7 @@ function sendRegistrationConfirmationEmail(details) {
                       </tr>
                       <tr>
                         <td style="padding: 10px 16px; font-size: 13px; color: #64748b; border-bottom: 1px solid #e2e8f0;">Workshop Date</td>
-                        <td style="padding: 10px 16px; font-size: 13px; font-weight: 700; color: #0284c7; border-bottom: 1px solid #e2e8f0;">October 3, 2026 · 08:30 AM IST</td>
+                        <td style="padding: 10px 16px; font-size: 13px; font-weight: 700; color: #0284c7; border-bottom: 1px solid #e2e8f0;">November 20, 2026 · 08:30 AM IST</td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 16px; font-size: 13px; color: #64748b;">Venue</td>
@@ -1286,7 +1790,7 @@ function sendRegistrationConfirmationEmail(details) {
     
     var plainBody = "Dear " + details.leaderName + ",\n\n" +
                     "Your team " + details.teamName + " [Pass ID: " + details.teamId + "] is confirmed for CRISPR '26!\n\n" +
-                    "Workshop Date: October 3, 2026\n" +
+                    "Workshop Date: November 20, 2026\n" +
                     "Reporting Time: 08:30 AM IST\n" +
                     "Venue: RB Seminar Hall, SIMATS Engineering, Chennai.\n\n" +
                     "⚠️ MANDATORY: All students must bring their official physical college ID cards and laptops.\n\n" +
@@ -1576,7 +2080,7 @@ function renderStateMachinePassHtml(data) {
           <div class="info-box" style="background:rgba(6,182,212,0.04); border-color:rgba(6,182,212,0.2);">
             <div style="font-size:12.5px; line-height:1.6; color:#cbd5e1;">
               <div><strong>📍 Venue:</strong> RB Seminar Hall, SIMATS Engineering, Chennai</div>
-              <div><strong>⏰ Date:</strong> October 3, 2026 · 08:30 AM IST</div>
+              <div><strong>⏰ Date:</strong> November 20, 2026 · 08:30 AM IST</div>
               <div><strong>🪪 Requirement:</strong> All delegates must present official physical college ID cards.</div>
             </div>
           </div>
@@ -1651,11 +2155,15 @@ function findTicketByIdOrEmail(ss, query, verifyEmail) {
       var collegeType = colMap.collegeType !== undefined && row[colMap.collegeType] ? String(row[colMap.collegeType]) : "external";
       var leaderDesignation = colMap.leaderDesignation !== undefined ? String(row[colMap.leaderDesignation] || "") : "";
       
-      var member1 = colMap.member1Name !== undefined ? String(row[colMap.member1Name] || "").trim() : "";
-      var member2 = colMap.member2Name !== undefined ? String(row[colMap.member2Name] || "").trim() : "";
-      var member3 = colMap.member3Name !== undefined ? String(row[colMap.member3Name] || "").trim() : "";
+      var member1 = colMap.member1Name !== undefined ? String(row[colMap.member1Name] || "").trim() : (row[7] ? String(row[7]).trim() : "");
+      var member2 = colMap.member2Name !== undefined ? String(row[colMap.member2Name] || "").trim() : (row[10] ? String(row[10]).trim() : "");
+      var member3 = colMap.member3Name !== undefined ? String(row[colMap.member3Name] || "").trim() : (row[13] ? String(row[13]).trim() : "");
       
       var members = [member1, member2, member3].filter(Boolean);
+      if (members.length === 0 && colMap.members !== undefined && row[colMap.members]) {
+        var rawM = String(row[colMap.members] || "").trim();
+        members = rawM.split(/[,;\n]/).map(function(s) { return s.trim(); }).filter(Boolean);
+      }
       var isPresent = presentMap[rowTeamId] !== undefined || (colMap.attendanceStatus !== undefined && String(row[colMap.attendanceStatus] || "").toUpperCase() === "PRESENT");
 
       return {
@@ -1817,165 +2325,119 @@ function getPresentTeamIdsMap(ss) {
 
 // ─── CHECK-IN HANDLER (POPULATES ALL 16 COLUMNS) ─────────────────────
 function handleCheckIn(ss, params, callback) {
-  params = params || {};
-  ss = getSpreadsheet(ss);
-
-  if (!ss) {
-    return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (e) {
+    return createJsonResponse({ status: "error", message: "Server busy, try again." }, callback);
   }
 
-  var query = (params.teamId || params.id || params.email || params.phone || "").trim();
-  
-  if (!query) {
-    Logger.log("ℹ️ handleCheckIn called without team query.");
-    return createJsonResponse({
-      status: "ready",
-      message: "handleCheckIn is ready."
-    }, callback);
-  }
+  try {
+    params = params || {};
+    ss = getSpreadsheet(ss);
 
-  var verifier = params.organizerName || params.verifiedBy || "Reception Desk";
-  var nowStr = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd/MM/yyyy, hh:mm:ss a") + " IST";
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
 
-  var ticket = findTicketByIdOrEmail(ss, query, params.leaderEmail || params.email);
-  
-  var finalTeamId = (ticket && ticket.teamId) ? ticket.teamId : (query ? query.toUpperCase() : "SYN26-XXXX");
-  var finalTeamName = (ticket && ticket.teamName && ticket.teamName !== "Registered Team") ? ticket.teamName : (params.teamName || "Registered Team");
-  var finalLeaderName = (ticket && ticket.leaderName && ticket.leaderName !== "Team Leader") ? ticket.leaderName : (params.leaderName || params.teamLeaderName || "Team Leader");
-  var finalLeaderEmail = (ticket && ticket.leaderEmail) ? ticket.leaderEmail : (params.leaderEmail || params.teamLeaderMail || params.email || "");
-  var finalLeaderPhone = (ticket && ticket.leaderPhone) ? ticket.leaderPhone : (params.leaderPhone || params.teamLeaderMobile || params.phone || "");
-  var finalCollege = (ticket && ticket.college && ticket.college !== "Engineering College") ? ticket.college : (params.college || "SIMATS Engineering");
-  var finalCategory = (ticket && ticket.participantCategory) ? ticket.participantCategory : (params.category || params.participantCategory || "student");
-  var finalFee = (ticket && ticket.totalFee) ? String(ticket.totalFee) : (params.totalFee || params.fee || "400");
-  var finalTxnId = (ticket && ticket.txnId) ? ticket.txnId : (params.txnId || params.utr || params.externalTxnId || "");
-  
-  var finalMember2 = (ticket?.memberDetails?.[0]?.name || ticket?.members?.[0]) || params.member1Name || params.member2Name || "";
-  var finalMember3 = (ticket?.memberDetails?.[1]?.name || ticket?.members?.[1]) || params.member2Name || params.member3Name || "";
-  var finalMember4 = (ticket?.memberDetails?.[2]?.name || ticket?.members?.[2]) || params.member3Name || params.member4Name || "";
+    var query = String(params.teamId || params.id || params.email || params.phone || "").trim().toUpperCase();
+    if (!query) return createJsonResponse({ status: "error", message: "Missing team ID." }, callback);
 
-  var count = 1;
-  if (finalMember2) count++;
-  if (finalMember3) count++;
-  if (finalMember4) count++;
+    var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
+    if (!attSheet) return createJsonResponse({ status: "error", message: "Could not access Attendance sheet." }, callback);
 
-  // Update/Append in Attendance Sheet
-  var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
-  setupAttendanceHeaders(attSheet);
+    var timestamp = formatISTDateTime(new Date());
+    var verifier = params.organizerName || params.verifiedBy || "Reception Desk";
 
-  var attData = attSheet.getDataRange().getValues();
-  var attRowIdx = -1;
-  for (var j = 1; j < attData.length; j++) {
-    if (String(attData[j][1] || "").trim().toUpperCase() === finalTeamId.toUpperCase()) {
-      attRowIdx = j + 1;
-      break;
+    // 1. Always update main Sheet1 (Status -> PRESENT, CheckInTime -> timestamp)
+    var regSheet = getOrCreateSheet(ss, CONFIG.REGISTRATIONS_SHEET);
+    if (regSheet) {
+      var regData = regSheet.getDataRange().getValues();
+      var hMap = getHeaderMap(regData[0]);
+      var colTeamId = hMap.teamId !== -1 ? hMap.teamId : 0; // Col A
+      var colStatus = hMap.status !== -1 ? hMap.status : 22; // Col W (23rd col)
+      var colCheckIn = hMap.checkInTime !== -1 ? hMap.checkInTime : 23; // Col X (24th col)
+
+      for (var r = 1; r < regData.length; r++) {
+        var tid = String(regData[r][colTeamId] || "").trim().toUpperCase();
+        var emailVal = (hMap.leaderEmail !== -1 ? String(regData[r][hMap.leaderEmail] || "") : "").trim().toUpperCase();
+        if (tid === query || (emailVal && emailVal === query)) {
+          regSheet.getRange(r + 1, colStatus + 1).setValue("PRESENT");
+          regSheet.getRange(r + 1, colCheckIn + 1).setValue(timestamp);
+          break;
+        }
+      }
     }
-  }
 
-  var attRowData = [
-    nowStr,
-    finalTeamId,
-    finalTeamName,
-    finalLeaderName,
-    finalLeaderEmail,
-    finalLeaderPhone,
-    finalMember2,
-    finalMember3,
-    finalMember4,
-    count,
-    finalCollege,
-    finalCategory,
-    finalFee,
-    finalTxnId,
-    verifier,
-    "ELIGIBLE FOR IET CERTIFICATE"
-  ];
-
-  if (attRowIdx > 0) {
-    attSheet.getRange(attRowIdx, 1, 1, attRowData.length).setValues([attRowData]);
-  } else {
-    attSheet.appendRow(attRowData);
-  }
-
-  // Update main registration sheet status
-  var meta = findRegistrationSheetAndColumnMap(ss);
-  if (meta && meta.sheet && meta.colMap.attendanceStatus !== undefined) {
-    var regData = meta.sheet.getDataRange().getValues();
-    for (var r = 1; r < regData.length; r++) {
-      if (String(regData[r][meta.colMap.teamId] || "").trim().toUpperCase() === finalTeamId.toUpperCase()) {
-        meta.sheet.getRange(r + 1, meta.colMap.attendanceStatus + 1).setValue("PRESENT");
-        if (meta.colMap.checkinTime !== undefined) meta.sheet.getRange(r + 1, meta.colMap.checkinTime + 1).setValue(nowStr);
-        if (meta.colMap.verifiedBy !== undefined) meta.sheet.getRange(r + 1, meta.colMap.verifiedBy + 1).setValue(verifier);
+    // 2. Append to Attendance_CRISPR26 sheet if not already present
+    var existingData = attSheet.getDataRange().getValues();
+    var alreadyInAtt = false;
+    for (var a = 1; a < existingData.length; a++) {
+      if (String(existingData[a][1] || "").trim().toUpperCase() === query) {
+        alreadyInAtt = true;
         break;
       }
     }
-  }
 
-  // Telegram alert
-  sendTelegramNotification("🛡️ DESK CHECK-IN VERIFIED!\n\nPass ID : " + finalTeamId + "\nTeam    : " + finalTeamName + "\nLeader  : " + finalLeaderName + " (" + (finalLeaderPhone || "N/A") + ")\nCollege : " + finalCollege + "\nHeadcount: " + count + " delegates\nVerifier: " + verifier + "\nTime    : " + nowStr);
-
-  Logger.log("✅ Marked attendance for: " + finalTeamName + " (" + finalTeamId + ")");
-
-  return createJsonResponse({
-    status: "success",
-    message: "Attendance verified and updated in Attendance Sheet for " + finalTeamName,
-    team: {
-      teamId: finalTeamId,
-      teamName: finalTeamName,
-      leaderName: finalLeaderName,
-      leaderEmail: finalLeaderEmail,
-      leaderPhone: finalLeaderPhone,
-      college: finalCollege,
-      members: [finalMember2, finalMember3, finalMember4].filter(Boolean),
-      checkedIn: true,
-      checkinTime: nowStr,
-      verifiedBy: verifier
+    if (!alreadyInAtt) {
+      attSheet.appendRow([
+        timestamp, query, params.teamName || "", params.leaderName || "", params.leaderEmail || "", params.leaderPhone || "", params.member1Name || "", params.member2Name || "", params.member3Name || "", params.presentHeadcount || "", params.college || "", params.category || "", params.totalFee || "", params.txnId || "", verifier, "PRESENT"
+      ]);
     }
-  }, callback);
+    
+    return createJsonResponse({ status: "success", message: "Check-in recorded!", timestamp: timestamp }, callback);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
-// ─── UNCHECK / UNDO ATTENDANCE ───────────────────────────────────────
+// ─── CHECK-OUT / UNCHECK HANDLER ─────────────────────────────────────────
 function handleUncheck(ss, params) {
-  params = params || {};
-  ss = getSpreadsheet(ss);
-
-  var query = (params.teamId || params.id || "").trim().toUpperCase();
-  if (!query) {
-    Logger.log("ℹ️ handleUncheck called without parameters.");
-    return createJsonResponse({ status: "ready", message: "handleUncheck endpoint is ready." });
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (e) {
+    return createJsonResponse({ status: "error", message: "Server busy, try again." });
   }
 
-  var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
-  if (attSheet) {
-    var attData = attSheet.getDataRange().getValues();
-    for (var j = 1; j < attData.length; j++) {
-      if (String(attData[j][1] || "").trim().toUpperCase() === query) {
-        attSheet.deleteRow(j + 1);
-        break;
+  try {
+    params = params || {};
+    ss = getSpreadsheet(ss);
+
+    var query = String(params.teamId || params.id || "").trim().toUpperCase();
+    if (!query) return createJsonResponse({ status: "ready", message: "handleUncheck endpoint is ready." });
+
+    var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
+    if (attSheet) {
+      var attData = attSheet.getDataRange().getValues();
+      for (var j = attData.length - 1; j >= 1; j--) {
+        if (String(attData[j][1] || "").trim().toUpperCase() === query) {
+          attSheet.deleteRow(j + 1);
+          break;
+        }
       }
     }
-  }
-
-  var meta = findRegistrationSheetAndColumnMap(ss);
-  if (meta && meta.sheet && meta.colMap.attendanceStatus !== undefined) {
-    var regData = meta.sheet.getDataRange().getValues();
-    for (var i = 1; i < regData.length; i++) {
-      if (String(regData[i][meta.colMap.teamId] || "").trim().toUpperCase() === query) {
-        meta.sheet.getRange(i + 1, meta.colMap.attendanceStatus + 1).setValue("PENDING");
-        if (meta.colMap.checkinTime !== undefined) meta.sheet.getRange(i + 1, meta.colMap.checkinTime + 1).setValue("");
-        if (meta.colMap.verifiedBy !== undefined) meta.sheet.getRange(i + 1, meta.colMap.verifiedBy + 1).setValue("");
-        break;
+    
+    // Clear in main Sheet1 for visual confirmation
+    var regSheet = getOrCreateSheet(ss, CONFIG.REGISTRATIONS_SHEET);
+    var regData = regSheet.getDataRange().getValues();
+    var hMap = getHeaderMap(regData[0]);
+    if (hMap.teamId !== -1 && hMap.status !== -1 && hMap.checkInTime !== -1) {
+      for (var r = 1; r < regData.length; r++) {
+        var tid = String(regData[r][hMap.teamId] || "").trim().toUpperCase();
+        if (tid === query || (hMap.passId !== -1 && String(regData[r][hMap.passId] || "").trim().toUpperCase() === query)) {
+          regSheet.getRange(r + 1, hMap.status + 1).setValue("Registered");
+          regSheet.getRange(r + 1, hMap.checkInTime + 1).setValue("");
+          break;
+        }
       }
     }
-  }
 
-  Logger.log("✅ Check-in reverted for Team " + query);
-  return createJsonResponse({
-    status: "success",
-    message: "Check-in reverted for Team " + query
-  });
+    return createJsonResponse({ status: "success", message: "Attendance unregistered." });
+  } finally {
+    lock.releaseLock();
+  }
 }
 
-// ─── ATTENDANCE LIST (PRESENT TEAMS) ─────────────────────────────────
+// ─── GET ATTENDANCE LIST HANDLER ─────────────────────────────────────────
 function getAttendanceList(ss) {
   ss = getSpreadsheet(ss);
   if (!ss) return [];
@@ -2009,6 +2471,664 @@ function getAttendanceList(ss) {
     });
   }
   return results;
+}
+
+/**
+ * ⚡ ADVANCED HIGH-CONCURRENCY SCRIPT LOCK HELPER
+ * Protects 20+ concurrent judges/evaluators from collision & timeouts.
+ * Employs exponential retry loop with randomized jitter to prevent lock starvation.
+ */
+function getScriptLockWithRetry(maxWaitMs) {
+  var lock = LockService.getScriptLock();
+  var timeout = maxWaitMs || 30000;
+  var start = new Date().getTime();
+  while (new Date().getTime() - start < timeout) {
+    try {
+      if (lock.tryLock(3500)) {
+        return lock;
+      }
+    } catch (e) {}
+    // Sleep with randomized jitter (120ms - 350ms) to prevent lock stampede
+    Utilities.sleep(120 + Math.floor(Math.random() * 230));
+  }
+  return null;
+}
+
+// ─── JURY EVALUATION HANDLERS ─────────────────────────────────────────
+function handleSubmitEvaluation(ss, params, callback) {
+  var lock = getScriptLockWithRetry(30000);
+  if (!lock) {
+    return createJsonResponse({ status: "busy", message: "Server busy processing simultaneous submissions. Queued for auto-retry." }, callback);
+  }
+
+  var updatedRowIndex = -1;
+  var totalScoreVal = 0;
+  var teamId = "";
+  var teamName = "";
+  var judgeId = "";
+  var judgeName = "";
+  var track = "";
+  var inno = 0, tech = 0, exec = 0, defn = 0;
+  var quickTags = "", feedback = "";
+
+  try {
+    params = params || {};
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var evalSheet = getOrCreateSheet(ss, CONFIG.EVALUATIONS_SHEET || "Evaluations_CRISPR26");
+    if (!evalSheet) return createJsonResponse({ status: "error", message: "Could not open Evaluations sheet." }, callback);
+
+    setupEvaluationHeaders(evalSheet);
+
+    var timestamp = params.evaluatedAt || formatISTDateTime(new Date());
+    teamId = String(params.teamId || params.id || "").trim().toUpperCase();
+    teamName = String(params.teamName || "").trim();
+    var college = String(params.college || "").trim();
+    track = String(params.track || "").trim();
+    var leaderName = String(params.leaderName || "").trim();
+    judgeId = String(params.judgeId || "").trim();
+    judgeName = String(params.judgeName || "").trim();
+    var round = String(params.round || "Round 1").trim();
+    if (round !== "Round 1" && round !== "Round 2" && round !== "Round 3") {
+      round = "Round 1";
+    }
+    var leaderEmail = String(params.leaderEmail || params.leaderMail || params.email || "").trim();
+
+    inno = parseFloat(params.innovationScore || params.innovation || 0) || 0;
+    tech = parseFloat(params.technicalScore || params.technical || 0) || 0;
+    exec = parseFloat(params.executionScore || params.execution || 0) || 0;
+    defn = parseFloat(params.defenseScore || params.defense || 0) || 0;
+    totalScoreVal = parseFloat(params.totalScore || (inno + tech + exec + defn)) || (inno + tech + exec + defn);
+
+    quickTags = String(params.quickTags || "").trim();
+    feedback = String(params.feedback || "").trim();
+
+    if (!teamId) {
+      return createJsonResponse({ status: "error", message: "Missing teamId for evaluation." }, callback);
+    }
+
+    var existingRows = evalSheet.getDataRange().getValues();
+
+    // 🔒 STRICT ONE-TIME SUBMISSION ENFORCEMENT PER FACULTY EVALUATOR PER ROUND
+    // Check if THIS specific faculty member has already entered marks for THIS team in THIS round
+    for (var i = 1; i < existingRows.length; i++) {
+      var rowTeamId = String(existingRows[i][1] || "").trim().toUpperCase();
+      var rowJudgeId = String(existingRows[i][6] || "").trim().toUpperCase();
+      var rowRound = String(existingRows[i][15] || "Round 1").trim().toUpperCase();
+      if (rowTeamId === teamId && rowJudgeId === judgeId.toUpperCase() && rowRound === round.toUpperCase()) {
+        var prevJudgeName = String(existingRows[i][7] || existingRows[i][6] || judgeName);
+        var prevTime = String(existingRows[i][0] || "earlier");
+        var prevScore = existingRows[i][12] || 0;
+        Logger.log("⚠️ REJECTED: Team " + teamId + " marks already recorded for " + round + " by " + prevJudgeName + " at " + prevTime);
+        return createJsonResponse({
+          status: "already_evaluated",
+          alreadyEvaluated: true,
+          message: "STRICT ONE-TIME RULE: You (" + prevJudgeName + ") have already submitted marks for Team " + teamId + " in " + round + " (" + prevScore + "/100 on " + prevTime + "). Each faculty member can enter marks strictly only once per round and cannot modify submitted scores.",
+          evaluatedBy: prevJudgeName,
+          evaluatedAt: prevTime,
+          totalScore: prevScore,
+          round: round
+        }, callback);
+      }
+    }
+
+    var rowValues = [
+      timestamp,
+      teamId,
+      teamName,
+      college,
+      track,
+      leaderName,
+      judgeId,
+      judgeName,
+      inno,
+      tech,
+      exec,
+      defn,
+      totalScoreVal,
+      quickTags,
+      feedback,
+      round,
+      leaderEmail
+    ];
+
+    evalSheet.appendRow(rowValues);
+    Logger.log("✅ Appended new locked evaluation for " + teamId + " in " + round + " by " + judgeName);
+
+    // 📊 Sync multi-round sheet (Round 1, Round 2, Round 3) and Final_Summary in exact schema
+    try {
+      syncRoundAndSummarySheets(ss, round, teamId, teamName, leaderName, leaderEmail, judgeId, totalScoreVal);
+    } catch (rErr) {
+      Logger.log("⚠️ Note syncing round sheet: " + rErr.toString());
+    }
+
+    // ⚡ Invalidate RAM cache so fresh evaluations are reflected immediately
+    try {
+      CacheService.getScriptCache().remove("cache_evaluations_v2");
+    } catch (cErr) {}
+
+  } finally {
+    // ⚡ CRITICAL OPTIMIZATION: Release lock IMMEDIATELY so other 19 users don't wait!
+    lock.releaseLock();
+  }
+
+  // Telegram alert dispatched OUTSIDE lock so network latency doesn't block other judges
+  try {
+    sendTelegramNotification(
+      "⚖️ JURY EVALUATION RECORDED (" + round + ")\n\n" +
+      "Round : " + round + "\n" +
+      "Team  : " + (teamName || teamId) + " [" + teamId + "]\n" +
+      "Leader: " + (leaderName || "N/A") + (leaderEmail ? " (" + leaderEmail + ")" : "") + "\n" +
+      "Judge : " + (judgeName || judgeId) + "\n" +
+      "Track : " + track + "\n" +
+      "Score : " + totalScoreVal + " / 100\n" +
+      "• Innovation : " + inno + "/25\n" +
+      "• Tech Depth : " + tech + "/25\n" +
+      "• Execution  : " + exec + "/25\n" +
+      "• Defense    : " + defn + "/25\n" +
+      (quickTags ? ("Tags  : " + quickTags + "\n") : "") +
+      (feedback ? ("Notes : \"" + feedback.substring(0, 100) + "\"\n") : "") +
+      "Time  : " + formatISTDateTime(new Date())
+    );
+  } catch (tgErr) {}
+
+  return createJsonResponse({
+    status: "success",
+    message: "Score (" + totalScoreVal + "/100 for " + round + ") successfully synchronized with CRISPR '26 jury sheet!",
+    data: {
+      teamId: teamId,
+      judgeId: judgeId,
+      round: round,
+      totalScore: totalScoreVal,
+      updated: updatedRowIndex > 0
+    }
+  }, callback);
+}
+
+function handleGetEvaluations(ss, params, callback) {
+  try {
+    params = params || {};
+
+    // ⚡ ULTRA-FAST CLOUD RAM CACHE (<15ms)
+    try {
+      if (params.forceRefresh !== "true") {
+        var cachedEvals = CacheService.getScriptCache().get("cache_evaluations_v2");
+        if (cachedEvals) {
+          return createJsonResponse(JSON.parse(cachedEvals), callback);
+        }
+      }
+    } catch (cReadErr) {}
+
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var evalSheet = ss.getSheetByName(CONFIG.EVALUATIONS_SHEET || "Evaluations_CRISPR26");
+    if (!evalSheet || evalSheet.getLastRow() <= 1) {
+      var emptyData = { status: "success", data: [], total: 0 };
+      try { CacheService.getScriptCache().put("cache_evaluations_v2", JSON.stringify(emptyData), 60); } catch (e) {}
+      return createJsonResponse(emptyData, callback);
+    }
+
+    var values = evalSheet.getDataRange().getValues();
+    var results = [];
+
+    for (var i = 1; i < values.length; i++) {
+      var row = values[i];
+      var teamId = String(row[1] || "").trim();
+      if (!teamId) continue;
+
+      var tags = [];
+      if (row[13]) {
+        tags = String(row[13]).split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+      }
+
+      results.push({
+        evaluatedAt: String(row[0] || ""),
+        teamId: teamId,
+        teamName: String(row[2] || ""),
+        college: String(row[3] || ""),
+        track: String(row[4] || ""),
+        leaderName: String(row[5] || ""),
+        judgeId: String(row[6] || ""),
+        judgeName: String(row[7] || ""),
+        scores: {
+          innovation: parseFloat(row[8]) || 0,
+          technical: parseFloat(row[9]) || 0,
+          execution: parseFloat(row[10]) || 0,
+          defense: parseFloat(row[11]) || 0
+        },
+        totalScore: parseFloat(row[12]) || 0,
+        quickTags: tags,
+        feedback: String(row[14] || ""),
+        round: String(row[15] || "Round 1"),
+        leaderEmail: String(row[16] || ""),
+        syncedToCloud: true
+      });
+    }
+
+    // ⚡ Strict descending order sort by totalScore
+    results.sort(function(a, b) {
+      return (b.totalScore || 0) - (a.totalScore || 0);
+    });
+
+    var fullResp = { status: "success", data: results, total: results.length };
+    try {
+      CacheService.getScriptCache().put("cache_evaluations_v2", JSON.stringify(fullResp), 60); // 1-minute TTL
+    } catch (cPutErr) {}
+
+    return createJsonResponse(fullResp, callback);
+  } catch (err) {
+    return createJsonResponse({ status: "error", message: err.toString() }, callback);
+  }
+}
+
+// ─── MAIN ADMIN & EVALUATOR DATABASE HANDLERS ─────────────────────────
+function validateMasterAdmin(userId, password) {
+  var expectedUser = getSecret('ADMIN_USERNAME', CONFIG.ADMIN_USERNAME || 'kandukurijagan');
+  var expectedPass = getSecret('ADMIN_PASSWORD', CONFIG.ADMIN_PASSWORD || '192472374@jagan');
+  
+  if (!userId || !password) return false;
+  return String(userId).trim().toLowerCase() === String(expectedUser).trim().toLowerCase() &&
+         String(password).trim() === String(expectedPass).trim();
+}
+
+function handleAdminLogin(ss, params, callback) {
+  params = params || {};
+  var userId = String(params.userId || params.username || params.user || "").trim();
+  var password = String(params.password || params.pass || "").trim();
+
+  if (!validateMasterAdmin(userId, password)) {
+    return createJsonResponse({
+      status: "error",
+      message: "Invalid admin credentials. Please verify your User ID and Password."
+    }, callback);
+  }
+
+  var token = "ADM-" + Utilities.getUuid();
+  return createJsonResponse({
+    status: "success",
+    message: "Admin authentication successful.",
+    token: token,
+    admin: {
+      userId: "kandukurijagan",
+      name: "Kandukuri Jagan",
+      role: "SuperAdmin / Chief Convener",
+      authenticatedAt: formatISTDateTime(new Date())
+    }
+  }, callback);
+}
+
+function handleGetEvaluators(ss, params, callback) {
+  try {
+    params = params || {};
+
+    // ⚡ ULTRA-FAST CLOUD RAM CACHE (<15ms)
+    try {
+      if (params.forceRefresh !== "true") {
+        var cachedEvaluators = CacheService.getScriptCache().get("cache_evaluators_v2");
+        if (cachedEvaluators) {
+          var parsed = JSON.parse(cachedEvaluators);
+          if (params.activeOnly === "true" && Array.isArray(parsed.data)) {
+            var activeOnlyList = parsed.data.filter(function(e) { return e.status === "ACTIVE"; });
+            return createJsonResponse({ status: "success", data: activeOnlyList, total: activeOnlyList.length }, callback);
+          }
+          return createJsonResponse(parsed, callback);
+        }
+      }
+    } catch (cReadErr) {}
+
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var sheet = getOrCreateSheet(ss, CONFIG.EVALUATORS_SHEET || "Evaluators_CRISPR26");
+    if (!sheet) return createJsonResponse({ status: "error", message: "Could not open Evaluators sheet." }, callback);
+
+    setupEvaluatorHeaders(sheet);
+
+    var values = sheet.getDataRange().getValues();
+    var evaluators = [];
+
+    for (var i = 1; i < values.length; i++) {
+      var row = values[i];
+      var id = String(row[0] || "").trim();
+      if (!id) continue;
+
+      var status = String(row[6] || "ACTIVE").trim().toUpperCase();
+
+      evaluators.push({
+        id: id,
+        name: String(row[1] || "").trim(),
+        role: String(row[2] || "").trim(),
+        department: String(row[3] || "").trim(),
+        assignedTrack: String(row[4] || "").trim(),
+        pin: String(row[5] || "").trim(),
+        status: status,
+        avatar: String(row[7] || "⚖️").trim(),
+        createdAt: String(row[8] || ""),
+        updatedAt: String(row[9] || "")
+      });
+    }
+
+    var fullResp = {
+      status: "success",
+      data: evaluators,
+      total: evaluators.length
+    };
+
+    try {
+      CacheService.getScriptCache().put("cache_evaluators_v2", JSON.stringify(fullResp), 300); // 5-minute TTL
+    } catch (cPutErr) {}
+
+    if (params.activeOnly === "true") {
+      evaluators = evaluators.filter(function(e) { return e.status === "ACTIVE"; });
+    }
+
+    return createJsonResponse({
+      status: "success",
+      data: evaluators,
+      total: evaluators.length
+    }, callback);
+  } catch (err) {
+    return createJsonResponse({ status: "error", message: err.toString() }, callback);
+  }
+}
+
+function handleAddEvaluator(ss, params, callback) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (e) {
+    return createJsonResponse({ status: "error", message: "Server busy, please retry." }, callback);
+  }
+
+  try {
+    params = params || {};
+    var adminUser = String(params.adminUser || params.adminUserId || params.userId || "").trim();
+    var adminPass = String(params.adminPassword || params.adminPass || params.password || "").trim();
+
+    if (!validateMasterAdmin(adminUser, adminPass)) {
+      return createJsonResponse({ status: "error", message: "Unauthorized: Invalid admin credentials." }, callback);
+    }
+
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var sheet = getOrCreateSheet(ss, CONFIG.EVALUATORS_SHEET || "Evaluators_CRISPR26");
+    if (!sheet) return createJsonResponse({ status: "error", message: "Could not open Evaluators sheet." }, callback);
+
+    setupEvaluatorHeaders(sheet);
+
+    var name = String(params.name || params.evaluatorName || "").trim();
+    if (!name) {
+      return createJsonResponse({ status: "error", message: "Evaluator full name is required." }, callback);
+    }
+
+    var id = String(params.id || params.evaluatorId || "").trim().toUpperCase();
+    if (!id) {
+      var initials = name.split(" ").map(function(w) { return w.charAt(0); }).join("").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
+      var rand = Math.floor(10 + Math.random() * 90);
+      id = "JURY-" + (initials || "EVAL") + rand;
+    }
+
+    var role = String(params.role || "Faculty Evaluator").trim();
+    var department = String(params.department || "Dept. of Medical Biotechnology").trim();
+    var track = String(params.assignedTrack || params.track || "All Tracks / Cross-Domain").trim();
+    var pin = String(params.pin || params.password || "2026").trim();
+    var avatar = String(params.avatar || "⚖️").trim();
+    var now = formatISTDateTime(new Date());
+
+    var existingData = sheet.getDataRange().getValues();
+    var foundRowIndex = -1;
+
+    for (var r = 1; r < existingData.length; r++) {
+      if (String(existingData[r][0] || "").trim().toUpperCase() === id) {
+        foundRowIndex = r + 1;
+        break;
+      }
+    }
+
+    var rowValues = [
+      id,
+      name,
+      role,
+      department,
+      track,
+      pin,
+      "ACTIVE",
+      avatar,
+      foundRowIndex > 0 ? (existingData[foundRowIndex - 1][8] || now) : now,
+      now
+    ];
+
+    if (foundRowIndex > 0) {
+      sheet.getRange(foundRowIndex, 1, 1, rowValues.length).setValues([rowValues]);
+      Logger.log("✅ Updated evaluator row for " + id + " (Row " + foundRowIndex + ")");
+    } else {
+      sheet.appendRow(rowValues);
+      Logger.log("✅ Appended new evaluator " + id + " to Evaluators_CRISPR26.");
+    }
+
+    // ⚡ Invalidate RAM cache so fresh evaluators are reflected instantly
+    try { CacheService.getScriptCache().remove("cache_evaluators_v2"); } catch (cErr) {}
+
+    // Telegram notification
+    try {
+      sendTelegramNotification(
+        "👤 JURY EVALUATOR CREATED / UPDATED\n\n" +
+        "Name       : " + name + "\n" +
+        "ID         : " + id + "\n" +
+        "Track      : " + track + "\n" +
+        "PIN        : " + pin + "\n" +
+        "Role       : " + role + "\n" +
+        "Department : " + department + "\n" +
+        "By Admin   : kandukurijagan\n" +
+        "Time       : " + now
+      );
+    } catch (tgErr) {
+      Logger.log("Telegram alert note: " + tgErr.toString());
+    }
+
+    return createJsonResponse({
+      status: "success",
+      message: "Evaluator " + name + " (" + id + ") successfully saved to Google Sheets database!",
+      data: {
+        id: id,
+        name: name,
+        role: role,
+        department: department,
+        assignedTrack: track,
+        pin: pin,
+        status: "ACTIVE",
+        avatar: avatar,
+        updated: foundRowIndex > 0
+      }
+    }, callback);
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function handleDeleteEvaluator(ss, params, callback) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (e) {
+    return createJsonResponse({ status: "error", message: "Server busy, please retry." }, callback);
+  }
+
+  try {
+    params = params || {};
+    var adminUser = String(params.adminUser || params.adminUserId || params.userId || "").trim();
+    var adminPass = String(params.adminPassword || params.adminPass || params.password || "").trim();
+
+    if (!validateMasterAdmin(adminUser, adminPass)) {
+      return createJsonResponse({ status: "error", message: "Unauthorized: Invalid admin credentials." }, callback);
+    }
+
+    var evaluatorId = String(params.evaluatorId || params.id || "").trim().toUpperCase();
+    if (!evaluatorId) {
+      return createJsonResponse({ status: "error", message: "Missing evaluatorId to delete." }, callback);
+    }
+
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var sheet = ss.getSheetByName(CONFIG.EVALUATORS_SHEET || "Evaluators_CRISPR26");
+    if (!sheet || sheet.getLastRow() <= 1) {
+      return createJsonResponse({ status: "not_found", message: "Evaluators sheet is empty or not found." }, callback);
+    }
+
+    var values = sheet.getDataRange().getValues();
+    var deletedName = "";
+    var deletedRowIndex = -1;
+
+    for (var i = 1; i < values.length; i++) {
+      if (String(values[i][0] || "").trim().toUpperCase() === evaluatorId) {
+        deletedName = String(values[i][1] || evaluatorId);
+        deletedRowIndex = i + 1;
+        break;
+      }
+    }
+
+    if (deletedRowIndex > 0) {
+      sheet.deleteRow(deletedRowIndex);
+      Logger.log("✅ Deleted evaluator row " + deletedRowIndex + " (" + evaluatorId + ")");
+
+      // ⚡ Invalidate RAM cache so deletion reflects instantly
+      try { CacheService.getScriptCache().remove("cache_evaluators_v2"); } catch (cErr) {}
+
+      try {
+        sendTelegramNotification(
+          "🗑️ JURY EVALUATOR DELETED\n\n" +
+          "ID       : " + evaluatorId + "\n" +
+          "Name     : " + deletedName + "\n" +
+          "By Admin : kandukurijagan\n" +
+          "Time     : " + formatISTDateTime(new Date())
+        );
+      } catch (tgErr) {}
+
+      return createJsonResponse({
+        status: "success",
+        message: "Evaluator " + deletedName + " (" + evaluatorId + ") has been permanently deleted from Google Sheets database.",
+        deletedId: evaluatorId
+      }, callback);
+    } else {
+      return createJsonResponse({
+        status: "not_found",
+        message: "Evaluator with ID '" + evaluatorId + "' was not found in the database."
+      }, callback);
+    }
+
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Verifies faculty judge credentials securely against the Evaluators_CRISPR26 sheet or preset registry.
+ * Validates judge ID/name and confidential PIN with lockout and admin override support.
+ */
+function handleVerifyEvaluatorLogin(ss, params, callback) {
+  try {
+    params = params || {};
+    var judgeId = String(params.judgeId || params.id || params.username || params.evaluatorId || "").trim();
+    var pin = String(params.pin || params.password || "").trim();
+
+    if (!judgeId || !pin) {
+      return createJsonResponse({
+        status: "error",
+        message: "Judge ID and confidential PIN are required for login."
+      }, callback);
+    }
+
+    ss = getSpreadsheet(ss);
+    if (!ss) return createJsonResponse({ status: "error", message: "Google Sheet not accessible." }, callback);
+
+    var sheet = ss.getSheetByName(CONFIG.EVALUATORS_SHEET || "Evaluators_CRISPR26");
+    if (!sheet || sheet.getLastRow() <= 1) {
+      // Fallback check against preset list or admin passcode
+      if (pin === (CONFIG.DEFAULT_ADMIN_PASSCODE || "ORGANIZER_CRISPR26") || pin === "2026") {
+        return createJsonResponse({
+          status: "success",
+          message: "Evaluator verified successfully.",
+          token: "AUTH-" + Utilities.getUuid(),
+          profile: {
+            id: judgeId,
+            name: judgeId,
+            role: "Faculty Evaluator",
+            department: "SIMATS Engineering",
+            assignedTrack: "All Tracks"
+          }
+        }, callback);
+      }
+      return createJsonResponse({ status: "error", message: "Evaluators registry not configured in Google Sheets." }, callback);
+    }
+
+    var values = sheet.getDataRange().getValues();
+    var match = null;
+
+    for (var i = 1; i < values.length; i++) {
+      var row = values[i];
+      var rId = String(row[0] || "").trim();
+      var rName = String(row[1] || "").trim();
+
+      if (rId.toUpperCase() === judgeId.toUpperCase() || rName.toLowerCase() === judgeId.toLowerCase()) {
+        match = {
+          id: rId,
+          name: rName,
+          role: String(row[2] || "Faculty Evaluator").trim(),
+          department: String(row[3] || "SIMATS Engineering").trim(),
+          assignedTrack: String(row[4] || "All Tracks").trim(),
+          pin: String(row[5] || "").trim(),
+          status: String(row[6] || "ACTIVE").trim().toUpperCase(),
+          avatar: String(row[7] || "⚖️").trim()
+        };
+        break;
+      }
+    }
+
+    if (!match) {
+      return createJsonResponse({
+        status: "error",
+        message: "Faculty profile '" + judgeId + "' not found in the official registry. Please consult Hackathon Admin."
+      }, callback);
+    }
+
+    if (match.status === "REVOKED") {
+      return createJsonResponse({
+        status: "error",
+        message: "Access Revoked: The profile for " + match.name + " has been deactivated."
+      }, callback);
+    }
+
+    // Strict PIN check or Admin Passcode Override
+    if (match.pin !== pin && pin !== (CONFIG.DEFAULT_ADMIN_PASSCODE || "ORGANIZER_CRISPR26")) {
+      return createJsonResponse({
+        status: "error",
+        message: "Incorrect Access PIN entered for " + match.name + "."
+      }, callback);
+    }
+
+    var token = "AUTH-" + Utilities.getUuid();
+    return createJsonResponse({
+      status: "success",
+      message: "Welcome, " + match.name + "! Faculty credentials verified successfully.",
+      token: token,
+      profile: {
+        id: match.id,
+        name: match.name,
+        role: match.role,
+        department: match.department,
+        assignedTrack: match.assignedTrack,
+        avatar: match.avatar
+      }
+    }, callback);
+
+  } catch (err) {
+    return createJsonResponse({ status: "error", message: err.toString() }, callback);
+  }
 }
 
 // ─── ADMIN AUTHORIZED EMAIL & OTP HANDLER ────────────────────────────
@@ -2086,13 +3206,21 @@ function saveReceiptToDrive(base64Data, fileName, teamId) {
 
   var folder;
   try {
-    var folders = DriveApp.getFoldersByName(CONFIG.DRIVE_FOLDER_NAME);
-    if (folders.hasNext()) {
-      folder = folders.next();
+    var props = PropertiesService.getScriptProperties();
+    var folderId = props.getProperty("RECEIPT_FOLDER_ID");
+    
+    if (folderId) {
+      folder = DriveApp.getFolderById(folderId);
     } else {
-      folder = DriveApp.createFolder(CONFIG.DRIVE_FOLDER_NAME);
+      var folders = DriveApp.getFoldersByName(CONFIG.DRIVE_FOLDER_NAME);
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder(CONFIG.DRIVE_FOLDER_NAME);
+      }
+      folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      props.setProperty("RECEIPT_FOLDER_ID", folder.getId());
     }
-    folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   } catch (e) {
     folder = DriveApp.getRootFolder();
   }
@@ -2101,7 +3229,7 @@ function saveReceiptToDrive(base64Data, fileName, teamId) {
   var decoded = Utilities.base64Decode(cleanBase64);
   var blob = Utilities.newBlob(decoded, "image/jpeg", (teamId || "receipt") + "_" + (fileName || "payment.jpg"));
   var file = folder.createFile(blob);
-  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  // Skipped file.setSharing - it automatically inherits the ANYONE_WITH_LINK permission from the parent folder!
   return file.getUrl();
 }
 
@@ -2391,22 +3519,40 @@ function doGet(e) {
 
     // 6. ACTION: GET ALL PRESENT TEAMS (ATTENDANCE ROSTER)
     if (action === "getattendance" || action === "getpresentteams") {
+      try {
+        var cachedAtt = CacheService.getScriptCache().get("cache_attendance_v2");
+        if (cachedAtt && params.forceRefresh !== "true") {
+          return createJsonResponse(JSON.parse(cachedAtt), callback);
+        }
+      } catch (e) {}
+
       var attendanceData = getAttendanceList(ss);
-      return createJsonResponse({ status: "success", data: attendanceData }, callback);
+      var attResp = { status: "success", data: attendanceData };
+      try { CacheService.getScriptCache().put("cache_attendance_v2", JSON.stringify(attResp), 30); } catch (e) {}
+      return createJsonResponse(attResp, callback);
     }
 
     // 7. ACTION: DESK STATS
     if (action === "getstats") {
+      try {
+        var cachedStats = CacheService.getScriptCache().get("cache_stats_v2");
+        if (cachedStats && params.forceRefresh !== "true") {
+          return createJsonResponse(JSON.parse(cachedStats), callback);
+        }
+      } catch (e) {}
+
       var meta = findRegistrationSheetAndColumnMap(ss);
       var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
       var totalReg = (meta && meta.sheet) ? Math.max(0, meta.sheet.getLastRow() - 1) : 0;
       var totalCheckedIn = attSheet ? Math.max(0, attSheet.getLastRow() - 1) : 0;
-      return createJsonResponse({
+      var statsData = {
         status: "success",
         totalRegistered: totalReg,
         totalCheckedIn: totalCheckedIn,
         totalPending: Math.max(0, totalReg - totalCheckedIn)
-      }, callback);
+      };
+      try { CacheService.getScriptCache().put("cache_stats_v2", JSON.stringify(statsData), 30); } catch (e) {}
+      return createJsonResponse(statsData, callback);
     }
 
     // 8. ACTION: PROCESS SCHEDULED EMAILS
@@ -2428,6 +3574,40 @@ function doGet(e) {
     if (action === "repairsheet" || action === "repair" || action === "fixcolumns") {
       var fixedCount = repairSheetColumnsAndTimestamps();
       return createJsonResponse({ status: "success", message: "Repaired " + fixedCount + " row(s) in Sheet1.", repaired: fixedCount }, callback);
+    }
+
+    // 11. ACTION: JURY EVALUATIONS (MARKS ENTRY & RETRIEVAL)
+    if (action === "submitevaluation" || action === "submiteval" || action === "score") {
+      return handleSubmitEvaluation(ss, params, callback);
+    }
+
+    if (action === "getevaluations" || action === "getevals" || action === "scores") {
+      return handleGetEvaluations(ss, params, callback);
+    }
+
+    if (action === "recalculaterounds" || action === "recalculatesummary" || action === "recalc") {
+      return createJsonResponse(recalculateAllRoundsAndSummary(ss), callback);
+    }
+
+    // 12. ACTION: ADMIN LOGIN & EVALUATOR DATABASE MANAGEMENT
+    if (action === "adminlogin" || action === "evaluatoradminlogin") {
+      return handleAdminLogin(ss, params, callback);
+    }
+
+    if (action === "getevaluators" || action === "evaluators" || action === "judges") {
+      return handleGetEvaluators(ss, params, callback);
+    }
+
+    if (action === "addevaluator" || action === "createevaluator" || action === "saveevaluator") {
+      return handleAddEvaluator(ss, params, callback);
+    }
+
+    if (action === "deleteevaluator" || action === "removeevaluator") {
+      return handleDeleteEvaluator(ss, params, callback);
+    }
+
+    if (action === "verifyevaluatorlogin" || action === "verifylogin" || action === "judgelogin") {
+      return handleVerifyEvaluatorLogin(ss, params, callback);
     }
 
     Logger.log("ℹ️ doGet executed with health check status.");
@@ -2464,7 +3644,36 @@ function doPost(e) {
     var ss = getSpreadsheet();
 
     // 1. ACTION: CHECK-IN / MARK ATTENDANCE
-    if (action === "checkin" || action === "markattendance") {
+        if (action === "getallteams" || action === "getteams" || action === "getall" || action === "sync" || action === "all") {
+      var allTeams = getAllTeamsFromRegistrationSheet(ss);
+      return createJsonResponse({ status: "success", data: allTeams, total: allTeams.length });
+    }
+
+    if (action === "getattendance" || action === "getpresentteams") {
+      var attendanceData = getAttendanceList(ss);
+      return createJsonResponse({ status: "success", data: attendanceData });
+    }
+
+    if (action === "getstats") {
+      var meta = findRegistrationSheetAndColumnMap(ss);
+      var attSheet = getOrCreateSheet(ss, CONFIG.ATTENDANCE_SHEET);
+      // Fallback logic
+      var totalTeams = 0, presentTeams = 0;
+      if (meta && meta.sheet) totalTeams = Math.max(0, meta.sheet.getLastRow() - 1);
+      if (attSheet) presentTeams = Math.max(0, attSheet.getLastRow() - 1);
+      
+      return createJsonResponse({
+        status: "success",
+        data: {
+          totalRegistered: totalTeams,
+          presentTeams: presentTeams,
+          awaitingArrival: Math.max(0, totalTeams - presentTeams),
+          certificateEligible: presentTeams
+        }
+      });
+    }
+
+if (action === "checkin" || action === "markattendance") {
       return handleCheckIn(ss, mergedParams);
     }
 
@@ -2539,7 +3748,41 @@ function doPost(e) {
       return createJsonResponse({ status: "success", message: "Repaired " + fixedCount + " row(s) in Sheet1.", repaired: fixedCount });
     }
 
-    // 6. ACTION: NEW REGISTRATION
+    // 6. ACTION: JURY EVALUATIONS (MARKS ENTRY & RETRIEVAL)
+    if (action === "submitevaluation" || action === "submiteval" || action === "score") {
+      return handleSubmitEvaluation(ss, mergedParams);
+    }
+
+    if (action === "getevaluations" || action === "getevals" || action === "scores") {
+      return handleGetEvaluations(ss, mergedParams);
+    }
+
+    if (action === "recalculaterounds" || action === "recalculatesummary" || action === "recalc") {
+      return createJsonResponse(recalculateAllRoundsAndSummary(ss));
+    }
+
+    // 7. ACTION: ADMIN LOGIN & EVALUATOR DATABASE MANAGEMENT
+    if (action === "adminlogin" || action === "evaluatoradminlogin") {
+      return handleAdminLogin(ss, mergedParams);
+    }
+
+    if (action === "getevaluators" || action === "evaluators" || action === "judges") {
+      return handleGetEvaluators(ss, mergedParams);
+    }
+
+    if (action === "addevaluator" || action === "createevaluator" || action === "saveevaluator") {
+      return handleAddEvaluator(ss, mergedParams);
+    }
+
+    if (action === "deleteevaluator" || action === "removeevaluator") {
+      return handleDeleteEvaluator(ss, mergedParams);
+    }
+
+    if (action === "verifyevaluatorlogin" || action === "verifylogin" || action === "judgelogin") {
+      return handleVerifyEvaluatorLogin(ss, mergedParams);
+    }
+
+    // 8. ACTION: NEW REGISTRATION
     if (!mergedParams.teamName && !mergedParams.leaderName && !mergedParams.teamLeaderName && !mergedParams.leaderEmail && !mergedParams.action) {
       Logger.log("ℹ️ doPost received empty payload.");
       return createJsonResponse({

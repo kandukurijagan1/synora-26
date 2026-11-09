@@ -44,7 +44,7 @@ export const CanvasBackground: React.FC = () => {
     // Floating background particle constellation
     const particleCount = Math.min(Math.floor((width * height) / 22000), 55);
     const particles: Particle[] = [];
-    const colors = ['#7c3aed', '#06b6d4', '#a855f7', '#10b981', '#38bdf8'];
+    const colors = ['#38bdf8', '#7dd3fc', '#bae6fd', '#0ea5e9', '#e0f2fe'];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -57,12 +57,6 @@ export const CanvasBackground: React.FC = () => {
         color: colors[Math.floor(Math.random() * colors.length)]
       });
     }
-
-    // DNA Double Helix Parameters
-    let helixAngle = 0;
-    const basePairs = 36;
-    const helixAmplitude = Math.min(width * 0.28, 220); // Width of DNA twist
-    const helixPitch = height / (basePairs * 0.7);
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
@@ -106,7 +100,7 @@ export const CanvasBackground: React.FC = () => {
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             const lineAlpha = (1 - dist / maxDistance) * 0.1;
-            ctx.strokeStyle = '#06b6d4';
+            ctx.strokeStyle = '#f97316';
             ctx.globalAlpha = lineAlpha;
             ctx.lineWidth = 0.6;
             ctx.stroke();
@@ -114,59 +108,7 @@ export const CanvasBackground: React.FC = () => {
         }
       }
 
-      // --- 2. Render 3D Rotating DNA Double Helix ---
-      helixAngle += 0.012;
-      const helixCenterX = width * 0.82; // Position subtly on the right side
-      const baseColors = [
-        { strand1: '#06b6d4', strand2: '#f59e0b', label1: 'A', label2: 'T' }, // Adenine-Thymine
-        { strand1: '#a855f7', strand2: '#10b981', label1: 'G', label2: 'C' }  // Guanine-Cytosine
-      ];
 
-      for (let i = 0; i < basePairs; i++) {
-        const y = (i * helixPitch * 1.5 - ((helixAngle * 35) % (helixPitch * 1.5))) - 50;
-        if (y < -50 || y > height + 50) continue;
-
-        const currentTheta = helixAngle + i * 0.32;
-        const sinVal = Math.sin(currentTheta);
-        const cosVal = Math.cos(currentTheta);
-
-        // 3D Perspective calculation
-        const x1 = helixCenterX + cosVal * helixAmplitude;
-        const x2 = helixCenterX - cosVal * helixAmplitude;
-
-        // Depth perspective (Z-order)
-        const depth1 = (sinVal + 1) / 2; // 0 (back) to 1 (front)
-        const depth2 = (-sinVal + 1) / 2;
-
-        const r1 = 2 + depth1 * 3;
-        const r2 = 2 + depth2 * 3;
-
-        const pairType = baseColors[i % baseColors.length];
-
-        // Draw connecting base pair rung
-        ctx.beginPath();
-        ctx.moveTo(x1, y);
-        ctx.lineTo(x2, y);
-        const rungAlpha = 0.08 + Math.abs(cosVal) * 0.12;
-        ctx.strokeStyle = '#6366f1';
-        ctx.globalAlpha = rungAlpha;
-        ctx.lineWidth = 1 + Math.abs(sinVal) * 0.8;
-        ctx.stroke();
-
-        // Draw Strand 1 Node
-        ctx.beginPath();
-        ctx.arc(x1, y, r1, 0, Math.PI * 2);
-        ctx.fillStyle = pairType.strand1;
-        ctx.globalAlpha = 0.25 + depth1 * 0.6;
-        ctx.fill();
-
-        // Draw Strand 2 Node
-        ctx.beginPath();
-        ctx.arc(x2, y, r2, 0, Math.PI * 2);
-        ctx.fillStyle = pairType.strand2;
-        ctx.globalAlpha = 0.25 + depth2 * 0.6;
-        ctx.fill();
-      }
 
       ctx.globalAlpha = 1.0;
       animationFrameId = requestAnimationFrame(render);

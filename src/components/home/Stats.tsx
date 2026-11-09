@@ -15,7 +15,7 @@ export const Stats: React.FC = () => {
           {statsList.map((stat, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl glass-card border border-white/10 hover:border-cyan-400/40 transition-all duration-300"
+              className="p-5 rounded-2xl glass-card border border-white/10 hover:border-orange-400/40 transition-all duration-300"
             >
               <div className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl grad-text mb-1">
                 {stat.value}

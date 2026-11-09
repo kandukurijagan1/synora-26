@@ -48,29 +48,29 @@ export const RegistrationClosed: React.FC<RegistrationClosedProps> = ({ onOpenPa
           {/* Quick Logistics Bar */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <Calendar className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+              <Calendar className="w-5 h-5 text-orange-400 mx-auto mb-1" />
               <div className="text-[10px] text-gray-400 uppercase font-semibold">Event Date</div>
               <div className="text-xs font-bold text-white mt-0.5">{EVENT_DETAILS.dateFormatted}</div>
             </div>
 
             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <MapPin className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+              <MapPin className="w-5 h-5 text-red-400 mx-auto mb-1" />
               <div className="text-[10px] text-gray-400 uppercase font-semibold">Venue</div>
               <div className="text-xs font-bold text-white mt-0.5">{EVENT_DETAILS.venue}</div>
             </div>
 
             <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <IdCard className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
+              <IdCard className="w-5 h-5 text-amber-400 mx-auto mb-1" />
               <div className="text-[10px] text-gray-400 uppercase font-semibold">Mandatory Entry</div>
-              <div className="text-xs font-bold text-emerald-300 mt-0.5">Physical College ID Card</div>
+              <div className="text-xs font-bold text-amber-300 mt-0.5">Physical College ID Card</div>
             </div>
           </div>
 
           {/* Already Registered? Digital Pass CTA */}
-          <div className="p-5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
+          <div className="p-5 rounded-2xl bg-orange-950/30 border border-orange-500/30 mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-left">
             <div>
-              <div className="text-xs font-bold text-cyan-300 flex items-center gap-1.5 mb-1">
-                <Ticket className="w-4 h-4 text-cyan-400" />
+              <div className="text-xs font-bold text-orange-300 flex items-center gap-1.5 mb-1">
+                <Ticket className="w-4 h-4 text-orange-400" />
                 <span>Already Registered Your Team?</span>
               </div>
               <p className="text-xs text-gray-300">
@@ -80,15 +80,15 @@ export const RegistrationClosed: React.FC<RegistrationClosedProps> = ({ onOpenPa
             <button
               type="button"
               onClick={onOpenPass}
-              className="px-5 py-2.5 rounded-full text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.4)] transition cursor-pointer whitespace-nowrap"
+              className="px-5 py-2.5 rounded-full text-xs font-bold bg-orange-500 hover:bg-orange-400 text-black shadow-[0_0_15px_rgba(249,115,22,0.4)] transition cursor-pointer whitespace-nowrap"
             >
               🪪 Access Digital Pass
             </button>
           </div>
 
           {/* Official WhatsApp Group Box */}
-          <div className="p-6 rounded-2xl bg-emerald-950/20 border border-emerald-500/30">
-            <div className="flex items-center justify-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider mb-2">
+          <div className="p-6 rounded-2xl bg-amber-950/20 border border-amber-500/30">
+            <div className="flex items-center justify-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider mb-2">
               <MessageCircle className="w-4 h-4" />
               <span>Official Participant WhatsApp Group</span>
             </div>

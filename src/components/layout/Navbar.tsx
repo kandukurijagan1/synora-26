@@ -61,14 +61,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       {/* Real-time Scroll Progress Bar */}
       <div
-        className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-purple-500 via-cyan-400 to-emerald-400 z-[100] transition-all duration-75"
+        className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-red-500 via-orange-400 to-amber-400 z-[100] transition-all duration-75"
         style={{ width: `${scrollProgress}%` }}
       />
 
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-slate-900/90 backdrop-blur-md border-b border-white/10 shadow-lg shadow-purple-950/20 py-3'
+            ? 'bg-stone-900/90 backdrop-blur-md border-b border-white/10 shadow-lg shadow-red-950/20 py-3'
             : 'bg-transparent py-5'
         }`}
       >
@@ -83,11 +83,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-3 group text-left cursor-pointer"
           >
             <div className="relative">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 opacity-60 group-hover:opacity-100 blur transition duration-300" />
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-red-600 to-orange-500 opacity-60 group-hover:opacity-100 blur transition duration-300" />
               <img
                 src="./logo.jpg"
                 alt="CRISPR Logo"
-                className="relative w-9 h-9 rounded-full object-cover border border-cyan-400/80 shadow-[0_0_10px_rgba(6,182,212,0.4)]"
+                className="relative w-9 h-9 rounded-full object-cover border border-orange-400/80 shadow-[0_0_10px_rgba(249,115,22,0.4)]"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
@@ -95,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="font-display font-extrabold text-lg tracking-tight text-white flex items-center">
-                CRISPR<span className="text-cyan-400 ml-1">'26</span>
+                CRISPR<span className="text-orange-400 ml-1">'26</span>
               </span>
               <span className="text-[10px] text-gray-400 font-medium block leading-none -mt-0.5">
                 {EVENT_DETAILS.department} · {EVENT_DETAILS.institution}
@@ -128,12 +128,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className={`px-3 py-2 rounded-full text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
                   activeView === 'organizer'
-                    ? 'bg-purple-600 text-white shadow-[0_0_15px_#7c3aed]'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-purple-300 border border-purple-500/30'
+                    ? 'bg-red-600 text-white shadow-[0_0_15px_#7c3aed]'
+                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-red-300 border border-red-500/30'
                 }`}
                 title="Event Staff & Organizer Check-in Desk"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-red-400" />
                 <span>Organizer Desk</span>
               </button>
             )}
@@ -144,16 +144,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 soundFX.playClick();
                 onOpenPass();
               }}
-              className="px-3.5 py-2 rounded-full text-xs font-bold bg-white/5 hover:bg-white/10 text-cyan-300 border border-cyan-500/30 hover:border-cyan-400 transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer"
+              className="px-3.5 py-2 rounded-full text-xs font-bold bg-white/5 hover:bg-white/10 text-orange-300 border border-orange-500/30 hover:border-orange-400 transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(249,115,22,0.15)] cursor-pointer"
             >
-              <Ticket className="w-3.5 h-3.5 text-cyan-400" />
+              <Ticket className="w-3.5 h-3.5 text-orange-400" />
               <span>Digital Pass</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleLinkClick('#register')}
-              className="px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-[0_0_20px_rgba(16,185,129,0.3)] transition cursor-pointer"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black shadow-[0_0_20px_rgba(245,158,11,0.3)] transition cursor-pointer"
             >
               <span>Register Now</span>
             </button>
@@ -168,11 +168,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   soundFX.playClick();
                   onOpenOrganizer();
                 }}
-                className="p-2 rounded-full bg-purple-950/40 border border-purple-500/40 text-purple-300 cursor-pointer"
+                className="p-2 rounded-full bg-red-950/40 border border-red-500/40 text-red-300 cursor-pointer"
                 aria-label="Organizer Desk"
                 title="Organizer Desk"
               >
-                <ShieldCheck className="w-4 h-4 text-purple-400" />
+                <ShieldCheck className="w-4 h-4 text-red-400" />
               </button>
             )}
 
@@ -182,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 soundFX.playClick();
                 onOpenPass();
               }}
-              className="p-2 rounded-full bg-white/5 border border-white/10 text-cyan-400 cursor-pointer"
+              className="p-2 rounded-full bg-white/5 border border-white/10 text-orange-400 cursor-pointer"
               aria-label="Open Entry Pass"
             >
               <Ticket className="w-4 h-4" />
@@ -222,9 +222,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     setMobileMenuOpen(false);
                     onOpenOrganizer();
                   }}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold bg-purple-950/40 text-purple-300 border border-purple-500/40 flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 rounded-xl text-xs font-bold bg-red-950/40 text-red-300 border border-red-500/40 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  <ShieldCheck className="w-4 h-4 text-purple-400" />
+                  <ShieldCheck className="w-4 h-4 text-red-400" />
                   <span>Organizer & Attendance Desk Login</span>
                 </button>
               )}
@@ -236,7 +236,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setMobileMenuOpen(false);
                   onOpenPass();
                 }}
-                className="w-full py-2.5 rounded-xl text-xs font-bold bg-white/5 text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full py-2.5 rounded-xl text-xs font-bold bg-white/5 text-orange-300 border border-orange-500/30 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Ticket className="w-3.5 h-3.5" />
                 <span>Lookup Digital Entry Pass</span>
@@ -245,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 type="button"
                 onClick={() => handleLinkClick('#register')}
-                className="w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 text-black flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(16,185,129,0.3)] cursor-pointer"
+                className="w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-black flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(245,158,11,0.3)] cursor-pointer"
               >
                 <span>Register Now</span>
               </button>

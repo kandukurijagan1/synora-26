@@ -22,7 +22,7 @@ export const ContactSection: React.FC = () => {
         {/* Main Tech Lead & Overall Event Head Card */}
         <div className="mb-12 p-6 sm:p-8 rounded-3xl glass-card border border-amber-500/40 shadow-[0_10px_40px_rgba(245,158,11,0.15)] flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-5 text-left">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500/30 to-purple-600/30 border-2 border-amber-400 flex items-center justify-center text-xl font-black text-amber-300 shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-500/30 to-red-600/30 border-2 border-amber-400 flex items-center justify-center text-xl font-black text-amber-300 shrink-0 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
               {MAIN_TECH_LEAD.initials}
             </div>
             <div>
@@ -54,7 +54,7 @@ export const ContactSection: React.FC = () => {
         {/* 3 Equal Student Helpline Coordinators */}
         <div>
           <div className="text-center mb-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-cyan-400">
+            <span className="text-xs font-bold uppercase tracking-widest text-orange-400">
               📞 Direct Student Helplines
             </span>
           </div>
@@ -63,25 +63,25 @@ export const ContactSection: React.FC = () => {
             {STUDENT_COORDINATORS.map((coord, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-2xl glass-card border border-white/10 hover:border-cyan-400/40 transition-all duration-300 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.5)] group hover:-translate-y-1"
+                className="p-6 rounded-2xl glass-card border border-white/10 hover:border-orange-400/40 transition-all duration-300 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.5)] group hover:-translate-y-1"
               >
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-lg">
+                    <div className="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-400/30 flex items-center justify-center text-lg">
                       {coord.avatar}
                     </div>
                     <div>
                       <h4 className="font-display font-bold text-base text-white">
                         {coord.name}
                       </h4>
-                      <div className="text-[11px] text-cyan-300 font-semibold">
+                      <div className="text-[11px] text-orange-300 font-semibold">
                         {coord.role}
                       </div>
                     </div>
                   </div>
 
                   <div className="text-xs text-gray-300 mb-6 flex items-center gap-2">
-                    <Phone className="w-3.5 h-3.5 text-cyan-400" />
+                    <Phone className="w-3.5 h-3.5 text-orange-400" />
                     <span>Mobile: </span>
                     <strong className="text-white font-mono">{coord.phone}</strong>
                   </div>
@@ -89,7 +89,7 @@ export const ContactSection: React.FC = () => {
 
                 <a
                   href={`tel:${coord.rawPhone}`}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-center bg-cyan-500/10 hover:bg-cyan-500 text-cyan-300 hover:text-black border border-cyan-400/40 transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.15)] cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-center bg-orange-500/10 hover:bg-orange-500 text-orange-300 hover:text-black border border-orange-400/40 transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(249,115,22,0.15)] cursor-pointer"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>Call {coord.name}</span>

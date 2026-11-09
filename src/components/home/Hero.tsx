@@ -67,15 +67,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
   return (
     <section className="relative min-h-screen pt-32 pb-20 flex items-center justify-center overflow-hidden">
       {/* Glow Orbs in Background */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-purple-600/20 to-cyan-500/15 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-1/3 left-1/4 w-[350px] h-[350px] bg-emerald-600/15 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-red-600/20 to-orange-500/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 left-1/4 w-[350px] h-[350px] bg-amber-600/15 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         {/* Floating CRISPR Emblem with Dual Glow Rings */}
         <div className="relative inline-flex items-center justify-center mb-6">
-          <div className="absolute -inset-4 rounded-full border border-purple-500/40 animate-[spin_12s_linear_infinite]" />
-          <div className="absolute -inset-8 rounded-full border border-dashed border-cyan-400/30 animate-[spin_18s_linear_infinite_reverse]" />
-          <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden p-1 bg-gradient-to-br from-purple-600 via-cyan-500 to-emerald-400 shadow-[0_0_35px_rgba(124,58,237,0.5)]">
+          <div className="absolute -inset-4 rounded-full border border-red-500/40 animate-[spin_12s_linear_infinite]" />
+          <div className="absolute -inset-8 rounded-full border border-dashed border-orange-400/30 animate-[spin_18s_linear_infinite_reverse]" />
+          <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden p-1 bg-gradient-to-br from-red-600 via-orange-500 to-amber-400 shadow-[0_0_35px_rgba(124,58,237,0.5)]">
             <img
               src="./logo.jpg"
               alt="CRISPR '26 Emblem"
@@ -89,22 +89,22 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
 
         {/* Institution & Department Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs sm:text-sm text-gray-300 font-medium mb-3 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
           <span>{EVENT_DETAILS.department} · {EVENT_DETAILS.institution}</span>
         </div>
 
         {/* IET Sponsorship Pill */}
         <div className="block mb-6">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/40 text-xs sm:text-sm font-semibold text-white shadow-[0_0_25px_rgba(6,182,212,0.25)] backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-orange-500/10 border border-orange-400/40 text-xs sm:text-sm font-semibold text-white shadow-[0_0_25px_rgba(249,115,22,0.25)] backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-amber-400 animate-bounce" />
             <span>
-              <strong className="text-cyan-300 tracking-wide">{EVENT_DETAILS.sponsorFull}</strong>
+              <strong className="text-orange-300 tracking-wide">{EVENT_DETAILS.sponsorFull}</strong>
             </span>
           </div>
         </div>
 
         {/* Main Cinematic Title */}
-        <h1 className="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white uppercase mb-4 drop-shadow-[0_0_40px_rgba(6,182,212,0.35)]">
+        <h1 className="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white uppercase mb-4 drop-shadow-[0_0_40px_rgba(249,115,22,0.35)]">
           CRISPR GENE <span className="grad-text">EDITING</span> TECHNOLOGIES
         </h1>
 
@@ -114,7 +114,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
           <span className="grad-text underline decoration-cyan-400/40 underline-offset-4">
             {displayText}
           </span>
-          <span className="animate-pulse text-cyan-400">|</span>
+          <span className="animate-pulse text-orange-400">|</span>
         </h2>
 
         {/* Paragraph description */}
@@ -124,30 +124,30 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
 
         {/* Key Event Highlights Chips */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mb-10">
-          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-emerald-500/40 transition">
-            <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-amber-500/40 transition">
+            <Award className="w-4 h-4 text-amber-400 shrink-0" />
             <span className="text-xs sm:text-sm font-bold text-gray-200">Students & Scholars</span>
           </div>
 
-          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-purple-500/40 transition">
-            <Zap className="w-4 h-4 text-purple-400 shrink-0" />
+          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-red-500/40 transition">
+            <Zap className="w-4 h-4 text-red-400 shrink-0" />
             <span className="text-xs sm:text-sm font-bold text-gray-200">Faculty & Researchers</span>
           </div>
 
-          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-cyan-500/40 transition">
-            <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
+          <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-orange-500/40 transition">
+            <MapPin className="w-4 h-4 text-orange-400 shrink-0" />
             <span className="text-xs sm:text-sm font-bold text-gray-200">RB Seminar Hall</span>
           </div>
 
           <div className="glass-card rounded-xl p-3 flex items-center justify-center gap-2 border border-white/10 hover:border-pink-500/40 transition">
             <Calendar className="w-4 h-4 text-pink-400 shrink-0" />
-            <span className="text-xs sm:text-sm font-bold text-gray-200">October 3, 2026</span>
+            <span className="text-xs sm:text-sm font-bold text-gray-200">November 20, 2026</span>
           </div>
         </div>
 
         {/* Countdown HUD Module */}
         <div className="max-w-xl mx-auto mb-10">
-          <div className="text-xs uppercase tracking-widest text-cyan-400 font-semibold mb-3">
+          <div className="text-xs uppercase tracking-widest text-orange-400 font-semibold mb-3">
             ⏳ Workshop Kickoff Countdown (IST)
           </div>
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
@@ -159,7 +159,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="glass-card rounded-2xl py-3 px-2 sm:p-4 border border-cyan-500/20 bg-gradient-to-b from-white/[0.04] to-transparent shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+                className="glass-card rounded-2xl py-3 px-2 sm:p-4 border border-orange-500/20 bg-gradient-to-b from-white/[0.04] to-transparent shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
               >
                 <div className="font-mono font-extrabold text-2xl sm:text-4xl text-white tracking-tight">
                   {String(item.value).padStart(2, '0')}
@@ -181,7 +181,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
               const el = document.getElementById('register');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="px-6 py-3 rounded-full font-bold text-sm bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black shadow-[0_0_25px_rgba(16,185,129,0.4)] border border-emerald-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3 rounded-full font-bold text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black shadow-[0_0_25px_rgba(245,158,11,0.4)] border border-amber-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
           >
             <span>✍️ Register for Workshop</span>
           </a>
@@ -189,18 +189,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPass, onViewSchedule }) => {
           <button
             type="button"
             onClick={onOpenPass}
-            className="px-6 py-3 rounded-full font-bold text-sm bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white shadow-[0_0_25px_rgba(124,58,237,0.4)] border border-cyan-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3 rounded-full font-bold text-sm bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-[0_0_25px_rgba(124,58,237,0.4)] border border-orange-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
           >
-            <Ticket className="w-4 h-4 text-cyan-300" />
+            <Ticket className="w-4 h-4 text-orange-300" />
             <span>🪪 Digital Entry Pass</span>
           </button>
 
           <button
             type="button"
             onClick={onViewSchedule}
-            className="px-6 py-3 rounded-full font-bold text-sm bg-white/5 hover:bg-white/10 text-gray-200 border border-white/20 hover:border-cyan-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3 rounded-full font-bold text-sm bg-white/5 hover:bg-white/10 text-gray-200 border border-white/20 hover:border-orange-400/50 transition-all duration-200 flex items-center gap-2 cursor-pointer"
           >
-            <CalendarDays className="w-4 h-4 text-cyan-400" />
+            <CalendarDays className="w-4 h-4 text-orange-400" />
             <span>📅 Workshop Schedule</span>
           </button>
         </div>

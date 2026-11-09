@@ -43,7 +43,7 @@ export const CustomCursor: React.FC = () => {
     <>
       {/* Tiny Center Dot */}
       <div
-        className="fixed pointer-events-none z-[99999] rounded-full bg-cyan-400 -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 ease-out shadow-[0_0_10px_#06b6d4]"
+        className="fixed pointer-events-none z-[99999] rounded-full bg-orange-400 -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 ease-out shadow-[0_0_10px_#f97316]"
         style={{
           left: `${pos.x}px`,
           top: `${pos.y}px`,
@@ -57,10 +57,10 @@ export const CustomCursor: React.FC = () => {
       <div
         className={`fixed pointer-events-none z-[99998] rounded-full -translate-x-1/2 -translate-y-1/2 border transition-all duration-200 ease-out ${
           isHovering
-            ? 'w-14 h-14 border-cyan-400 bg-cyan-400/10 shadow-[0_0_25px_rgba(6,182,212,0.45)]'
+            ? 'w-14 h-14 border-orange-400 bg-orange-400/10 shadow-[0_0_25px_rgba(249,115,22,0.45)]'
             : isClicking
-            ? 'w-6 h-6 border-purple-500 bg-purple-500/25 shadow-[0_0_20px_rgba(168,85,247,0.8)]'
-            : 'w-9 h-9 border-cyan-500/70 shadow-[0_0_15px_rgba(124,58,237,0.3)]'
+            ? 'w-6 h-6 border-red-500 bg-red-500/25 shadow-[0_0_20px_rgba(239,68,68,0.8)]'
+            : 'w-9 h-9 border-orange-500/70 shadow-[0_0_15px_rgba(124,58,237,0.3)]'
         }`}
         style={{
           left: `${pos.x}px`,
